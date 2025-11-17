@@ -2,25 +2,57 @@
 jordy,
 17-11-2025
 */
+:fullscreen {
+    width: 100vw;
+    height: 100vh;
+}
 
 :root {
-    /*main colors*/
-    --background-main: hsla(240, 33%, 87%, 1);
-    --header-pri: hsla(304, 36%, 42%, 1);
-    --header-sec: hsla(287, 41%, 35%, 1);
-    /*ext colors*/
-    --text-1: hsla(0, 0%, 10%, 1);
+    --logo-achtergrond: hsla(255, 100%, 100%, 1);
+    /*primaire kleuren*/
+    --achtergrond-primair: hsla(240, 33%, 87%, 1);
+    --header-primair: hsla(304, 36%, 42%, 1);
+    --header-secundair: hsla(287, 41%, 35%, 1);
+    /*text waardes*/
+    --font-primair: Arial, Verdana;
+    --font-grootte: 16px;
+    --header-text: hsla(255, 100%, 100%, 1);
 }
 
 body, html {
-    background-color: var(--background-main);
+    background-color: var(--achtergrond-primair);
+    font-family: var(--font-primair);
+    font-size: var(--font-grootte);
 }
 
-.header {
+.logo {
+    background-color: var(--header-secundair);
+    border-radius: 100%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+header {
     top: 0;
-    background-color: var(--header-pri);
-    color: var(--text-1);
+    background-color: var(--header-primair);
+    color: var(--header-text);
     position: sticky;
     width: auto;
     padding: 2.5%;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-primair);
+    font-size: var(--font-grootte);
 }
