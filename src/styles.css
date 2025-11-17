@@ -1,0 +1,26 @@
+/*
+jordy,
+17-11-2025
+*/
+
+:root {
+    /*main colors*/
+    --background-main: hsla(240, 33%, 87%, 1);
+    --header-pri: hsla(304, 36%, 42%, 1);
+    --header-sec: hsla(287, 41%, 35%, 1);
+    /*ext colors*/
+    --text-1: hsla(0, 0%, 10%, 1);
+}
+
+body, html {
+    background-color: var(--background-main);
+}
+
+.header {
+    top: 0;
+    background-color: var(--header-pri);
+    color: var(--text-1);
+    position: sticky;
+    width: auto;
+    padding: 2.5%;
+}
