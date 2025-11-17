@@ -1,5 +1,11 @@
 Kunst Rondleiding
 
+//Backend frameworks:
+Nodejs, Leaflet.js (voor gps en server interactie), Typescript
+
+//Frontend frameworks:
+React, Typescript 
+
 Dit project is een website die bezoekers meeneemt door een digitale rondleiding langs verschillende kunstwerken. De nadruk ligt op een rustige, duidelijke presentatie van kunst, met uitleg die zowel toegankelijk als informatief is. Het doel is om een omgeving te creëren waarin gebruikers vrij kunnen klikken, ontdekken en leren over kunst zonder overweldigd te worden door teveel informatie tegelijk.
 
 De website wordt volledig in het Nederlands ontwikkeld, zodat de rondleidingen begrijpelijk en herkenbaar zijn voor een Nederlandstalig publiek. Alle begeleidende tekst, knoppen, navigatie en uitleg blijven daarom bewust Nederlandstalig.
