@@ -1,7 +1,8 @@
 #map {
-    height: 100%;
-    width: 100%;
+  width: 100%;
+  height: 100vh; /* full viewport height */
 }
+
 
 :root {
   --achtergrond-primair: hsl(0, 0%, 96%);
