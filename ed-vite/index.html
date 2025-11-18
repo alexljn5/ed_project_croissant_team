@@ -1,0 +1,138 @@
+<template>
+  <div>
+    <header>
+      <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
+      <button class="contactKnop">Neem Contact Op</button>
+      <div class="logo">
+        <img src="/src/img/dubbelop-logo.png" alt="Dubbelop Logo" />
+      </div>
+    </header>
+
+    <!-- SLIDER -->
+    <div class="content-slider">
+      <div class="slider-container">
+        <button class="slider-arrow prev" @click="prevSlide">❮</button>
+
+        <div class="slider-track" ref="track">
+          <div
+            v-for="(card, index) in cards"
+            :key="index"
+            class="slider-card"
+            :class="{ active: index === currentIndex }"
+          >
+            <div
+              class="card-image"
+              :style="{ backgroundImage: `url('${card.image}')` }"
+            >
+              <div class="date-badge">{{ card.date }}</div>
+            </div>
+            <div class="card-content">
+              <h3>{{ card.title }}</h3>
+              <p>{{ card.description }}</p>
+            </div>
+          </div>
+        </div>
+
+        <button class="slider-arrow next" @click="nextSlide">❯</button>
+
+        <div class="slider-nav">
+          <div
+            v-for="(dot, index) in cards"
+            :key="index"
+            class="slider-dot"
+            :class="{ active: index === currentIndex }"
+            @click="goToSlide(index)"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAP -->
+    <div class="map-container">
+      <div id="map"></div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { onMounted, ref } from "vue";
+import L from "leaflet";
+
+const cards = [
+  {
+    image: "/src/img/18c-glas-in-lood.webp",
+    date: "18-11-25, 8:00",
+    title: "titel",
+    description: "description",
+  },
+  { image: "", date: "19-11-25, 14:30", title: "titel", description: "description" },
+  { image: "", date: "20-11-25, 10:00", title: "titel", description: "description" },
+  { image: "", date: "21-11-25, 19:00", title: "titel", description: "description" },
+  { image: "", date: "22-11-25, 11:00", title: "titel", description: "description" },
+];
+
+const currentIndex = ref(0);
+const track = ref(null);
+let autoSlideInterval = null;
+
+const slideCount = cards.length;
+
+function updateSlider() {
+  const cardEl = track.value.children[0];
+  if (!cardEl) return;
+
+  const cardWidth = cardEl.offsetWidth + 30;
+  const offset =
+    track.value.offsetWidth / 2 - cardWidth / 2 - currentIndex.value * cardWidth;
+
+  track.value.style.transform = `translateX(${offset}px)`;
+}
+
+function goToSlide(i) {
+  currentIndex.value = (i + slideCount) % slideCount;
+  updateSlider();
+  resetAutoSlide();
+}
+
+function nextSlide() {
+  goToSlide(currentIndex.value + 1);
+}
+
+function prevSlide() {
+  goToSlide(currentIndex.value - 1);
+}
+
+function startAutoSlide() {
+  autoSlideInterval = setInterval(nextSlide, 8000);
+}
+
+function resetAutoSlide() {
+  clearInterval(autoSlideInterval);
+  startAutoSlide();
+}
+
+onMounted(() => {
+  // Leaflet map
+  const map = L.map("map").setView([52.3676, 4.9041], 13);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  // Resize listener for slider
+  window.addEventListener("resize", updateSlider);
+
+  // Hover pause
+  track.value.addEventListener("mouseenter", () => clearInterval(autoSlideInterval));
+  track.value.addEventListener("mouseleave", startAutoSlide);
+
+  // Initialize slider
+  updateSlider();
+  startAutoSlide();
+});
+</script>
+
+<style scoped>
+/* --- paste your styles.css here or import it --- */
+</style>
