@@ -29,11 +29,64 @@ html, body {
 
 .content-slider {
     display: flex;
-    background-color: rgb(255,255,255);
-    width: 1rem 2rem;
-    height: 20%;
+    gap: 1rem;
+    padding: 1rem;
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
-    scroll-snap-type: proximity;
+
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    border-radius: 4px;
+    margin: 1rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+
+    white-space: nowrap;
+}
+
+.content-slider::-webkit-scrollbar {
+    display: none;
+}
+.content-slider {
+    -ms-overflow-style: none; 
+    scrollbar-width: none;
+}
+
+.slider-card {
+    min-width: 220px;
+    padding: 1.2rem;
+    background: white;
+
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+
+    scroll-snap-align: start;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.slider-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.slider-card h3 {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.1rem;
+}
+
+.slider-card p {
+    margin: 0;
+    opacity: 0.7;
+    font-size: 0.9rem;
 }
 
 .contactKnop {
@@ -66,7 +119,7 @@ header {
   -webkit-backdrop-filter: blur(12px) saturate(150%);
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 4px var(--header-shadow);
+  box-shadow: 0 8px 8px var(--header-shadow);
 
   color: var(--header-text);
   z-index: 1000;
