@@ -1,150 +1,92 @@
-#map {
+/* Jullie bestaande variabelen – blijven staan */
+:root {
+    --achtergrond-primair: hsl(0, 0%, 96%);
+    --site-paars: hsla(304, 36%, 42%, 1);
+    --header-bg: rgba(107, 59, 97, 0.3);
+    --header-shadow: rgba(0, 0%, 0.1);
+    --font-primair: Arial, Verdana;
+    --font-grootte: 16px;
+    --font-grootte2: 32px;
+    --header-text: hsla(0, 0%, 11%, 1);
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
     height: 100%;
+    background-color: var(--achtergrond-primair);
+    font-family: var(--font-primair);
+    overflow-x: hidden;
+}
+
+/* DIT IS DE ENIGE CONTAINER DIE JE NODIG HEBT */
+.map-container {
+    width: 50%;
+    height: 50%;
+    /* scale inside whole viewport */
+    display: flex;
+}
+
+/* Leaflet moet 100% van zijn ouder vullen */
+#map {
+    flex: 1;
+    /* fill the container */
+    height: 100%;
+    /* REQUIRED */
     width: 100%;
 }
 
-:root {
-  --achtergrond-primair: hsl(0, 0%, 96%);
-  --site-paars: hsla(304, 36%, 42%, 1);
-  --header-bg: rgba(107, 59, 97, 0.3);
-  --header-shadow: rgba(0, 0, 0, 0.1);
-  --font-primair: Arial, Verdana;
-  --font-grootte: 16px;
-  --font-grootte2: 32px;
-  --header-text: hsla(0, 0%, 11%, 1);
+/* Header blijft gewoon bovenaan */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 2rem;
+    z-index: 1000;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html, body {
-  background-color: var(--achtergrond-primair);
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
-.content-slider {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-
-    background: rgba(255,255,255,0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-
-    border-radius: 4px;
-    margin: 1rem;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-
-    white-space: nowrap;
-}
-
-.content-slider::-webkit-scrollbar {
-    display: none;
-}
-.content-slider {
-    -ms-overflow-style: none; 
-    scrollbar-width: none;
-}
-
-.slider-card {
-    min-width: 220px;
-    padding: 1.2rem;
-    background: white;
-
-    border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-
-    scroll-snap-align: start;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.slider-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-}
-
-.slider-card h3 {
-    margin: 0 0 0.4rem 0;
-    font-size: 1.1rem;
-}
-
-.slider-card p {
+.dubbeloproute-titel {
+    font-family: 'Lucida Sans', sans-serif;
+    font-size: var(--font-grootte2);
     margin: 0;
-    opacity: 0.7;
-    font-size: 0.9rem;
+}
+
+.logo {
+    background-color: var(--site-paars);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .contactKnop {
     padding: 1%;
     background: var(--achtergrond-primair);
     border-radius: 20px;
-    border-style: solid;
-    border-color: var(--site-paars);
+    border: 2px solid var(--site-paars);
     cursor: pointer;
     transition: background-color 0.45s;
 }
 
 .contactKnop:hover {
     background: var(--site-paars);
+    color: white;
 }
 
-header {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  padding: 1rem 2rem;
-  box-sizing: border-box;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  background-color: var(--header-bg);
-  backdrop-filter: blur(12px) saturate(150%);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 8px 8px var(--header-shadow);
-
-  color: var(--header-text);
-  z-index: 1000;
-}
-
-.dubbeloproute-titel {
-  font-family: 'Lucida Sans', sans-serif;
-  font-size: var(--font-grootte2);
-  margin: 0;
-}
-
-.logo {
-  background-color: var(--site-paars);
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 1rem;
-}
-
-.logo img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
+.content-slider {
+    position: relative;
+    z-index: 2;
+    background: white;
 }

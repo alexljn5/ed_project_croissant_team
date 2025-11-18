@@ -19,8 +19,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Fout? TypeScript schreeuwt meteen:
   // "Argument of type 'string' is not assignable to parameter of type 'number'"
+  L.marker([52.519, 5.472], { icon: purple })
+    .addTo(map)
+    .bindPopup("Marker twee!");
+
+  L.marker([52.520, 5.469], { icon: purple })
+    .addTo(map)
+    .bindPopup("Marker drie!");
+
   L.marker([52.518, 5.471], { icon: purple })
     .addTo(map)
-    .bindPopup("<b>PAARSE STER LEEFT!</b><br>En geen errors meer ooit")
-    .openPopup();
+    .bindPopup(`
+    <b>PAARSE STER LEEFT!</b><br>
+    <a href="https://example.com" target="_blank">
+      Klik hier!
+    </a>
+  `);
+
 });
