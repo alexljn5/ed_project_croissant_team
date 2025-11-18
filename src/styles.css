@@ -10,23 +10,45 @@ jordy,
 :root {
     --logo-achtergrond: hsla(255, 100%, 100%, 1);
     /*primaire kleuren*/
-    --achtergrond-primair: hsla(240, 33%, 87%, 1);
-    --header-primair: hsla(304, 36%, 42%, 1);
-    --header-secundair: hsla(287, 41%, 35%, 1);
+    --achtergrond-primair: hsl(0, 0%, 80%);
+    --acthergrond-secundair: hsl(0, 0%, 100%);
+
+
+    --header: linear-gradient( to top,
+    hsla(100, 100%, 100%, 0.6),
+    hsla(100, 100%, 100%, 0.6),
+    hsla(100, 100%, 100%, 0.6),
+    hsla(100, 100%, 100%, 0.6),
+    hsla(100, 100%, 100%, 0.6),
+    hsla(100, 100%, 100%, 0.6),
+    hsla(100, 100%, 100%, 0.5),
+    hsla(100, 100%, 100%, 0.4)
+    );
+
+    --site-paars: hsla(304, 36%, 42%, 1);
+    --site-paars2: hsla(287, 41%, 35%, 1);
     /*text waardes*/
     --font-primair: Arial, Verdana;
     --font-grootte: 16px;
-    --header-text: hsla(255, 100%, 100%, 1);
+    --font-grootte2: 32px;
+    --header-text: hsla(0, 0%, 11%, 1);
 }
 
+/*lichaam*/
 body, html {
     background-color: var(--achtergrond-primair);
     font-family: var(--font-primair);
     font-size: var(--font-grootte);
 }
 
+.content {
+    background-color: var(--achtergrond-primair);
+    padding: 15%;
+
+}
+
 .logo {
-    background-color: var(--header-secundair);
+    background-color: var(--site-paars2);
     border-radius: 100%;
     width: 80px;
     height: 80px;
@@ -45,11 +67,22 @@ body, html {
 
 header {
     top: 0;
-    background-color: var(--header-primair);
+    background-color: var(--site-paars);
+    background-image: var(--header);
     color: var(--header-text);
     position: sticky;
     width: auto;
-    padding: 2.5%;
+    padding: 1rem 2rem;
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    border-bottom: 1px solid hsla(100, 100%, 100%, 0.25);
+    box-shadow: 0 4px 20px hsla(100, 100%, 0%, 0.1);
+}
+
+.dubbeloproute-titel {
+    font-family:'Lucida Sans';
+    font-size: var(--font-grootte2);
+    color: var(--header-text);
 }
 
 h1, h2, h3 {
