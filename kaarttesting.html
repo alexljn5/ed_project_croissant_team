@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
   <meta charset="utf-8">
   <title>Lelystad Historisch Pad</title>
@@ -7,10 +8,22 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
-  <div id="map"></div>
+
+  <!-- Je header blijft gewoon bovenaan -->
+  <header>
+    <h1 class="dubbeloproute-titel">Lelystad Historisch Pad</h1>
+    <div class="logo"><img src="assets/logo.png" alt="Logo"></div>
+  </header>
+
+  <!-- DE MOOIE KAARTBOX -->
+  <div class="map-container">
+    <div id="map"></div>
+  </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script type="module" src="js/map.js"></script>
+  <script src="js/map.js"></script>
 </body>
+
 </html>

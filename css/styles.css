@@ -1,98 +1,93 @@
-#map {
-  
-
-}
-
-
+/* Jullie bestaande variabelen – blijven staan */
 :root {
-  --achtergrond-primair: hsl(0, 0%, 96%);
-  --site-paars: hsla(304, 36%, 42%, 1);
-  --header-bg: rgba(107, 59, 97, 0.3);
-  --header-shadow: rgba(0, 0, 0, 0.1);
-  --font-primair: Arial, Verdana;
-  --font-grootte: 16px;
-  --font-grootte2: 32px;
-  --header-text: hsla(0, 0%, 11%, 1);
+    --achtergrond-primair: hsl(0, 0%, 96%);
+    --site-paars: hsla(304, 36%, 42%, 1);
+    --header-bg: rgba(107, 59, 97, 0.3);
+    --header-shadow: rgba(0, 0%, 0.1);
+    --font-primair: Arial, Verdana;
+    --font-grootte: 16px;
+    --font-grootte2: 32px;
+    --header-text: hsla(0, 0%, 11%, 1);
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: var(--achtergrond-primair);
+    font-family: var(--font-primair);
+    overflow-x: hidden;
 }
 
-html, body {
-  background-color: var(--achtergrond-primair);
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
-.content-slider {
+/* DIT IS DE ENIGE CONTAINER DIE JE NODIG HEBT */
+.map-container {
+    width: 50%;
+    height: 50%;
+    /* scale inside whole viewport */
     display: flex;
-    background-color: rgb(255,255,255);
-    width: 1rem 2rem;
-    height: 20%;
-    scroll-behavior: smooth;
-    scroll-snap-type: proximity;
+}
+
+/* Leaflet moet 100% van zijn ouder vullen */
+#map {
+    flex: 1;
+    /* fill the container */
+    height: 100%;
+    /* REQUIRED */
+    width: 100%;
+}
+
+/* Header blijft gewoon bovenaan */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 2rem;
+    z-index: 1000;
+}
+
+.dubbeloproute-titel {
+    font-family: 'Lucida Sans', sans-serif;
+    font-size: var(--font-grootte2);
+    margin: 0;
+}
+
+.logo {
+    background-color: var(--site-paars);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .contactKnop {
     padding: 1%;
     background: var(--achtergrond-primair);
     border-radius: 20px;
-    border-style: solid;
-    border-color: var(--site-paars);
+    border: 2px solid var(--site-paars);
     cursor: pointer;
     transition: background-color 0.45s;
 }
 
 .contactKnop:hover {
     background: var(--site-paars);
+    color: white;
 }
 
-header {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  padding: 1rem 2rem;
-  box-sizing: border-box;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  background-color: var(--header-bg);
-  backdrop-filter: blur(12px) saturate(150%);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 4px var(--header-shadow);
-
-  color: var(--header-text);
-  z-index: 1000;
-}
-
-.dubbeloproute-titel {
-  font-family: 'Lucida Sans', sans-serif;
-  font-size: var(--font-grootte2);
-  margin: 0;
-}
-
-.logo {
-  background-color: var(--site-paars);
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 1rem;
-}
-
-.logo img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
+/* Optioneel: andere content onder de kaart */
+.content-slider {
+    position: relative;
+    z-index: 2;
+    background: white;
 }
