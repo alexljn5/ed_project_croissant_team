@@ -19,21 +19,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Fout? TypeScript schreeuwt meteen:
   // "Argument of type 'string' is not assignable to parameter of type 'number'"
-  L.marker([52.519, 5.472], { icon: purple })
+  L.marker([44.518, 5.471], { icon: purple })
     .addTo(map)
-    .bindPopup("Marker twee!");
+    .bindPopup("<b>PAARSE STER LEEFT!</b><br>En geen errors meer ooit")
+    .openPopup();
 
-  L.marker([52.520, 5.469], { icon: purple })
+      L.marker([53.518, 6.471], { icon: purple })
     .addTo(map)
-    .bindPopup("Marker drie!");
+    .bindPopup("<b>NATE HIGGER WAS HERE!</b><br>En geen errors meer ooit")
+    .openPopup();
 
-  L.marker([52.518, 5.471], { icon: purple })
-    .addTo(map)
-    .bindPopup(`
-    <b>PAARSE STER LEEFT!</b><br>
-    <a href="https://example.com" target="_blank">
-      Klik hier!
-    </a>
-  `);
 
+const fotoHtml: string = '<img src="src/img/agora.webp" width="200" height="150"> <br> De Agora';
+L.marker([52.5205, 5.4790], { icon: purple })
+  .addTo(map)
+  .bindPopup(fotoHtml);
 });
+ 
