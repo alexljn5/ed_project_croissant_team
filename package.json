@@ -1,0 +1,23 @@
+{
+    "name": "ed_project_croissant_team",
+    "version": "1.0.0",
+    "description": "Lelystad historisch pad – Leaflet + TypeScript",
+    "main": "index.html",
+    "scripts": {
+        "dev": "tsc --watch",
+        "build": "tsc",
+        "clean": "rm -rf js node_modules"
+    },
+    "keywords": [
+        "leaflet",
+        "typescript",
+        "map",
+        "historisch-pad"
+    ],
+    "author": "Croissant Team",
+    "license": "MIT",
+    "devDependencies": {
+        "typescript": "^5.9.3",
+        "@types/leaflet": "^1.9.12"
+    }
+}
