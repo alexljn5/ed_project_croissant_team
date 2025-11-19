@@ -1,5 +1,14 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import { createApp, ref } from 'vue'
+//import App from 'App.vue'
 
-createApp(App).mount('#app')
+// Leaflet CSS
+import 'leaflet/dist/leaflet.css'
+
+createApp({
+    setup()
+{
+    const test = ref("h")
+    return{
+        test
+    }
+}}).mount('#app')
