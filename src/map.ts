@@ -24,15 +24,15 @@ document.addEventListener("DOMContentLoaded", () => {
     .bindPopup("<b>PAARSE STER LEEFT!</b><br>En geen errors meer ooit")
     .openPopup();
 
-      L.marker([53.518, 6.471], { icon: purple })
+  L.marker([53.518, 6.471], { icon: purple })
     .addTo(map)
     .bindPopup("<b>NATE HIGGER WAS HERE!</b><br>En geen errors meer ooit")
     .openPopup();
 
 
-const fotoHtml: string = '<img src="src/img/agora.webp" width="200" height="150"> <br> De Agora';
-L.marker([52.5205, 5.4790], { icon: purple })
-  .addTo(map)
-  .bindPopup(fotoHtml);
+  const fotoHtml: string = '<img src="src/img/agora.webp" width="200" height="150"> <br> De Agora';
+  L.marker([52.5205, 5.4790], { icon: purple })
+    .addTo(map)
+    .bindPopup(fotoHtml);
 });
- 
+
