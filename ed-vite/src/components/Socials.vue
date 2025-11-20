@@ -1,3 +1,4 @@
+<!--
 <template>
     <div class="socials">
         <a
@@ -55,3 +56,4 @@ const socials = [
   height: 20px;
 }
 </style>
+-->
