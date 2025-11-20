@@ -17,7 +17,7 @@ onMounted(() => {
   
   // Add marker
   L.marker([51.505, -0.09]).addTo(map)
-    .bindPopup('Hello Vue + Leaflet!')
+    .bindPopup('placeholder')
     .openPopup();
 });
 </script>
