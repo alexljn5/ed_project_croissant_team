@@ -1,5 +1,1 @@
-node_modules/
-js/
-.env
-.DS_Store
-*.log
+node_modules
