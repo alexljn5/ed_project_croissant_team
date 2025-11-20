@@ -24,7 +24,7 @@ export function initMap(containerId: string) {
 
   L.marker([53.518, 6.471], { icon: purple })
     .addTo(map)
-    .bindPopup("<b>NATE HIGGER WAS HERE!</b><br>En geen errors meer ooit")
+    .bindPopup("<b>k!</b><br>En geen errors meer ooit")
     .openPopup();
 
   const fotoHtml: string = '<img src="src/img/agora.webp" width="200" height="150"> <br> De Agora';
