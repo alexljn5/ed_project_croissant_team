@@ -14,7 +14,7 @@
 import Header from './components/Header.vue';
 import Slider from './components/Slider.vue';
 import MapView from './components/MapView.vue';
-import Footer from './components/Footer.vue';
+import TestConnection from './components/TestConnection.vue';
 </script>
 
 <style>
