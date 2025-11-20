@@ -1,6 +1,7 @@
 <template>
   <div>
     <Header />
+    <TestConnection />
     <main>
       <Slider />
       <MapView />
