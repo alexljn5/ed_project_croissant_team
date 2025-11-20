@@ -8,6 +8,7 @@
     </main>
     <Footer />
   </div>
+  </Footer>
 </template>
 
 
