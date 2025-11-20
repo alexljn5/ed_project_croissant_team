@@ -8,9 +8,7 @@
     </main>
     <Footer />
   </div>
-  </Footer>
 </template>
-
 
 <script setup lang="ts">
 import Header from './components/Header.vue';
@@ -48,16 +46,11 @@ body {
   background-color: var(--body);
   font-family: var(--font-primair);
   overflow-x: hidden;
-  /* verstop scrollbar in firefox */
   scrollbar-width: none;
   -ms-overflow-style: none;
-  /* 
-  scroll = functioneel, overflow-y houdt het mogelijk om te kunnen scrollen vanwege overflow-x
-  */
   overflow-y: auto;
 }
 
-  /* verstop scrollbar in chrome, safari & edge */
 body::-webkit-scrollbar {
   display: none;
 }
