@@ -14,7 +14,6 @@ const msg = ref('connecting...')
 
 onMounted(async () => {
   try {
-    // DIRECT connection — no proxy, no 404, no bullshit
     const res = await fetch('http://127.0.0.1:8000/api/hello')
     const data = await res.json()
     msg.value = data.message || 'DIRECT CONNECT SUCCESS!'
