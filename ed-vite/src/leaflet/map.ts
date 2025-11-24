@@ -16,6 +16,7 @@ export function initMap(containerId: string) {
     shadowSize: [41, 41]
   });
 
+  //Placeholder om te zien of dit werkt, van Casper.
   const fotoHtml: string = '<img src="src/img/agora.webp" width="200" height="150"> <br> De Agora';
   L.marker([52.5205, 5.4790], { icon: purple })
     .addTo(map)

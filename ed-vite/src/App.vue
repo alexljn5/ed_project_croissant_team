@@ -22,7 +22,6 @@ import DynamicList from './components/DynamicList.vue'; // Placeholder 2
 </script>
 
 <style>
-/* Global CSS variables and resets (available to all components) */
 :root {
   --body: hsla(304, 36%, 42%, 1);
   --achtergrond-primair: hsl(0, 0%, 96%);

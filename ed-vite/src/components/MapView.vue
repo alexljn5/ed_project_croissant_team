@@ -1,7 +1,7 @@
 <template>
   <section class="mb-8 p-6 bg-white rounded shadow-md">
     <h2 class="text-2xl font-bold text-purple-700 mb-4">
-      Voeg een marker toe ✿
+      Voeg een marker toe
     </h2>
 
     <!-- simple form to add markers -->
@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { initMap } from '../leaflet/map';  // <-- your function
+import { initMap } from '../leaflet/map'; 
 import L from 'leaflet';
 
 let map: L.Map;
