@@ -1,0 +1,12 @@
+nohup: ignoring input
+[31mfailed to load config from C:\Users\alexl\Documents\GitHub\ed_project_croissant_team\ed-vite\vite.config.ts[39m
+[31merror when starting dev server:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from C:\Users\alexl\Documents\GitHub\ed_project_croissant_team\node_modules\.vite-temp\vite.config.ts.timestamp-1763996709456-ad49c6826b77.mjs
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:268:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:858:18)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:735:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:712:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at #link (node:internal/modules/esm/module_job:208:49)[39m
