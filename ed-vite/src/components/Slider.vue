@@ -110,7 +110,7 @@ onBeforeUnmount(() => {
   position: relative;
   z-index: 2;
   background: var(--site-paars);
-  padding: 120px 0 60px;
+  padding: 120px 0 20px;
   overflow: hidden;
 }
 
@@ -120,6 +120,8 @@ onBeforeUnmount(() => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px 0;
+  top: 0;
+  bottom: 0;
 }
 
 .slider-track {

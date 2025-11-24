@@ -1,10 +1,12 @@
 <template>
   <div>
     <Header />
+    <TestConnection />
     <main>
       <Slider />
       <MapView />
     </main>
+    <Footer />
   </div>
 </template>
 
@@ -12,11 +14,13 @@
 import Header from './components/Header.vue';
 import Slider from './components/Slider.vue';
 import MapView from './components/MapView.vue';
+import TestConnection from './components/TestConnection.vue';
 </script>
 
 <style>
 /* Global CSS variables and resets (available to all components) */
 :root {
+  --body: hsla(304, 36%, 42%, 1);
   --achtergrond-primair: hsl(0, 0%, 96%);
   --site-paars: hsla(304, 36%, 42%, 1);
   --interactief: hsl(41, 100%, 69%);
@@ -39,12 +43,19 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: var(--achtergrond-primair);
+  background-color: var(--body);
   font-family: var(--font-primair);
   overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow-y: auto;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
 
 main {
-  padding-top: 110px;
+  padding-top: 10px;
 }
 </style>
