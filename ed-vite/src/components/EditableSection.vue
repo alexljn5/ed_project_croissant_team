@@ -1,3 +1,22 @@
+<script setup lang="ts">
+import { useContent } from '../composables/useContent'
+import { ref } from 'vue'
+
+const { data: content, save } = useContent<string>(
+  'editable_section',
+  'Placeholder text! Edit me and watch the DOM change right away. ♡'
+)
+
+const saving = ref(false)
+
+const saveChanges = async () => {
+  saving.value = true
+  await save()
+  saving.value = false
+  alert('Saved forever! ♡ Refresh the page — your text will still be here!')
+}
+</script>
+
 <template>
   <section class="mb-8 p-6 bg-[var(--achtergrond-primair)] rounded-lg shadow-md">
     <h2 class="text-[var(--font-grootte2)] font-bold text-[var(--site-paars)] mb-4">
@@ -24,22 +43,3 @@
     </button>
   </section>
 </template>
-
-<script setup lang="ts">
-import { useContent } from '../composables/useContent'
-import { ref } from 'vue'
-
-const { data: content, save } = useContent<string>(
-  'editable_section',
-  'Placeholder text! Edit me and watch the DOM change right away. ♡'
-)
-
-const saving = ref(false)
-
-const saveChanges = async () => {
-  saving.value = true
-  await save()
-  saving.value = false
-  alert('Saved forever! ♡ Refresh the page — your text will still be here!')
-}
-</script>

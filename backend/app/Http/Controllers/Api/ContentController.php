@@ -13,29 +13,47 @@ class ContentController extends Controller
     {
         $content = PageContent::firstWhere('key', $key);
 
-        // fallback to empty array
-        $items = $content->value ?? [];
-
-        // Ensure array of plain strings
-        if (!is_array($items)) {
-            $items = [$items];
+        // fallback to empty array if content not found
+        if (!$content) {
+            return response()->json(['value' => null]);
         }
 
-        $items = array_map(fn($item) => trim(strip_tags((string) $item)), $items);
+        $value = $content->value;
 
-        return response()->json(['value' => $items]);
+        // Return the value as-is (can be string or array)
+        // The controller should not force it into any particular format
+        return response()->json(['value' => $value]);
     }
 
     // POST /api/content/{key}
     public function update(Request $request, $key)
     {
         $data = $request->input('value', []);
-        if (!is_array($data)) {
-            $data = [$data];
-        }
 
-        // sanitize strings
-        $clean = array_map(fn($item) => trim(strip_tags((string) $item)), $data);
+        // Helper function to recursively sanitize nested data
+        $sanitize = function ($value) use (&$sanitize) {
+            if (is_string($value)) {
+                return trim(strip_tags($value));
+            } elseif (is_array($value)) {
+                // Check if it's a simple array or array of objects
+                $isAssoc = !empty($value) && array_keys($value) !== range(0, count($value) - 1);
+
+                if ($isAssoc) {
+                    // It's an associative array (object-like), preserve structure
+                    $result = [];
+                    foreach ($value as $k => $v) {
+                        $result[$k] = $sanitize($v);
+                    }
+                    return $result;
+                } else {
+                    // It's a numeric array, sanitize each item
+                    return array_map(fn($item) => $sanitize($item), $value);
+                }
+            }
+            return $value;
+        };
+
+        $clean = $sanitize($data);
 
         PageContent::updateOrCreate(
             ['key' => $key],

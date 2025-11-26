@@ -18,9 +18,19 @@ class PageContentSeeder extends Seeder
         );
 
         PageContent::updateOrCreate(
-            ['key' => 'dynamic_list'],
+            ['key' => 'dynamic-list'],
             ['value' => ['Item 1 (click remove to zap me!)', 'Item 2']]
-            // → Laravel automatically saves arrays as JSON in json columns! No need for json_encode ♡
+        );
+
+        PageContent::updateOrCreate(
+            ['key' => 'map-markers'],
+            [
+                'value' => [
+                    ['lat' => 52.5205, 'lng' => 5.4790, 'label' => 'Amsterdam'],
+                    ['lat' => 44.518, 'lng' => 5.471, 'label' => 'Provence'],
+                    ['lat' => 53.518, 'lng' => 6.471, 'label' => 'Groningen']
+                ]
+            ]
         );
     }
 }
