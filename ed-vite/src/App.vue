@@ -1,9 +1,11 @@
 <template>
   <div>
     <Header />
-    <TestConnection />
+    <BackendGlue />
     <main>
       <Slider />
+      <EditableSection /> <!-- New: Simple text edit -->
+      <DynamicList /> <!-- New: Add/remove items -->
       <MapView />
     </main>
     <Footer />
@@ -14,11 +16,12 @@
 import Header from './components/Header.vue';
 import Slider from './components/Slider.vue';
 import MapView from './components/MapView.vue';
-import Footer from './components/Footer.vue';
+import BackendGlue from './components/BackendGlue.vue';
+import EditableSection from './components/EditableSection.vue'; // Placeholder 1
+import DynamicList from './components/DynamicList.vue'; // Placeholder 2
 </script>
 
 <style>
-/* Global CSS variables and resets (available to all components) */
 :root {
   --body: hsla(304, 36%, 42%, 1);
   --achtergrond-primair: hsl(0, 0%, 96%);
