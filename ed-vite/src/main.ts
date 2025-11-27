@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import * as L from 'leaflet'            // ← YOU FORGOT THIS!
 import 'leaflet/dist/leaflet.css'
+import TestConnection from './components/BackendGlue.vue'
 
 // Fix for default markers in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl
