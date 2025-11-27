@@ -21,5 +21,9 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '/api')
       }
     }
+  },
+  // Disable Vue type checking emission (.d.ts files)
+  define: {
+    __VUE_PROD_DEVTOOLS__: false
   }
 })

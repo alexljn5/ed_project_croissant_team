@@ -1,29 +1,24 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Models\Content;
+use App\Http\Controllers\Api\ContentController;
 
-Route::get('/hello', fn() => ['message' => 'CROISSANT TEAM WINS — FINAL VICTORY 2025!!!']);
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/content/{key}', function (string $key) {
-    $item = Content::where('key', $key)->first();
+Route::get('/hello', function () {
     return response()->json([
-        'value' => $item?->value ?? null
+        'message' => 'CROISSANT TEAM WINS FOREVER!!!',
+        'time' => now()->toIso8601String(),
     ]);
 });
 
-Route::post('/content/{key}', function (Request $request, string $key) {
-    $value = $request->input('value');
-
-    Content::updateOrCreate(
-        ['key' => $key],
-        ['value' => $value]
-    );
-
-    return response()->json([
-        'success' => true,
-        'key' => $key,
-        'value' => $value
-    ]);
+Route::get('/', function () {
+    return response()->json(['status' => 'Laravel API is alive and kicking!']);
 });
+
+// Fix: Match the exact path your frontend is requesting
+Route::get('/content/{key}', [ContentController::class, 'show']);
+Route::post('/content/{key}', [ContentController::class, 'update']);
