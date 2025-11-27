@@ -2,12 +2,21 @@
 
 use App\Http\Controllers\Api\ContentController;
 
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/hello', function () {
-    return ['message' => 'CROISSANT TEAM WINS — FINAL VICTORY 2025!!!'];
+    return response()->json([
+        'message' => 'CROISSANT TEAM WINS FOREVER!!!',
+        'time' => now()->toIso8601String(),
+    ]);
 });
 
 Route::get('/', function () {
-    return ['status' => 'API is running'];
+    return response()->json(['status' => 'Laravel API is alive and kicking!']);
 });
 
 // Fix: Match the exact path your frontend is requesting

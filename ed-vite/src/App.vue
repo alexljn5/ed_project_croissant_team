@@ -13,9 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import Header from './components/Header.vue';
-import Slider from './components/Slider.vue';
-import MapView from './components/MapView.vue';
+import Header from "./components/Header.vue";
+import Slider from "./components/Slider.vue";
+import MapView from "./components/MapView.vue";
 import BackendGlue from './components/BackendGlue.vue';
 import EditableSection from './components/EditableSection.vue'; // Placeholder 1
 import DynamicList from './components/DynamicList.vue'; // Placeholder 2
