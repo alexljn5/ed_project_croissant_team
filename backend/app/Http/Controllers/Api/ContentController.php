@@ -62,4 +62,24 @@ class ContentController extends Controller
 
         return response()->json(['success' => true, 'value' => $clean]);
     }
+
+    // POST /api/upload-photo
+    public function uploadPhoto(Request $request)
+    {
+        $request->validate([
+            'photo' => 'required|image|mimes:jpeg,png,gif,webp|max:5120' // max 5MB
+        ]);
+
+        $file = $request->file('photo');
+
+        // Store in storage/app/public/photos
+        $path = $file->store('photos', 'public');
+
+        // Return the URL
+        return response()->json([
+            'success' => true,
+            'url' => asset('storage/' . $path),
+            'path' => $path
+        ]);
+    }
 }

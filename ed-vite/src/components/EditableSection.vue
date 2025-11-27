@@ -43,7 +43,7 @@ const uploadPhoto = async (e: Event) => {
   formData.append('photo', file)
 
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/upload-photo', {
+    const res = await fetch('/api/upload-photo', {
       method: 'POST',
       body: formData
     })
@@ -79,6 +79,12 @@ const uploadPhoto = async (e: Event) => {
       <h3 class="text-xl font-semibold text-purple-700 mb-4">Tekst bewerken</h3>
 
       <div v-if="textLoading" class="text-purple-600">Tekst laden...</div>
+
+      <!-- Huidige tekst tonen -->
+      <div v-if="text && !textLoading" class="mb-6 p-4 bg-gray-50 border-l-4 border-purple-400 rounded">
+        <p class="text-sm text-gray-600 font-semibold mb-2">📝 Huidige tekst:</p>
+        <p class="text-gray-800 whitespace-pre-wrap">{{ text }}</p>
+      </div>
 
       <textarea 
         v-model="text"
