@@ -4,8 +4,8 @@
       Voeg een marker toe
     </h2>
 
-    <!-- simple form to add markers -->
-    <div class="flex gap-4">
+    <!-- Form to add markers -->
+    <div class="flex gap-4 flex-wrap mb-6">
       <input v-model.number="lat" type="number" placeholder="Latitude"
              class="p-2 border rounded w-40" />
 
@@ -13,12 +13,13 @@
              class="p-2 border rounded w-40" />
 
       <button @click="addMarker"
-              class="px-4 py-2 bg-purple-600 text-white rounded">
+              class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
         Add Marker
       </button>
     </div>
 
-    <div id="leaflet-map" class="mt-4" style="height: 400px;"></div>
+    <!-- Map Display -->
+    <div id="leaflet-map" class="mt-4" style="height: 400px; width: 100%; border-radius: 8px; overflow: hidden;"></div>
   </section>
 </template>
 
@@ -43,7 +44,7 @@ interface Marker {
 const { data: markers, loading: markersLoading, save: saveMarkers } = useContent<Marker[]>('map-markers', []);
 
 onMounted(async () => {
-  // get the map instance from your existing code
+  // Initialize the map
   map = initMap('leaflet-map');
   
   // Wait a bit for data to load from API

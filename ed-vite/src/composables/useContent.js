@@ -1,31 +1,28 @@
 import { ref, onMounted } from 'vue';
-
 const API_BASE = 'http://127.0.0.1:8000/api/content';
-
-export function useContent<T>(key: string, defaultValue: T) {
-    const data = ref<T>(defaultValue);
+export function useContent(key, defaultValue) {
+    const data = ref(defaultValue);
     const loading = ref(true);
-
     const load = async () => {
         try {
-            console.log(`[useContent] Attempting to fetch ${key} from ${API_BASE}/${key}`);
             const res = await fetch(`${API_BASE}/${key}`);
-            if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch`);
+            if (!res.ok)
+                throw new Error('Failed to fetch');
             const json = await res.json();
-            console.log(`[useContent] ✅ Loaded ${key}:`, json);
+            console.log(`[useContent] Loaded ${key}:`, json);
             const value = json.value ?? defaultValue;
             // Just use the value directly - don't force it into any format
             data.value = value;
             console.log(`[useContent] Set data.value to:`, data.value);
-        } catch (e) {
-            console.error(`❌ [useContent] Failed to load ${key}:`, e);
-            console.error(`❌ Make sure Laravel backend is running on http://127.0.0.1:8000`);
+        }
+        catch (e) {
+            console.warn(`Kon ${key} niet laden, fallback naar default ♡`, e);
             data.value = defaultValue;
-        } finally {
+        }
+        finally {
             loading.value = false;
         }
     };
-
     const save = async () => {
         try {
             // Convert reactive proxy to plain object/array before sending
@@ -41,13 +38,12 @@ export function useContent<T>(key: string, defaultValue: T) {
             }
             const result = await res.json();
             console.log(`[useContent] Save successful for ${key}:`, result);
-        } catch (e) {
+        }
+        catch (e) {
             console.error(`[useContent] Save failed for ${key}:`, e);
             throw e;
         }
     };
-
     onMounted(load);
-
     return { data, loading, save, reload: load };
 }

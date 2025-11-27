@@ -19,19 +19,24 @@ const removeItem = (index: number) => {
 </script>
 
 <template>
-  <section class="mb-8 p-6 bg-[var(--achtergrond-primair)] rounded-lg shadow-md">
-    <h2 class="text-[var(--font-grootte2)] font-bold text-[var(--site-paars)] mb-4">Dynamic List ➕</h2>
+  <section class="mb-8 p-6 bg-gray-100 rounded-lg shadow-md border-2 border-purple-600">
+    <h2 class="text-2xl font-bold text-purple-700 mb-4">Dynamic List</h2>
 
-    <div v-if="loading" class="text-purple-500 font-bold">Loading from DB... ♡</div>
+    <div v-if="loading" class="text-purple-600 font-bold mb-4">Loading from database...</div>
     
-    <ul v-else class="list-disc pl-6 mb-4">
-      <li v-for="(item, index) in data" :key="index" class="mb-2 flex items-center">
-        {{ item }}
-        <button @click="removeItem(index)" class="ml-4 text-red-500 hover:text-red-700">Remove</button>
-      </li>
-    </ul>
+    <div v-else>
+      <ul class="list-disc pl-6 mb-4 bg-white p-4 rounded border">
+        <li v-for="(item, index) in data" :key="index" class="mb-2 flex items-center justify-between text-gray-800">
+          <span>{{ item }}</span>
+          <button @click="removeItem(index)" class="ml-4 text-red-500 hover:text-red-700 font-bold cursor-pointer">Remove</button>
+        </li>
+        <li v-if="data.length === 0" class="text-gray-500 italic">No items yet</li>
+      </ul>
+    </div>
 
-    <input v-model="newItem" type="text" class="p-2 border-2 border-[var(--site-paars)] rounded mr-2" placeholder="Add a new item ♡" />
-    <button @click="addItem" class="px-6 py-2 bg-[var(--interactief)] text-white rounded hover:bg-yellow-500">Add</button>
+    <div class="flex gap-2">
+      <input v-model="newItem" type="text" class="flex-1 p-2 border-2 border-purple-600 rounded" placeholder="Add a new item..." />
+      <button @click="addItem" class="px-6 py-2 bg-yellow-400 text-gray-800 rounded hover:bg-yellow-500 font-bold cursor-pointer">Add</button>
+    </div>
   </section>
 </template>
