@@ -2,51 +2,139 @@
 import { useContent } from '../composables/useContent'
 import { ref } from 'vue'
 
-const { data: content, loading, save } = useContent<string>(
+// Tekst (blijft zoals het was)
+const { data: text, save: saveText, loading: textLoading } = useContent<string>(
   'editable_section',
   'Placeholder text! Edit me and watch the DOM change right away. ♡'
 )
 
-const saving = ref(false)
+// Foto URL (nieuwe key)
+const { data: photoUrl, save: savePhoto, loading: photoLoading, reload } = useContent<string>(
+  'homepage_photo',
+  '' // geen foto standaard
+)
+
+const savingText = ref(false)
+const uploadingPhoto = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const saveChanges = async () => {
-  saving.value = true
+  savingText.value = true
   try {
-    await save()
-    alert('✅ Saved to database!')
+    await saveText()
+    alert('Tekst opgeslagen!')
   } catch (e) {
-    alert('❌ Failed to save: ' + (e as Error).message)
+    alert('Opslaan mislukt: ' + (e as Error).message)
   } finally {
-    saving.value = false
+    savingText.value = false
+  }
+}
+
+const triggerUpload = () => fileInput.value?.click()
+
+const uploadPhoto = async (e: Event) => {
+  const input = e.target as HTMLInputElement
+  if (!input.files?.length) return
+
+  const file = input.files[0]
+  uploadingPhoto.value = true
+
+  const formData = new FormData()
+  formData.append('photo', file)
+
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/upload-photo', {
+      method: 'POST',
+      body: formData
+    })
+
+    if (!res.ok) throw new Error('Upload mislukt')
+
+    const json = await res.json()
+    const newUrl = (json.url || json.path) + '?t=' + Date.now() // cache busting
+
+    photoUrl.value = newUrl
+    await savePhoto()  // slaat de URL op in dezelfde content-tabel
+
+    alert('Foto geüpload & opgeslagen!')
+    reload() // forceer herladen (niet echt nodig, maar veilig)
+  } catch (err) {
+    alert('Fout: ' + (err as Error).message)
+  } finally {
+    uploadingPhoto.value = false
+    input.value = '' // zodat je dezelfde foto opnieuw kunt kiezen
   }
 }
 </script>
 
 <template>
-  <section class="mb-8 p-6 bg-gray-100 rounded-lg shadow-md border-2 border-purple-600">
-    <h2 class="text-2xl font-bold text-purple-700 mb-4">
-      Edit Section Content
+  <section class="mb-12 p-8 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl shadow-lg border-2 border-purple-300">
+
+    <h2 class="text-3xl font-bold text-purple-800 mb-8 text-center">
+      Admin Edit Sectie
     </h2>
 
-    <div v-if="loading" class="text-purple-600 font-bold mb-4">Loading from database...</div>
+    <!-- TEKST DEEL -->
+    <div class="mb-10 bg-white p-6 rounded-lg shadow">
+      <h3 class="text-xl font-semibold text-purple-700 mb-4">Tekst bewerken</h3>
 
-    <p v-if="!loading" class="text-base text-gray-800 mb-4 p-2 bg-white rounded border">
-      Current text: {{ content }}
-    </p>
+      <div v-if="textLoading" class="text-purple-600">Tekst laden...</div>
 
-    <textarea 
-      v-model="content" 
-      class="w-full p-4 border-2 border-purple-600 rounded text-gray-800 font-mono" 
-      rows="5" 
-      placeholder="Type your content here..."
-    ></textarea>
+      <textarea 
+        v-model="text"
+        class="w-full p-4 border-2 border-purple-400 rounded-lg font-mono text-gray-800"
+        rows="6"
+        placeholder="Typ hier je tekst..."
+      ></textarea>
 
-    <button 
-      @click="saveChanges" 
-      :disabled="saving"
-      class="mt-4 px-6 py-2 bg-yellow-400 text-gray-800 rounded hover:bg-yellow-500 disabled:opacity-70 font-bold cursor-pointer"
-    >
-      {{ saving ? 'Saving...' : 'Save to Database' }}
-    </button>
+      <button 
+        @click="saveChanges"
+        :disabled="savingText"
+        class="mt-4 px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold rounded-lg disabled:opacity-70"
+      >
+        {{ savingText ? 'Opslaan...' : 'Tekst opslaan' }}
+      </button>
+    </div>
+
+    <!-- FOTO DEEL -->
+    <div class="bg-white p-6 rounded-lg shadow">
+      <h3 class="text-xl font-semibold text-pink-700 mb-4">Homepage foto (wordt vervangen)</h3>
+
+      <div v-if="photoLoading" class="text-pink-600">Foto laden...</div>
+
+      <!-- Huidige foto tonen -->
+      <div v-if="photoUrl && !photoLoading" class="mb-6">
+        <img 
+          :src="photoUrl" 
+          alt="Huidige foto"
+          class="max-w-full h-auto rounded-lg shadow-md mx-auto"
+        />
+        <p class="text-center text-sm text-gray-600 mt-2">Huidige foto – wordt overschreven bij nieuwe upload</p>
+      </div>
+
+      <div v-else-if="!photoLoading" class="text-center py-16 border-2 border-dashed border-gray-300 rounded-lg text-gray-500">
+        Nog geen foto geüpload
+      </div>
+
+      <!-- Upload knop -->
+      <div class="text-center mt-6">
+        <input 
+          ref="fileInput"
+          type="file"
+          accept="image/*"
+          @change="uploadPhoto"
+          class="hidden"
+        />
+
+        <button
+          @click="triggerUpload"
+          :disabled="uploadingPhoto"
+          class="px-8 py-4 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-lg text-lg disabled:opacity-70"
+        >
+          {{ uploadingPhoto ? 'Uploaden...' : 'Nieuwe foto kiezen & uploaden' }}
+        </button>
+      </div>
+    </div>
+
   </section>
 </template>
