@@ -33,7 +33,6 @@ js/
 *.vue.d.ts
 *.d.ts
 main.js
-router.js
 App.vue.js
 .vite/
 
