@@ -17,11 +17,6 @@
           </div>
         </div>
         <button class="slider-arrow next" @click="nextSlide">❯</button>
-        <div class="slider-nav">
-          <div v-for="(_, index) in sliderCards" :key="index"
-               :class="['slider-dot', { active: index === currentIndex }]"
-               @click="goToSlide(index)"></div>
-        </div>
       </div>
     </div>
 
@@ -230,31 +225,6 @@ onMounted(() => {
 
 .slider-arrow.next {
   right: 0;
-}
-
-.slider-nav {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 2rem;
-}
-
-.slider-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #ddd;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.slider-dot.active {
-  background: var(--site-paars);
-  transform: scale(1.3);
-}
-
-.slider-dot:hover {
-  background: var(--site-paars);
 }
 
 /* Map container */
