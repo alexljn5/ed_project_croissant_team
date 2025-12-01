@@ -22,16 +22,6 @@
       </div>
 
       <button class="slider-arrow next" @click="nextSlide">❯</button>
-
-      <div class="slider-nav">
-        <div
-          v-for="(_, idx) in cards"
-          :key="'dot' + idx"
-          class="slider-dot"
-          :class="{ active: idx === currentIndex }"
-          @click="goToSlide(idx)"
-        />
-      </div>
     </div>
   </section>
 </template>
@@ -188,26 +178,6 @@ onBeforeUnmount(() => {
   margin: 0;
   color: #555;
   line-height: 1.5;
-}
-
-.slider-nav {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-}
-
-.slider-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #ccc;
-  margin: 0 5px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.slider-dot.active {
-  background: var(--interactief);
 }
 
 .slider-arrow {

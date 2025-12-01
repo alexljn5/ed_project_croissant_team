@@ -22,16 +22,12 @@
 
     <!-- Vue Components Section -->
     <BackendGlue />
-    <main>
-      <Slider />
-    </main>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import BackendGlue from '../components/BackendGlue.vue';
-import Slider from '../components/Slider.vue';
 
 const currentIndex = ref(0);
 const sliderTrack = ref<HTMLElement | null>(null);
@@ -225,16 +221,5 @@ onMounted(() => {
 
 .slider-arrow.next {
   right: 0;
-}
-
-/* Map container */
-.map-container {
-  width: 100%;
-  padding: 2rem;
-  background: #f9f9f9;
-}
-
-main {
-  padding-top: 10px;
 }
 </style>
