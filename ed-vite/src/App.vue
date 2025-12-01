@@ -6,7 +6,7 @@
         <router-link to="/" class="header-left">
           <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
         </router-link>
-        
+
         <div class="header-right">
           <router-link to="/admin" class="admin-button">
             <button class="adminKnop">Admin</button>
@@ -21,48 +21,29 @@
       </div>
     </header>
 
-    <!-- Page Content -->
+    <!-- Router Content + Components -->
     <router-view />
+
+    <Header />
+    <TestConnection />
+
+    <main>
+      <Slider />
+      <MapView />
+    </main>
+
+    <Footer />
   </div>
 </template>
 
 <script setup lang="ts">
-// App layout component
+//ignore header temp
+//import Header from './components/Header.vue'
+import Slider from './components/Slider.vue'
+import MapView from './components/MapView.vue'
 </script>
 
 <style>
-:root {
-  --body: hsla(304, 36%, 42%, 1);
-  --achtergrond-primair: hsl(0, 0%, 96%);
-  --site-paars: hsla(304, 36%, 42%, 1);
-  --interactief: hsl(41, 100%, 69%);
-  --header-bg: rgba(255, 255, 255, 0.8);
-  --header-shadow: rgba(0, 0%, 0.1);
-  --font-primair: Arial, Verdana;
-  --font-grootte: 16px;
-  --font-grootte2: 32px;
-  --header-text: hsla(0, 0%, 11%, 1);
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background-color: var(--body);
-  font-family: var(--font-primair);
-  overflow-x: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  overflow-y: auto;
-}
-
 body::-webkit-scrollbar {
   display: none;
 }
@@ -77,6 +58,8 @@ body::-webkit-scrollbar {
   background-color: transparent;
 }
 
+/* HEADER STYLES */
+/*
 .header-top {
   position: fixed;
   top: 0;
@@ -85,8 +68,9 @@ body::-webkit-scrollbar {
   padding: 1rem 2rem;
   z-index: 1000;
   background-color: var(--header-bg);
-  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5);
+box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5);
 }
+*/
 
 .header-container {
   display: flex;
@@ -126,7 +110,9 @@ body::-webkit-scrollbar {
   object-fit: contain;
 }
 
-.contact-button {
+/* BUTTONS */
+.contact-button,
+.admin-button {
   text-decoration: none;
 }
 
@@ -161,5 +147,9 @@ body::-webkit-scrollbar {
   background: var(--site-paars);
   color: white;
   transition: all 0.1s;
+}
+
+main {
+  padding-top: 10px;
 }
 </style>
