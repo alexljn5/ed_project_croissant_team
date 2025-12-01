@@ -101,6 +101,8 @@ body::-webkit-scrollbar {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  max-width: 100%;
+  width: 100%;
 }
 
 .dubbeloproute-titel {
@@ -109,12 +111,15 @@ body::-webkit-scrollbar {
   margin: 0;
   color: var(--header-text);
   cursor: default;
+  flex-shrink: 0;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 1rem;
+  margin-left: auto;
+  justify-content: flex-end;
 }
 
 .logo-link {
