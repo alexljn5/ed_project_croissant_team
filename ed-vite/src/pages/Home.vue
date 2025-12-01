@@ -6,7 +6,8 @@
         <button class="slider-arrow prev" @click="prevSlide">❮</button>
         <div class="slider-track" ref="sliderTrack">
           <div v-for="(card, index) in sliderCards" :key="index" 
-               :class="['slider-card', { active: index === currentIndex }]">
+               :class="['slider-card', { active: index === currentIndex, selected: index === currentIndex }]"
+               @click="handleCardClick(index)">
             <div class="card-image" :style="{ backgroundImage: `url('${card.image}')` }">
               <div class="date-badge">{{ card.date }}</div>
             </div>
@@ -26,7 +27,23 @@
     </div>
 
     <!-- Vue Components Section -->
-    <BackendGlue />
+    <div class="backend-section">
+      <BackendGlue />
+    </div>
+
+    <!-- Modal for zoomed card -->
+    <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <button class="modal-close" @click="closeModal">✕</button>
+        <div class="modal-image" :style="{ backgroundImage: `url('${selectedCard.image}')` }">
+          <div class="modal-date-badge">{{ selectedCard.date }}</div>
+        </div>
+        <div class="modal-text">
+          <h2>{{ selectedCard.title }}</h2>
+          <p>{{ selectedCard.description }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -36,7 +53,37 @@ import BackendGlue from '../components/BackendGlue.vue';
 
 const currentIndex = ref(0);
 const sliderTrack = ref<HTMLElement | null>(null);
+const showModal = ref(false);
+const selectedCard = ref<any>(null);
 let autoSlideInterval: NodeJS.Timeout;
+
+const isCardSelected = ref(false);
+
+const handleCardClick = (index: number) => {
+  if (index === currentIndex.value) {
+    // Als geselecteerd, open modal en stop slider
+    selectedCard.value = sliderCards[index];
+    showModal.value = true;
+    isCardSelected.value = true;
+    clearInterval(autoSlideInterval);
+  } else {
+    // Als niet geselecteerd, ga naar die slide
+    goToSlide(index);
+  }
+};
+
+const isClosing = ref(false);
+
+const closeModal = () => {
+  isClosing.value = true;
+  setTimeout(() => {
+    showModal.value = false;
+    selectedCard.value = null;
+    isClosing.value = false;
+    isCardSelected.value = false;
+    startAutoSlide();
+  }, 400);
+};
 
 const sliderCards = [
   {
@@ -96,7 +143,7 @@ const prevSlide = () => {
 };
 
 const startAutoSlide = () => {
-  autoSlideInterval = setInterval(nextSlide, 8000);
+  autoSlideInterval = setInterval(nextSlide, 10000);
 };
 
 const resetAutoSlide = () => {
@@ -111,10 +158,14 @@ onMounted(() => {
 
   if (sliderTrack.value) {
     sliderTrack.value.addEventListener('mouseenter', () => {
-      clearInterval(autoSlideInterval);
+      if (!isCardSelected.value) {
+        clearInterval(autoSlideInterval);
+      }
     });
     sliderTrack.value.addEventListener('mouseleave', () => {
-      startAutoSlide();
+      if (!isCardSelected.value) {
+        resetAutoSlide();
+      }
     });
   }
 });
@@ -145,19 +196,32 @@ onMounted(() => {
 .slider-card {
   flex: 0 0 auto;
   width: 300px;
-  background: white;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(0.95);
   opacity: 0.7;
+  cursor: pointer;
+}
+
+.slider-card:hover {
+  transform: scale(0.98) translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
 .slider-card.active {
-  transform: scale(1);
+  transform: scale(1.05);
   opacity: 1;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(128, 128, 128, 0.4);
+}
+
+.slider-card.active:hover {
+  transform: scale(1.08) translateY(-8px);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), 0 0 0 3px rgba(128, 128, 128, 0.5);
 }
 
 .card-image {
@@ -171,13 +235,16 @@ onMounted(() => {
 .date-badge {
   position: absolute;
   top: 10px;
-  right: 10px;
+  left: 10px;
   background: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.75rem;
   font-weight: bold;
+  white-space: nowrap;
+  width: fit-content;
+  max-width: 130px;
 }
 
 .card-content {
@@ -187,13 +254,17 @@ onMounted(() => {
 .card-content h3 {
   margin: 0 0 0.5rem 0;
   color: var(--site-paars);
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
 .card-content p {
   margin: 0;
   color: #666;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  transition: all 0.3s ease;
 }
 
 .slider-arrow {
@@ -252,5 +323,153 @@ onMounted(() => {
 
 .slider-dot:hover {
   background: var(--interactief);
+}
+
+.backend-section {
+  background: white;
+  min-height: 100vh;
+  width: 100%;
+  padding: 2rem 0;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.4s ease;
+}
+
+.modal-overlay.closing {
+  animation: fadeOut 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  animation: zoomIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.modal-overlay.closing .modal-content {
+  animation: zoomOut 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes zoomOut {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--interactief);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close:hover {
+  background: var(--site-paars);
+  transform: rotate(90deg) scale(1.1);
+}
+
+.modal-image {
+  width: 100%;
+  height: 400px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  border-radius: 20px 20px 0 0;
+}
+
+.modal-date-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.modal-text {
+  padding: 3rem;
+}
+
+.modal-text h2 {
+  margin: 0 0 1.5rem 0;
+  color: var(--site-paars);
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.modal-text p {
+  margin: 0;
+  color: #555;
+  font-size: 1.3rem;
+  line-height: 1.8;
 }
 </style>
