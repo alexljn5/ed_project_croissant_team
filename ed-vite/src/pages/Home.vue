@@ -125,7 +125,7 @@ onMounted(() => {
 .content-slider {
   width: 100%;
   padding: 2rem 0;
-  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+  background: var(--site-paars);
 }
 
 .slider-container {
@@ -240,7 +240,7 @@ onMounted(() => {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--interactief);
+  background: #ccc;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -252,6 +252,5 @@ onMounted(() => {
 
 .slider-dot:hover {
   background: var(--interactief);
-  opacity: 0.8;
 }
 </style>
