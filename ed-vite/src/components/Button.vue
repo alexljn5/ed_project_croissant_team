@@ -1,12 +1,18 @@
 <template>
-  <button class="contactKnop">Neem Contact Op</button>
+  <router-link to="/contact" class="contact-link">
+    <button class="contactKnop">Neem Contact Op</button>
+  </router-link>
 </template>
 
 <script setup lang="ts">
-// no script logic yet
+// Router link to contact page
 </script>
 
 <style scoped>
+.contact-link {
+  text-decoration: none;
+}
+
 .contactKnop {
   padding: 10px 20px;
   background: var(--achtergrond-primair);

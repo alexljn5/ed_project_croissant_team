@@ -27,3 +27,12 @@ js/
 .env
 .DS_Store
 *.log
+
+# Vue/Vite auto-generated files (should never be committed)
+*.vue.js
+*.vue.d.ts
+*.d.ts
+main.js
+App.vue.js
+.vite/
+

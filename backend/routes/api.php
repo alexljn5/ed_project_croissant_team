@@ -1,11 +1,22 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
-Route::get('/hello', function () {
-    return ['message' => 'CROISSANT TEAM WINS — FINAL VICTORY 2025!!!'];
-});
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/', function () {
-    return ['status' => 'API is running'];
+Route::middleware('api')->group(function () {
+
+    // === API Content Routes (using PageContent model) ===
+    Route::get('/content/{key}', [\App\Http\Controllers\Api\ContentController::class, 'show']);
+    Route::post('/content/{key}', [\App\Http\Controllers\Api\ContentController::class, 'update']);
+    Route::post('/upload-photo', [\App\Http\Controllers\Api\ContentController::class, 'uploadPhoto']);
+
 });
