@@ -2,21 +2,28 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use App\Models\PageContent;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API Routes (CSRF-vrij door Route::api())
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('api')->group(function () {
+Route::get('/hello', fn() => [
+    'message' => 'CROISSANT TEAM WINS — FINAL VICTORY 2025!!!',
+    'time' => now()->toIso8601String(),
+]);
 
-    // === API Content Routes (using PageContent model) ===
-    Route::get('/content/{key}', [\App\Http\Controllers\Api\ContentController::class, 'show']);
-    Route::post('/content/{key}', [\App\Http\Controllers\Api\ContentController::class, 'update']);
-    Route::post('/upload-photo', [\App\Http\Controllers\Api\ContentController::class, 'uploadPhoto']);
+// GET content
+Route::get('/content/{key}', function ($key) {
+    $content = PageContent::firstWhere('key', $key);
+    return response()->json(['value' => $content?->value ?? null]);
+});
 
+// POST content (opslaan)
+Route::post('/content/{key}', function (Request $request, $key) {
+    $value = $request->input('value');
+    PageContent::updateOrCreate(['key' => $key], ['value' => $value]);
+    return response()->json(['success' => true, 'value' => $value]);
 });
