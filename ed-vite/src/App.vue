@@ -1,11 +1,19 @@
+<!-- 
+# Rohit - heeft dit gedaan
+Navigatiebalk aangepast: 
+- Logo en knoppen verplaatst naar rechts
+- Alleen logo is klikbaar naar homepage
+- Dubbeloproute titel is niet meer klikbaar
+-->
+
 <template>
   <div class="app-layout">
     <!-- Navigation Header -->
     <header class="header-top">
       <div class="header-container">
-        <router-link to="/" class="header-left">
+        <div class="header-left">
           <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
-        </router-link>
+        </div>
         
         <div class="header-right">
           <router-link to="/admin" class="admin-button">
@@ -14,9 +22,11 @@
           <router-link to="/contact" class="contact-button">
             <button class="contactKnop">Neem Contact Op</button>
           </router-link>
-          <div class="logo">
-            <img src="/src/assets/img/dubbelop-logo.png" alt="Dubbelop Logo" />
-          </div>
+          <router-link to="/" class="logo-link">
+            <div class="logo">
+              <img src="/src/assets/img/dubbelop-logo.png" alt="Dubbelop Logo" />
+            </div>
+          </router-link>
         </div>
       </div>
     </header>
@@ -96,7 +106,8 @@ body::-webkit-scrollbar {
 }
 
 .header-left {
-  text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 
 .dubbeloproute-titel {
@@ -104,12 +115,25 @@ body::-webkit-scrollbar {
   font-size: var(--font-grootte2);
   margin: 0;
   color: var(--header-text);
+  cursor: default;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.logo-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo-link:hover {
+  transform: scale(1.1);
 }
 
 .logo {
@@ -126,7 +150,8 @@ body::-webkit-scrollbar {
   object-fit: contain;
 }
 
-.contact-button {
+.contact-button,
+.admin-button {
   text-decoration: none;
 }
 
