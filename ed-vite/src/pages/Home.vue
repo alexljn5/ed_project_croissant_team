@@ -17,6 +17,11 @@
           </div>
         </div>
         <button class="slider-arrow next" @click="nextSlide">❯</button>
+        <div class="slider-nav">
+          <div v-for="(_, index) in sliderCards" :key="index"
+               :class="['slider-dot', { active: index === currentIndex }]"
+               @click="goToSlide(index)"></div>
+        </div>
       </div>
     </div>
 
@@ -195,8 +200,8 @@ onMounted(() => {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: var(--site-paars);
-  color: white;
+  background: white;
+  color: var(--site-paars);
   border: none;
   width: 40px;
   height: 40px;
@@ -212,6 +217,7 @@ onMounted(() => {
 
 .slider-arrow:hover {
   background: var(--interactief);
+  color: white;
   transform: translateY(-50%) scale(1.1);
 }
 
@@ -221,5 +227,31 @@ onMounted(() => {
 
 .slider-arrow.next {
   right: 0;
+}
+
+.slider-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 2rem;
+}
+
+.slider-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--interactief);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slider-dot.active {
+  background: var(--interactief);
+  transform: scale(1.3);
+}
+
+.slider-dot:hover {
+  background: var(--interactief);
+  opacity: 0.8;
 }
 </style>

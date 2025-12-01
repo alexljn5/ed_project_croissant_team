@@ -63,7 +63,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: var(--body);
+  background-color: var(--site-paars);
   font-family: var(--font-primair);
   overflow-x: hidden;
   scrollbar-width: none;
