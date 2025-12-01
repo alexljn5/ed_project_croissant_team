@@ -1,17 +1,9 @@
-<!-- 
-# Rohit - heeft dit gedaan
-Navigatiebalk aangepast: 
-- Logo en knoppen verplaatst naar rechts
-- Alleen logo is klikbaar naar homepage
-- Dubbeloproute titel is niet meer klikbaar
--->
-
 <template>
   <div class="app-layout">
     <!-- Navigation Header -->
     <header class="header-top">
       <div class="header-container">
-        <div class="header-left">
+        <router-link to="/" class="header-left">
           <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
         </router-link>
 
@@ -22,16 +14,13 @@ Navigatiebalk aangepast:
           <router-link to="/contact" class="contact-button">
             <button class="contactKnop">Neem Contact Op</button>
           </router-link>
-          <router-link to="/" class="logo-link">
-            <div class="logo">
-              <img src="/src/assets/img/dubbelop-logo.png" alt="Dubbelop Logo" />
-            </div>
-          </router-link>
+          <div class="logo">
+            <img src="/src/assets/img/dubbelop-logo.png" alt="Dubbelop Logo" />
+          </div>
         </div>
       </div>
     </header>
 
-    <!-- Router Content + Components -->
     <router-view />
 
     <Header />
@@ -47,7 +36,6 @@ Navigatiebalk aangepast:
 </template>
 
 <script setup lang="ts">
-//ignore header temp
 //import Header from './components/Header.vue'
 import Slider from './components/Slider.vue'
 import MapView from './components/MapView.vue'
@@ -69,7 +57,6 @@ body::-webkit-scrollbar {
 }
 
 /* HEADER STYLES */
-/*
 .header-top {
   position: fixed;
   top: 0;
@@ -78,9 +65,8 @@ body::-webkit-scrollbar {
   padding: 1rem 2rem;
   z-index: 1000;
   background-color: var(--header-bg);
-box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5);
 }
-*/
 
 .header-container {
   display: flex;
@@ -90,8 +76,7 @@ box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5);
 }
 
 .header-left {
-  display: flex;
-  align-items: center;
+  text-decoration: none;
 }
 
 .dubbeloproute-titel {
@@ -99,25 +84,12 @@ box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5);
   font-size: var(--font-grootte2);
   margin: 0;
   color: var(--header-text);
-  cursor: default;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-.logo-link {
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.logo-link:hover {
-  transform: scale(1.1);
 }
 
 .logo {
