@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="cssBackup.css"/>
+    <link rel="stylesheet" href="cssBackup.css" />
     <title>Dubbeloproute</title>
 </head>
+
 <body>
     <!-- header -->
     <header>
@@ -38,7 +40,8 @@
                     </div>
                 </div>
                 <div class="slider-card">
-                    <div class="card-image" style="background-image: url('src/assets/img/buitenkant-bib-en-stadhuis.webp')">
+                    <div class="card-image"
+                        style="background-image: url('src/assets/img/buitenkant-bib-en-stadhuis.webp')">
                         <div class="date-badge">20-11-25, 10:00</div>
                     </div>
                     <div class="card-content">
@@ -66,7 +69,7 @@
                 </div>
             </div>
             <button class="slider-arrow next">❯</button>
-            
+
             <div class="slider-nav">
                 <div class="slider-dot active"></div>
                 <div class="slider-dot"></div>
@@ -76,97 +79,98 @@
             </div>
         </div>
     </div>
-        <!-- map -->
+    <!-- map -->
     <div class="map-container">
-  <div class="map-container">
-        <div id="map"></div>
-  </div>
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         //kaart in de index
         const map = L.map('map').setView([52.3676, 4.9041], 13);
-        
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-        
+
         // carousel effect cool toch?
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const track = document.querySelector('.slider-track');
             const cards = document.querySelectorAll('.slider-card');
             const dots = document.querySelectorAll('.slider-dot');
             const prevBtn = document.querySelector('.slider-arrow.prev');
             const nextBtn = document.querySelector('.slider-arrow.next');
-            
+
             let currentIndex = 0;
             let autoSlideInterval;
             const slideCount = cards.length;
-            
+
             // slider update function
             function updateSlider() {
                 const cardWidth = cards[0].offsetWidth + 30;
                 const offset = (track.offsetWidth / 2) - (cardWidth / 2) - (currentIndex * cardWidth);
                 track.style.transform = `translateX(${offset}px)`;
-                
+
                 cards.forEach((card, index) => {
                     card.classList.toggle('active', index === currentIndex);
                 });
-                
+
                 dots.forEach((dot, index) => {
                     dot.classList.toggle('active', index === currentIndex);
                 });
             }
-            
+
             function goToSlide(index) {
                 currentIndex = index;
                 if (currentIndex >= slideCount) currentIndex = 0;
                 if (currentIndex < 0) currentIndex = slideCount - 1;
                 updateSlider();
             }
-            
+
             function nextSlide() {
                 goToSlide(currentIndex + 1);
             }
-            
+
             function prevSlide() {
                 goToSlide(currentIndex - 1);
             }
-            
+
             nextBtn.addEventListener('click', nextSlide);
             prevBtn.addEventListener('click', prevSlide);
-            
+
             dots.forEach((dot, index) => {
                 dot.addEventListener('click', () => {
                     goToSlide(index);
                     resetAutoSlide();
                 });
             });
-            
+
             function startAutoSlide() {
                 autoSlideInterval = setInterval(nextSlide, 8000); // elke 8 sec
             }
-            
+
             function resetAutoSlide() {
                 clearInterval(autoSlideInterval);
                 startAutoSlide();
             }
-            
+
             startAutoSlide();
-            
+
             track.addEventListener('mouseenter', () => {
                 clearInterval(autoSlideInterval);
             });
-            
+
             track.addEventListener('mouseleave', () => {
                 startAutoSlide();
             });
-            
+
             updateSlider();
-            
+
             window.addEventListener('resize', updateSlider);
         });
     </script>
 </body>
+
 </html>

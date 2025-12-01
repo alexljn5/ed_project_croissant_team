@@ -1,6 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\ContentController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -8,17 +12,11 @@ use App\Http\Controllers\Api\ContentController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/hello', function () {
-    return response()->json([
-        'message' => 'CROISSANT TEAM WINS FOREVER!!!',
-        'time' => now()->toIso8601String(),
-    ]);
-});
+Route::middleware('api')->group(function () {
 
-Route::get('/', function () {
-    return response()->json(['status' => 'Laravel API is alive and kicking!']);
-});
+    // === API Content Routes (using PageContent model) ===
+    Route::get('/content/{key}', [\App\Http\Controllers\Api\ContentController::class, 'show']);
+    Route::post('/content/{key}', [\App\Http\Controllers\Api\ContentController::class, 'update']);
+    Route::post('/upload-photo', [\App\Http\Controllers\Api\ContentController::class, 'uploadPhoto']);
 
-// Fix: Match the exact path your frontend is requesting
-Route::get('/content/{key}', [ContentController::class, 'show']);
-Route::post('/content/{key}', [ContentController::class, 'update']);
+});
