@@ -11,9 +11,7 @@ Navigatiebalk aangepast:
     <!-- Navigation Header -->
     <header class="header-top">
       <div class="header-container">
-        <div class="header-left">
-          <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
-        </div>
+        <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
         
         <div class="header-right">
           <router-link to="/admin" class="admin-button">
@@ -103,11 +101,6 @@ body::-webkit-scrollbar {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
 }
 
 .dubbeloproute-titel {
