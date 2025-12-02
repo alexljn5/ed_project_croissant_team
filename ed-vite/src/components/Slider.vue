@@ -22,16 +22,6 @@
       </div>
 
       <button class="slider-arrow next" @click="nextSlide">❯</button>
-
-      <div class="slider-nav">
-        <div
-          v-for="(_, idx) in cards"
-          :key="'dot' + idx"
-          class="slider-dot"
-          :class="{ active: idx === currentIndex }"
-          @click="goToSlide(idx)"
-        />
-      </div>
     </div>
   </section>
 </template>
@@ -109,9 +99,8 @@ onBeforeUnmount(() => {
 .content-slider {
   position: relative;
   z-index: 2;
-  /* background now controlled by page layout (Home.vue) */
-  background: transparent;
-  padding: 60px 0 20px;
+  background: var(--site-paars);
+  padding: 120px 0 20px;
   overflow: hidden;
 }
 
@@ -191,34 +180,12 @@ onBeforeUnmount(() => {
   line-height: 1.5;
 }
 
-.slider-nav {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-}
-
-.slider-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #ddd;
-  margin: 0 6px;
-  cursor: pointer;
-  transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
-}
-
-.slider-dot.active {
-  background: var(--interactief);
-  transform: scale(1.25);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
-}
-
 .slider-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: white;
-  border: 2px solid var(--site-paars);
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -226,7 +193,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 100;
   font-size: 1.2rem;
   color: var(--site-paars);
@@ -234,7 +201,7 @@ onBeforeUnmount(() => {
 
 .slider-arrow:hover {
   background: var(--interactief);
-  color: var(--site-paars);
+  color: white;
 }
 
 .slider-arrow.prev {

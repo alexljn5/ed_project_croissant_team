@@ -1,21 +1,76 @@
+<!-- 
+# Rohit - heeft dit gedaan
+Navigatiebalk aangepast: 
+- Logo en knoppen verplaatst naar rechts
+- Alleen logo is klikbaar naar homepage
+- Dubbeloproute titel is niet meer klikbaar
+-->
+
 <template>
   <div class="app-layout">
+    <!-- Navigation Header -->
+    <header class="header-top">
+      <div class="header-container">
+        <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
+        
+        <div class="header-right">
+          <router-link to="/admin" class="admin-button">
+            <button class="adminKnop">Admin</button>
+          </router-link>
+          <router-link to="/contact" class="contact-button">
+            <button class="contactKnop">Neem Contact Op</button>
+          </router-link>
+          <router-link to="/" class="logo-link">
+            <div class="logo">
+              <img src="/src/assets/img/dubbelop-logo.png" alt="Dubbelop Logo" />
+            </div>
+          </router-link>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
     <router-view />
-
-    <!-- Centralized header component -->
-    <Header />
-
-    <main>
-      <!-- Page-specific content is rendered in each route. Home.vue will include the primary Slider + MapView layout. -->
-    </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import Header from './components/Header.vue'
+// App layout component
 </script>
 
 <style>
+:root {
+  --body: hsla(304, 36%, 42%, 1);
+  --achtergrond-primair: hsl(0, 0%, 96%);
+  --site-paars: hsla(304, 36%, 42%, 1);
+  --interactief: hsl(41, 100%, 69%);
+  --header-bg: rgba(255, 255, 255, 0.8);
+  --header-shadow: rgba(0, 0%, 0.1);
+  --font-primair: Arial, Verdana;
+  --font-grootte: 16px;
+  --font-grootte2: 32px;
+  --header-text: hsla(0, 0%, 11%, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: var(--site-paars);
+  font-family: var(--font-primair);
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow-y: auto;
+}
+
 body::-webkit-scrollbar {
   display: none;
 }
@@ -30,7 +85,6 @@ body::-webkit-scrollbar {
   background-color: transparent;
 }
 
-/* HEADER STYLES */
 .header-top {
   position: fixed;
   top: 0;
@@ -47,10 +101,8 @@ body::-webkit-scrollbar {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-}
-
-.header-left {
-  text-decoration: none;
+  max-width: 100%;
+  width: 100%;
 }
 
 .dubbeloproute-titel {
@@ -58,12 +110,28 @@ body::-webkit-scrollbar {
   font-size: var(--font-grootte2);
   margin: 0;
   color: var(--header-text);
+  cursor: default;
+  flex-shrink: 0;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 1rem;
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.logo-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo-link:hover {
+  transform: scale(1.1);
 }
 
 .logo {
@@ -80,7 +148,6 @@ body::-webkit-scrollbar {
   object-fit: contain;
 }
 
-/* BUTTONS */
 .contact-button,
 .admin-button {
   text-decoration: none;
@@ -117,9 +184,5 @@ body::-webkit-scrollbar {
   background: var(--site-paars);
   color: white;
   transition: all 0.1s;
-}
-
-main {
-  padding-top: 10px;
 }
 </style>
