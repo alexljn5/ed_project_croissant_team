@@ -65,8 +65,6 @@ let __VLS_directives;
 /** @type {__VLS_StyleScopedClasses['active']} */ ;
 /** @type {__VLS_StyleScopedClasses['card-content']} */ ;
 /** @type {__VLS_StyleScopedClasses['card-content']} */ ;
-/** @type {__VLS_StyleScopedClasses['slider-dot']} */ ;
-/** @type {__VLS_StyleScopedClasses['active']} */ ;
 /** @type {__VLS_StyleScopedClasses['slider-arrow']} */ ;
 /** @type {__VLS_StyleScopedClasses['slider-arrow']} */ ;
 /** @type {__VLS_StyleScopedClasses['slider-arrow']} */ ;
@@ -127,25 +125,6 @@ __VLS_asFunctionalElement(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 });
 // @ts-ignore
 [nextSlide,];
-__VLS_asFunctionalElement(__VLS_intrinsics.div, __VLS_intrinsics.div)({
-    ...{ class: "slider-nav" },
-});
-for (const [_, idx] of __VLS_getVForSourceType((__VLS_ctx.cards))) {
-    // @ts-ignore
-    [cards,];
-    __VLS_asFunctionalElement(__VLS_intrinsics.div)({
-        ...{ onClick: (...[$event]) => {
-                __VLS_ctx.goToSlide(idx);
-                // @ts-ignore
-                [goToSlide,];
-            } },
-        key: ('dot' + idx),
-        ...{ class: "slider-dot" },
-        ...{ class: ({ active: idx === __VLS_ctx.currentIndex }) },
-    });
-    // @ts-ignore
-    [currentIndex,];
-}
 /** @type {__VLS_StyleScopedClasses['content-slider']} */ ;
 /** @type {__VLS_StyleScopedClasses['slider-container']} */ ;
 /** @type {__VLS_StyleScopedClasses['slider-arrow']} */ ;
@@ -158,8 +137,5 @@ for (const [_, idx] of __VLS_getVForSourceType((__VLS_ctx.cards))) {
 /** @type {__VLS_StyleScopedClasses['card-content']} */ ;
 /** @type {__VLS_StyleScopedClasses['slider-arrow']} */ ;
 /** @type {__VLS_StyleScopedClasses['next']} */ ;
-/** @type {__VLS_StyleScopedClasses['slider-nav']} */ ;
-/** @type {__VLS_StyleScopedClasses['slider-dot']} */ ;
-/** @type {__VLS_StyleScopedClasses['active']} */ ;
 const __VLS_export = (await import('vue')).defineComponent({});
 export default {};

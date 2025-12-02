@@ -14,6 +14,11 @@ use Illuminate\Support\Str;
 
 Route::middleware('api')->group(function () {
 
+    // === Health Check ===
+    Route::get('/hello', function () {
+        return response()->json(['message' => 'Hello from API!']);
+    });
+
     // === API Content Routes (using PageContent model) ===
     Route::get('/content/{key}', [\App\Http\Controllers\Api\ContentController::class, 'show']);
     Route::post('/content/{key}', [\App\Http\Controllers\Api\ContentController::class, 'update']);

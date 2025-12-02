@@ -55,7 +55,7 @@ const currentIndex = ref(0);
 const sliderTrack = ref<HTMLElement | null>(null);
 const showModal = ref(false);
 const selectedCard = ref<any>(null);
-let autoSlideInterval: NodeJS.Timeout;
+let autoSlideInterval: ReturnType<typeof setTimeout>;
 
 const isCardSelected = ref(false);
 

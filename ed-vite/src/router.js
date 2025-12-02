@@ -1,8 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from './pages/Home.vue'
-import Contact from './pages/Contact.vue'
-import Admin from './pages/Admin.vue'
-
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from './pages/Home.vue';
+import Contact from './pages/Contact.vue';
+import Admin from './pages/Admin.vue';
 const routes = [
     {
         path: '/',
@@ -23,13 +22,10 @@ const routes = [
         path: '/:pathMatch(.*)*',
         redirect: '/'
     }
-]
-
-console.log('[router] registered routes:', routes.map(r => r.path))
-
+];
+console.log('[router] registered routes:', routes.map(r => r.path));
 const router = createRouter({
-    history: createWebHistory((import.meta as any).env.BASE_URL),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes
-})
-
-export default router
+});
+export default router;

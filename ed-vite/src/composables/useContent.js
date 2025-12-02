@@ -5,18 +5,20 @@ export function useContent(key, defaultValue) {
     const loading = ref(true);
     const load = async () => {
         try {
+            console.log(`[useContent] Attempting to fetch ${key} from ${API_BASE}/${key}`);
             const res = await fetch(`${API_BASE}/${key}`);
             if (!res.ok)
-                throw new Error('Failed to fetch');
+                throw new Error(`HTTP ${res.status}: Failed to fetch`);
             const json = await res.json();
-            console.log(`[useContent] Loaded ${key}:`, json);
+            console.log(`[useContent] ✅ Loaded ${key}:`, json);
             const value = json.value ?? defaultValue;
             // Just use the value directly - don't force it into any format
             data.value = value;
             console.log(`[useContent] Set data.value to:`, data.value);
         }
         catch (e) {
-            console.warn(`Kon ${key} niet laden, fallback naar default ♡`, e);
+            console.error(`❌ [useContent] Failed to load ${key}:`, e);
+            console.error(`❌ Make sure Laravel backend is running on http://127.0.0.1:8000`);
             data.value = defaultValue;
         }
         finally {

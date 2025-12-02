@@ -4,17 +4,18 @@ export function initMap(containerId) {
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
-    const purple = L.icon({
-        iconUrl: "https://raw.githubusercontent.com/poi/master/img/marker-icon-.png",
-        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+    // Use the default Leaflet marker icon
+    const defaultIcon = L.icon({
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
         shadowSize: [41, 41]
     });
-    //Placeholder om te zien of dit werkt, van Casper.
-    const fotoHtml = '<img src="src/img/agora.webp" width="200" height="150"> <br> De Agora';
-    L.marker([52.5205, 5.4790], { icon: purple })
+    // Placeholder marker to verify it works
+    const fotoHtml = '<img src="/src/assets/img/agorahof.webp" width="200" height="150" style="border-radius: 8px;"> <br> <strong>De Agora</strong>';
+    L.marker([52.5205, 5.4790], { icon: defaultIcon })
         .addTo(map)
         .bindPopup(fotoHtml);
     return map;
