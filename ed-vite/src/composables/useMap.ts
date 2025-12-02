@@ -17,10 +17,10 @@ export function useMap() {
       const res = await fetch('http://127.0.0.1:8000/api/content/walking-route')
       if (!res.ok) throw new Error('Failed to load route')
       const data = await res.json()
-      
+
       if (mapInstance && data.value) {
         drawRoute(mapInstance, data.value)
-        console.log('✅ Route loaded from database')
+        console.log('Route loaded from database')
         return data.value
       }
       return null
@@ -37,9 +37,9 @@ export function useMap() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ value: coordinates })
       })
-      
+
       if (!res.ok) throw new Error('Failed to save route')
-      console.log('✅ Route saved to database!')
+      console.log('Route saved to database!')
       return true
     } catch (e) {
       console.error('Failed to save route:', e)
