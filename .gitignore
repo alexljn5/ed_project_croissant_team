@@ -2,6 +2,7 @@
 
 # Node modules and build artifacts
 node_modules/
+<<<<<<< HEAD
 dist/
 dist-ssr/
 public/build/
@@ -75,3 +76,7 @@ main.js
 
 # Misc
 start_frontend_and_backend.sh
+=======
+start_frontend_and_backend.sh/
+start.sh
+>>>>>>> debug

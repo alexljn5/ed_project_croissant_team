@@ -2,18 +2,20 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use App\Models\PageContent;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API Routes (CSRF-vrij door Route::api())
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('api')->group(function () {
+Route::get('/hello', fn() => [
+    'message' => 'CROISSANT TEAM WINS — FINAL VICTORY 2025!!!',
+    'time' => now()->toIso8601String(),
+]);
 
+<<<<<<< HEAD
     // === Health Check ===
     Route::get('/hello', function () {
         return response()->json(['message' => 'Hello from API!']);
@@ -29,4 +31,17 @@ Route::middleware('api')->group(function () {
         return response()->json(['message' => 'hello from backend']);
     });
 
+=======
+// GET content
+Route::get('/content/{key}', function ($key) {
+    $content = PageContent::firstWhere('key', $key);
+    return response()->json(['value' => $content?->value ?? null]);
+});
+
+// POST content (opslaan)
+Route::post('/content/{key}', function (Request $request, $key) {
+    $value = $request->input('value');
+    PageContent::updateOrCreate(['key' => $key], ['value' => $value]);
+    return response()->json(['success' => true, 'value' => $value]);
+>>>>>>> debug
 });

@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import { initMap } from '../leaflet/map'; 
+import { initMap, loadRoutesFromDatabase } from '../leaflet/map'; 
 import { useContent } from '../composables/useContent';
 import L from 'leaflet';
 
@@ -49,6 +49,10 @@ onMounted(async () => {
   
   // Wait a bit for data to load from API
   await new Promise(resolve => setTimeout(resolve, 100));
+  
+  // Laad routes van database
+  console.log('Loading routes from database...');
+  await loadRoutesFromDatabase(map);
   
   // Render existing markers on the map
   console.log('Rendering markers from DB:', markers.value);

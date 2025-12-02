@@ -168,7 +168,7 @@ onBeforeUnmount(() => {
   padding: 20px;
 }
 
-.card-content h3 {
+.card-content h1 {
   margin: 0 0 10px;
   color: var(--header-text);
   font-size: 1.2rem;

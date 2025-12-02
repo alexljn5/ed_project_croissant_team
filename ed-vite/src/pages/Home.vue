@@ -12,7 +12,7 @@
               <div class="date-badge">{{ card.date }}</div>
             </div>
             <div class="card-content">
-              <h3>{{ card.title }}</h3>
+              <h1>{{ card.title }}</h1>
               <p>{{ card.description }}</p>
             </div>
           </div>
@@ -172,7 +172,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Slider styles */
 .content-slider {
   width: 100%;
   padding: 2rem 0;
@@ -196,7 +195,7 @@ onMounted(() => {
 .slider-card {
   flex: 0 0 auto;
   width: 300px;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 12px;
@@ -216,12 +215,12 @@ onMounted(() => {
 .slider-card.active {
   transform: scale(1.05);
   opacity: 1;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(128, 128, 128, 0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
 .slider-card.active:hover {
   transform: scale(1.08) translateY(-8px);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), 0 0 0 3px rgba(128, 128, 128, 0.5);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
 }
 
 .card-image {
@@ -251,7 +250,8 @@ onMounted(() => {
   padding: 1.5rem;
 }
 
-.card-content h3 {
+.card-content h1 {
+  font: sans-serif;
   margin: 0 0 0.5rem 0;
   color: var(--site-paars);
   font-size: 1.5rem;
@@ -260,8 +260,10 @@ onMounted(() => {
 }
 
 .card-content p {
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font: Verdana;
   margin: 0;
-  color: #666;
+  color: #232323;
   font-size: 1.1rem;
   line-height: 1.4;
   transition: all 0.3s ease;
@@ -311,7 +313,7 @@ onMounted(() => {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #ccc;
+  background: #cccccc;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -322,7 +324,8 @@ onMounted(() => {
 }
 
 .slider-dot:hover {
-  background: var(--interactief);
+  background: hsl(46, 100%, 93%);
+  transform: scale(1.15);
 }
 
 .backend-section {
@@ -332,16 +335,15 @@ onMounted(() => {
   padding: 2rem 0;
 }
 
-/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(52, 52, 52, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -379,6 +381,9 @@ onMounted(() => {
   max-height: 90vh;
   overflow: auto;
   position: relative;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow-y: auto;
   animation: zoomIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
 }
@@ -388,22 +393,30 @@ onMounted(() => {
 }
 
 @keyframes zoomIn {
-  from {
+  0% {
     transform: scale(0.8);
     opacity: 0;
   }
-  to {
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
     transform: scale(1);
     opacity: 1;
   }
 }
 
 @keyframes zoomOut {
-  from {
+  0% {
     transform: scale(1);
     opacity: 1;
   }
-  to {
+  40% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
     transform: scale(0.8);
     opacity: 0;
   }
@@ -413,7 +426,7 @@ onMounted(() => {
   position: absolute;
   top: 15px;
   right: 15px;
-  background: var(--interactief);
+  background: var(--site-paars);
   color: white;
   border: none;
   width: 40px;
@@ -430,13 +443,13 @@ onMounted(() => {
 }
 
 .modal-close:hover {
-  background: var(--site-paars);
+  background: var(--interactief);
   transform: rotate(90deg) scale(1.1);
 }
 
 .modal-image {
   width: 100%;
-  height: 400px;
+  height: 100px;
   background-size: cover;
   background-position: center;
   position: relative;
