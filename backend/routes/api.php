@@ -19,4 +19,9 @@ Route::middleware('api')->group(function () {
     Route::post('/content/{key}', [\App\Http\Controllers\Api\ContentController::class, 'update']);
     Route::post('/upload-photo', [\App\Http\Controllers\Api\ContentController::class, 'uploadPhoto']);
 
+    // Simple health/handshake route for the frontend
+    Route::get('/hello', function () {
+        return response()->json(['message' => 'hello from backend']);
+    });
+
 });

@@ -109,8 +109,9 @@ onBeforeUnmount(() => {
 .content-slider {
   position: relative;
   z-index: 2;
-  background: var(--site-paars);
-  padding: 120px 0 20px;
+  /* background now controlled by page layout (Home.vue) */
+  background: transparent;
+  padding: 60px 0 20px;
   overflow: hidden;
 }
 
@@ -200,22 +201,24 @@ onBeforeUnmount(() => {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #ccc;
-  margin: 0 5px;
+  background: #ddd;
+  margin: 0 6px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .slider-dot.active {
   background: var(--interactief);
+  transform: scale(1.25);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
 }
 
 .slider-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.8);
-  border: none;
+  background: white;
+  border: 2px solid var(--site-paars);
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -223,7 +226,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   z-index: 100;
   font-size: 1.2rem;
   color: var(--site-paars);
@@ -231,7 +234,7 @@ onBeforeUnmount(() => {
 
 .slider-arrow:hover {
   background: var(--interactief);
-  color: white;
+  color: var(--site-paars);
 }
 
 .slider-arrow.prev {

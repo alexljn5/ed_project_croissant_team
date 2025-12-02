@@ -15,6 +15,11 @@ const msg = ref('connecting...')
 onMounted(async () => {
   try {
     const res = await fetch('http://127.0.0.1:8000/api/hello')
+    if (!res.ok) {
+      msg.value = `HTTP ${res.status}`
+      console.error('Backend returned non-OK status for /api/hello', res.status)
+      return
+    }
     const data = await res.json()
     msg.value = data.message || 'DIRECT CONNECT SUCCESS!'
   } catch (e) {

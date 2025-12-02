@@ -1,44 +1,18 @@
 <template>
   <div class="app-layout">
-    <!-- Navigation Header -->
-    <header class="header-top">
-      <div class="header-container">
-        <router-link to="/" class="header-left">
-          <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
-        </router-link>
-
-        <div class="header-right">
-          <router-link to="/admin" class="admin-button">
-            <button class="adminKnop">Admin</button>
-          </router-link>
-          <router-link to="/contact" class="contact-button">
-            <button class="contactKnop">Neem Contact Op</button>
-          </router-link>
-          <div class="logo">
-            <img src="/src/assets/img/dubbelop-logo.png" alt="Dubbelop Logo" />
-          </div>
-        </div>
-      </div>
-    </header>
-
     <router-view />
 
+    <!-- Centralized header component -->
     <Header />
-    <TestConnection />
 
     <main>
-      <Slider />
-      <MapView />
+      <!-- Page-specific content is rendered in each route. Home.vue will include the primary Slider + MapView layout. -->
     </main>
-
-    <Footer />
   </div>
 </template>
 
 <script setup lang="ts">
-//import Header from './components/Header.vue'
-import Slider from './components/Slider.vue'
-import MapView from './components/MapView.vue'
+import Header from './components/Header.vue'
 </script>
 
 <style>
