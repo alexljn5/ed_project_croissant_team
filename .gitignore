@@ -1,2 +1,3 @@
 node_modules/
-start_frontend_and_backend.sh
+start_frontend_and_backend.sh/
+start.sh
