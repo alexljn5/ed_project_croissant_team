@@ -3,6 +3,7 @@ import L from 'leaflet';
 // Global route polyline that we can update
 let currentRoute: L.Polyline | null = null;
 let currentMap: L.Map | null = null;
+let currentMarkers: L.CircleMarker[] = [];
 
 export function initMap(containerId: string) {
   const map: L.Map = L.map(containerId).setView([52.518611, 5.471389], 13);
@@ -41,10 +42,14 @@ export function drawRoute(map: L.Map, coordinates: Array<{ lat: number; lng: num
     return;
   }
 
-  // Remove old route
+  // Remove old route polyline
   if (currentRoute) {
     currentRoute.remove();
   }
+
+  // Remove old markers
+  currentMarkers.forEach(marker => marker.remove());
+  currentMarkers = [];
 
   // Convert to [lat, lng] format
   const latLngs = coordinates.map(c => [c.lat, c.lng] as [number, number]);
@@ -59,13 +64,14 @@ export function drawRoute(map: L.Map, coordinates: Array<{ lat: number; lng: num
 
   // Add markers at each point
   coordinates.forEach((coord, idx) => {
-    L.circleMarker([coord.lat, coord.lng], {
+    const marker = L.circleMarker([coord.lat, coord.lng], {
       radius: 5,
       color: '#6b3b61',
       fillColor: '#ff9800',
       fillOpacity: 0.8,
       weight: 2
     }).addTo(map).bindPopup(`Point ${idx + 1}`);
+    currentMarkers.push(marker);
   });
 
   console.log(`✅ Route drawn with ${coordinates.length} points!`);

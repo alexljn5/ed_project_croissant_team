@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import 'leaflet/dist/leaflet.css'
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import EditableSection from '../components/EditableSection.vue'
 import DynamicList from '../components/DynamicList.vue'
 import { useMap } from '../composables/useMap'
@@ -80,6 +80,17 @@ const waypoints = ref<Waypoint[]>([
 ])
 
 const { initMap, loadRoute, saveRoute: saveRouteToAPI, updateRoute } = useMap()
+
+// Watch waypoints for changes and update map in real-time
+watch(
+  waypoints,
+  (newWaypoints) => {
+    if (newWaypoints.length >= 2) {
+      updateRoute(newWaypoints)
+    }
+  },
+  { deep: true }
+)
 
 // Wordt één keer aangeroepen als de pagina laadt
 onMounted(async () => {
