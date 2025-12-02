@@ -1,2 +1,77 @@
+# Merged global gitignore
+
+# Node modules and build artifacts
 node_modules/
+dist/
+dist-ssr/
+public/build/
+public/hot/
+public/storage/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Platform / editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+Thumbs.db
+
+# Environment
+.env
+.env.backup
+.env.production
+auth.json
+
+# PHP / Laravel
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.nova
+/.phpunit.cache
+/.zed
+/.vscode
+/vendor
+Homestead.json
+Homestead.yaml
+
+# Storage and cache
+/storage/*.key
+/storage/pail
+bootstrap/cache/
+bootstrap/cache/.gitignore
+
+# SQLite databases
+/database/*.sqlite
+/database/database.sqlite
+
+# TypeScript / declaration files
+*.d.ts
+*.vue.d.ts
+
+# Vite/Vue generated files and JS build outputs
+*.vue.js
+App.vue.js
+main.js
+.vite/
+
+# Ignore JS files (untrack tracked ones separately)
+*.js
+
+# Keep per-directory .gitignore files that intentionally preserve empty folders
+# (do not remove per-directory .gitignore files under storage and bootstrap/cache)
+
+# Misc
 start_frontend_and_backend.sh
