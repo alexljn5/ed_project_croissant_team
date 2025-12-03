@@ -53,9 +53,23 @@
           
           <div id="admin-map" class="map-container"></div>
         </div>
+
+        <!-- POI Editor Card -->
+        <div class="map-card">
+          <POIEditor 
+            :pois="pois" 
+            :onAddPOI="addPOI" 
+            :onRemovePOI="removePOI"
+            :onSave="savePOIsWrapper"
+            :isLoading="isLoading"
+          />
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- POI Detail Modal -->
+  <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
 </template>
 
 <script setup lang="ts">
@@ -63,7 +77,10 @@ import 'leaflet/dist/leaflet.css'
 import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import EditableSection from '../components/EditableSection.vue'
 import DynamicList from '../components/DynamicList.vue'
+import POIEditor from '../components/POIEditor.vue'
+import POIModal from '../components/POIModal.vue'
 import { useMap } from '../composables/useMap'
+import type { POI } from '../composables/useMap'
 
 interface Waypoint {
   lat: number
@@ -79,7 +96,11 @@ const waypoints = ref<Waypoint[]>([
   { lat: 52.5220, lng: 5.4810 }
 ])
 
-const { initMap, loadRoute, saveRoute: saveRouteToAPI, updateRoute } = useMap()
+// Modal state for POI details
+const showPOIModal = ref(false)
+const selectedPOI = ref<POI | null>(null)
+
+const { initMap, loadRoute, saveRoute: saveRouteToAPI, updateRoute, pois, addPOI, removePOI, saveMarkers, loadMarkers } = useMap()
 
 // Watch waypoints for changes and update map in real-time
 watch(
@@ -98,11 +119,28 @@ onMounted(async () => {
   await nextTick()
   initMap('admin-map') // ← moet exact hetzelfde zijn als id hierboven
   
-  // Load the existing route from database
+  // Load waypoints (route line)
   const loadedRoute = await loadRoute()
   if (loadedRoute) {
     waypoints.value = loadedRoute
   }
+  
+  // Load POI markers separately
+  await loadMarkers()
+  
+  // Setup global event listener for POI "Meer info" buttons
+  document.addEventListener('click', (e: Event) => {
+    const target = e.target as HTMLElement
+    if (target.classList.contains('poi-more-btn')) {
+      const poiId = target.getAttribute('data-id')
+      // Find the POI in pois array and show modal
+      const poi = pois.value.find(p => p.id === poiId)
+      if (poi) {
+        selectedPOI.value = poi
+        showPOIModal.value = true
+      }
+    }
+  })
 })
 
 async function refreshMap() {
@@ -146,6 +184,12 @@ async function updateAndSaveRoute() {
     // Update map display with new waypoints
     updateRoute(waypoints.value)
   }
+}
+
+async function savePOIsWrapper() {
+  isLoading.value = true
+  await saveMarkers()
+  isLoading.value = false
 }
 
 onUnmounted(() => {
