@@ -46,7 +46,7 @@ Navigatiebalk aangepast:
   --site-paars-light: hsla(304, 36%, 52%, 1);
   --site-paars: hsla(304, 36%, 42%, 1);
   --interactief: hsl(41, 100%, 69%);
-  --header-bg: rgba(255, 255, 255,0.65);
+  --header-bg: rgba(255, 255, 255, 0.65);
   --header-shadow: rgba(0, 0%, 0.1);
   --font-primair: 'Inter', Roboto, 'Open Sans', Arial, Helvetica, sans-serif;
   --font-heading: 'Montserrat', 'Poppins', 'Nunito', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
