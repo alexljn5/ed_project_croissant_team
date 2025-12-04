@@ -1,9 +1,5 @@
 {
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.2",
-    "vite-plugin-vue-devtools": "^8.0.5"
-  },
-  "dependencies": {
-    "vue-router": "^4.6.3"
+    "@vitejs/plugin-vue": "^6.0.2"
   }
 }

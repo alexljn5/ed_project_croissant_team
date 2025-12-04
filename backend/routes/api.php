@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use App\Models\PageContent;
 
 /*
@@ -44,4 +45,24 @@ Route::post('/content/{key}', function (Request $request, $key) {
     PageContent::updateOrCreate(['key' => $key], ['value' => $value]);
     return response()->json(['success' => true, 'value' => $value]);
 >>>>>>> debug
+});
+
+// NEW: Photo upload endpoint
+Route::post('/upload-photo', function (Request $request) {
+    $request->validate([
+        'photo' => 'required|image|max:2048', // Max 2MB
+    ]);
+
+    // Store the file in the 'public' disk (usually storage/app/public)
+    $path = $request->file('photo')->store('photos', 'public');
+    
+    // Get the public URL (will be accessible via storage link)
+    $url = Storage::disk('public')->url($path);
+    
+    return response()->json([
+        'success' => true,
+        'path' => $path,
+        'url' => $url,
+        'message' => 'Foto succesvol geüpload!'
+    ]);
 });
