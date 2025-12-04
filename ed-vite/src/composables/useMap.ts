@@ -8,6 +8,10 @@ import {
 } from '../leaflet/map'
 import type L from 'leaflet'
 
+//Fixed imports for images
+import markerImg from '/src/assets/img/markers/marker.png'
+import agoraImg from '/src/assets/img/agora.webp'
+
 export interface POI {
   id: string
   lat: number
@@ -18,8 +22,6 @@ export interface POI {
 }
 
 let mapInstance: L.Map | null = null
-
-// Extra groepen uit tweede bestand
 let routesGroup: L.FeatureGroup | null = null
 let tempGroup: L.FeatureGroup | null = null
 
@@ -29,10 +31,8 @@ export function useMap() {
 
   // ---------- INIT MAP ----------
   function init(containerId: string) {
-    // map aanmaken via bestaande leaflet init
     mapInstance = leafletInitMap(containerId)
 
-    // extra groups toevoegen
     routesGroup = new L.FeatureGroup()
     tempGroup = new L.FeatureGroup()
 
@@ -45,7 +45,6 @@ export function useMap() {
       mapInstance.on('mousemove', (e: L.LeafletMouseEvent) => {
         coordsElement.innerHTML = `Lat: ${e.latlng.lat.toFixed(6)} | Lng: ${e.latlng.lng.toFixed(6)}`
       })
-
       mapInstance.on('mouseout', () => {
         coordsElement.innerHTML = 'Lat: — | Lng: —'
       })
@@ -60,7 +59,7 @@ export function useMap() {
     return mapInstance
   }
 
-  // ---------- ROUTE API LOAD ----------
+  // ---------- ROUTE API ----------
   async function loadRoute() {
     try {
       const res = await fetch('http://127.0.0.1:8000/api/content/walking-route')
@@ -69,7 +68,7 @@ export function useMap() {
 
       if (mapInstance && data.value) {
         drawRoute(mapInstance, data.value)
-        console.log('✅ Waypoints loaded from database')
+        console.log('Waypoints loaded from database')
         return data.value
       }
       return null
@@ -86,7 +85,6 @@ export function useMap() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ value: coordinates }),
       })
-
       if (!res.ok) throw new Error('Failed to save route')
       console.log('✅ Route saved to database!')
       return true
@@ -107,7 +105,7 @@ export function useMap() {
       if (mapInstance && data.value) {
         pois.value = data.value
         data.value.forEach((poi: POI) => mapAddMarker(mapInstance!, poi))
-        console.log('✅ Markers loaded from database')
+        console.log('Markers loaded from database')
         return data.value
       }
       return null
@@ -124,9 +122,8 @@ export function useMap() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ value: pois.value }),
       })
-
       if (!res.ok) throw new Error('Failed to save markers')
-      console.log('✅ Markers saved to database!')
+      console.log('Markers saved to database!')
       return true
     } catch (e) {
       console.error('Failed to save markers:', e)
@@ -159,26 +156,31 @@ export function useMap() {
     }
   }
 
-  // ---------- EXTRA FUNCTIES UIT TWEEDE BESTAND ----------
+  // ---------- EXAMPLE MARKERS WITH CUSTOM ICON ----------
   function addExampleMarkers() {
     if (!mapInstance) return
 
-    const purple = L.icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png',
+    const customPurpleIcon = L.icon({
+      iconUrl: markerImg, // our local marker
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
+      iconSize: [30, 42],
+      iconAnchor: [15, 42],
+      popupAnchor: [0, -40],
       shadowSize: [41, 41],
     })
 
-    L.marker([52.5205, 5.479], { icon: purple })
+    // Agora marker with image in popup
+    L.marker([52.5205, 5.479], { icon: customPurpleIcon })
       .addTo(mapInstance)
-      .bindPopup('<img src="/src/assets/img/agora.webp" width="200" style="border-radius:8px"><br><strong>De Agora</strong>')
+      .bindPopup(`<img src="${agoraImg}" width="200" style="border-radius:8px"><br><strong>De Agora</strong>`)
 
-    L.marker([52.522, 5.481], { icon: purple }).addTo(mapInstance).bindPopup('Test Marker 2')
+    // Another example marker
+    L.marker([52.522, 5.481], { icon: customPurpleIcon })
+      .addTo(mapInstance)
+      .bindPopup('Test Marker 2')
   }
 
+  // ---------- LOAD EXTERNAL ROUTES ----------
   async function loadExternalRoutes() {
     if (!routesGroup) return
     routesGroup.clearLayers()
@@ -218,7 +220,6 @@ export function useMap() {
     await loadExternalRoutes()
   }
 
-  // ---------- RETURN EXPORT ----------
   return {
     initMap: init,
     loadRoute,
@@ -233,4 +234,3 @@ export function useMap() {
     refresh,
   }
 }
-
