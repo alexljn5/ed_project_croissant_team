@@ -1,10 +1,9 @@
+// src/leaflet/map.ts
 import L from 'leaflet';
 
-// Global state for waypoints (route line only, no popups/images)
+// Global state (zoals jij al had)
 let currentRoutePolyline: L.Polyline | null = null;
 let currentWaypointCircles: L.CircleMarker[] = [];
-
-// Global state for POI markers (with images and popups)
 let currentMap: L.Map | null = null;
 const poiMarkers = new Map<string, L.Marker>();
 
@@ -17,7 +16,7 @@ export interface POI {
   longDescription: string
 }
 
-export function initMap(containerId: string) {
+export function initMap(containerId: string): L.Map {
   const map: L.Map = L.map(containerId).setView([52.518611, 5.471389], 13);
   currentMap = map;
 
@@ -25,40 +24,64 @@ export function initMap(containerId: string) {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
-  // Store map on window so we can access it elsewhere
+  // ==== NIEUW: Live cursor coördinaten ====
+  const coordsDiv = L.DomUtil.create('div', 'cursor-coords');
+  coordsDiv.style.cssText = `
+    position: absolute;
+    bottom: 10px; left: 10px;
+    background: rgba(0,0,0,0.75);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    z-index: 1000;
+    pointer-events: none;
+    user-select: none;
+  `;
+  coordsDiv.innerHTML = 'Lat: — | Lng: —';
+  map.getContainer().appendChild(coordsDiv);
+
+  map.on('mousemove', (e: L.LeafletMouseEvent) => {
+    const lat = e.latlng.lat.toFixed(6);
+    const lng = e.latlng.lng.toFixed(6);
+    coordsDiv.innerHTML = `Lat: ${lat} | Lng: ${lng}`;
+  });
+
+  map.on('mouseout', () => {
+    coordsDiv.innerHTML = 'Lat: — | Lng: —';
+  });
+  // ==== EINDE NIEUW ====
+
   (window as any).leafletMap = map;
 
   return map;
 }
 
-// ===== WAYPOINT FUNCTIONS (Route lines only) =====
+// De rest van je functies blijven 100% hetzelfde
 export function drawRoute(map: L.Map, coordinates: Array<{ lat: number; lng: number }>) {
   if (!coordinates || coordinates.length < 2) {
     console.warn('Not enough coordinates for route');
     return;
   }
 
-  // Remove old route polyline
   if (currentRoutePolyline) {
     currentRoutePolyline.remove();
   }
   
-  // Clear old waypoint circles (we're not using them anymore)
   currentWaypointCircles.forEach(circle => circle.remove());
   currentWaypointCircles = [];
 
-  // Convert to [lat, lng] format
   const latLngs = coordinates.map(c => [c.lat, c.lng] as [number, number]);
 
-  // Draw ONLY the line - NO markers, NO images, NO popups
   currentRoutePolyline = L.polyline(latLngs, {
-    color: '#6b3b61',      // Purple
+    color: '#6b3b61',
     weight: 4,
     opacity: 0.8,
     dashArray: '5, 5'
   }).addTo(map);
 
-  console.log(`✅ Route drawn with ${coordinates.length} waypoints (line only)!`);
+  console.log(`Route drawn with ${coordinates.length} waypoints (line only)!`);
 }
 
 export function updateRoute(coordinates: Array<{ lat: number; lng: number }>) {
@@ -67,7 +90,6 @@ export function updateRoute(coordinates: Array<{ lat: number; lng: number }>) {
   }
 }
 
-// ===== POI MARKER FUNCTIONS (Images and popups only) =====
 export function addMarker(map: L.Map, poi: POI) {
   const customIcon = L.icon({
     iconUrl: poi.imageUrl,
