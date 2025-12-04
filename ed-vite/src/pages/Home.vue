@@ -1,8 +1,9 @@
 <template>
   <div>
-    <!-- Slider Section -->
-    <div class="content-slider">
-      <div class="slider-container">
+   <div class="content-slider" 
+     :style="{ backgroundImage: 'url(public/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
+      <h1 class="neEv-text">Nieuws & Evenementen</h1> 
+     <div class="slider-container"> 
         <button class="slider-arrow prev" @click="prevSlide">❮</button>
         <div class="slider-track" ref="sliderTrack">
           <div v-for="(card, index) in sliderCards" :key="index" 
@@ -26,12 +27,10 @@
       </div>
     </div>
 
-    <!-- Vue Components Section -->
     <div class="backend-section">
       <BackendGlue />
     </div>
 
-    <!-- Modal for zoomed card -->
     <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
       <div class="modal-content" @click.stop>
         <button class="modal-close" @click="closeModal">✕</button>
@@ -39,7 +38,7 @@
           <div class="modal-date-badge">{{ selectedCard.date }}</div>
         </div>
         <div class="modal-text">
-          <h2>{{ selectedCard.title }}</h2>
+          <h1>{{ selectedCard.title }}</h1>
           <p>{{ selectedCard.description }}</p>
         </div>
       </div>
@@ -61,13 +60,11 @@ const isCardSelected = ref(false);
 
 const handleCardClick = (index: number) => {
   if (index === currentIndex.value) {
-    // Als geselecteerd, open modal en stop slider
     selectedCard.value = sliderCards[index];
     showModal.value = true;
     isCardSelected.value = true;
     clearInterval(autoSlideInterval);
   } else {
-    // Als niet geselecteerd, ga naar die slide
     goToSlide(index);
   }
 };
@@ -87,32 +84,32 @@ const closeModal = () => {
 
 const sliderCards = [
   {
-    title: 'titel',
-    description: 'description',
+    title: 'Titel1',
+    description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore',
     date: '18-11-25, 8:00',
     image: 'src/assets/img/18c-glas-in-lood.webp'
   },
   {
-    title: 'titel',
-    description: 'description',
+    title: 'Titel2',
+    description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore',
     date: '19-11-25, 14:30',
     image: 'src/assets/img/17a-gevelschilderingen.webp'
   },
   {
-    title: 'titel',
-    description: 'description',
+    title: 'Titel3',
+    description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore',
     date: '20-11-25, 10:00',
     image: 'src/assets/img/buitenkant-bib-en-stadhuis.webp'
   },
   {
-    title: 'titel',
-    description: 'description',
+    title: 'Titel4',
+    description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore',
     date: '21-11-25, 19:00',
     image: 'src/assets/img/agorahof.webp'
   },
   {
-    title: 'titel',
-    description: 'description',
+    title: 'Titel5',
+    description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore',
     date: '22-11-25, 11:00',
     image: 'src/assets/img/20ab.webp'
   }
@@ -175,7 +172,6 @@ onMounted(() => {
 .content-slider {
   width: 100%;
   padding: 2rem 0;
-  background: var(--site-paars);
 }
 
 .slider-container {
@@ -195,9 +191,9 @@ onMounted(() => {
 .slider-card {
   flex: 0 0 auto;
   width: 300px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgb(255, 255, 255);
+  backdrop-filter: blur(100px);
+  -webkit-backdrop-filter: blur(100px);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -223,6 +219,17 @@ onMounted(() => {
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
 }
 
+.slider-card.active .card-content h1 {
+  transform: translateY(0);
+  opacity: 1;
+  transition: all 0.4s ease;
+}
+
+.slider-card .card-content h1 {
+  transform: translateY(10px);
+  opacity: 0.8;
+}
+
 .card-image {
   width: 100%;
   height: 180px;
@@ -238,7 +245,7 @@ onMounted(() => {
   background: rgba(0, 0, 0, 0.7);
   color: white;
   padding: 5px 10px;
-  border-radius: 15px;
+  border-radius: 5px;
   font-size: 0.75rem;
   font-weight: bold;
   white-space: nowrap;
@@ -460,12 +467,14 @@ onMounted(() => {
   position: absolute;
   top: 20px;
   left: 20px;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 10px 20px;
-  border-radius: 25px;
+  padding: 5px 20px;
+  border-radius: 5px;
   font-size: 1.1rem;
   font-weight: bold;
+  white-space: nowrap;
+  width: fit-content;
 }
 
 .modal-text {
@@ -485,4 +494,19 @@ onMounted(() => {
   font-size: 1.3rem;
   line-height: 1.8;
 }
+
+.neEv-text {
+  /*margin-left: 2.5%;*/
+  padding-left: 2.5%;
+  padding-right: 1%;
+  background-color: var(--det);
+  width: fit-content;
+  font-size: 2.5rem;
+  font-weight: lighter;
+  text-align: left;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  color: var(--title-text);
+}
+
 </style>

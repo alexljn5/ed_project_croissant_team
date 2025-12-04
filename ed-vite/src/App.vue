@@ -11,7 +11,7 @@ Navigatiebalk aangepast:
     <!-- Navigation Header -->
     <header class="header-top">
       <div class="header-container">
-        <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
+        <h1 class="dubbeloproute-titel">Dubbelop-route</h1>
         
         <div class="header-right">
           <router-link to="/admin" class="admin-button">
@@ -35,13 +35,14 @@ Navigatiebalk aangepast:
 </template>
 
 <script setup lang="ts">
-// App layout component
 </script>
 
 <style>
 :root {
   --body: hsla(304, 36%, 42%, 1);
+  --title-text:hsl(0, 0%, 90%);
   --achtergrond-primair: hsl(0, 0%, 96%);
+  --site-paars-light: hsla(304, 36%, 52%, 1);
   --site-paars: hsla(304, 36%, 42%, 1);
   --interactief: hsl(41, 100%, 69%);
   --header-bg: rgba(255, 255, 255, 0.8);
@@ -50,6 +51,7 @@ Navigatiebalk aangepast:
   --font-grootte: 16px;
   --font-grootte2: 32px;
   --header-text: hsla(0, 0%, 11%, 1);
+  --det: hsla(41, 100%, 69%, 0.8);
 }
 
 *,
