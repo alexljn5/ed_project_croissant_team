@@ -2,7 +2,7 @@
   <div>
    <div class="content-slider" 
      :style="{ backgroundImage: 'url(public/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
-      <h1 class="neEv-text">Nieuws & Evenementen</h1> 
+     <h1 class="neEv-text">Nieuws & Evenementen</h1> 
      <div class="slider-container"> 
         <button class="slider-arrow prev" @click="prevSlide">❮</button>
         <div class="slider-track" ref="sliderTrack">
@@ -47,8 +47,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import BackendGlue from '../components/BackendGlue.vue';
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown);
+});
+
 
 const currentIndex = ref(0);
 const sliderTrack = ref<HTMLElement | null>(null);
@@ -81,6 +86,7 @@ const closeModal = () => {
     startAutoSlide();
   }, 400);
 };
+
 
 const sliderCards = [
   {
@@ -117,9 +123,10 @@ const sliderCards = [
 
 const updateSlider = () => {
   if (!sliderTrack.value) return;
-  const cards = sliderTrack.value.querySelectorAll('.slider-card');
-  const cardWidth = (cards[0] as HTMLElement).offsetWidth + 30;
-  const offset = sliderTrack.value.offsetWidth / 2 - cardWidth / 2 - currentIndex.value * cardWidth;
+  const cards = sliderTrack.value.querySelectorAll<HTMLElement>('.slider-card');
+  const cardWidth = cards[0].offsetWidth + 30;
+  const centerOffset = sliderTrack.value.offsetWidth / 2 - cardWidth / 2;
+  const offset = centerOffset - currentIndex.value * cardWidth;
   sliderTrack.value.style.transform = `translateX(${offset}px)`;
 };
 
@@ -140,7 +147,7 @@ const prevSlide = () => {
 };
 
 const startAutoSlide = () => {
-  autoSlideInterval = setInterval(nextSlide, 10000);
+  autoSlideInterval = setInterval(nextSlide, 5000);
 };
 
 const resetAutoSlide = () => {
@@ -148,23 +155,43 @@ const resetAutoSlide = () => {
   startAutoSlide();
 };
 
+let canNav = true;
+const cd = 300;
+
+const handleKeydown = (e: KeyboardEvent) => {
+  if (!canNav) return;
+
+  if (e.key === 'ArrowLeft') {
+    prevSlide();
+  } else if (e.key === 'ArrowRight') {
+    nextSlide();
+  }
+
+  canNav = false;
+  setTimeout(() => {
+    canNav = true;
+  }, cd);
+};
+
 onMounted(() => {
   updateSlider();
   startAutoSlide();
   window.addEventListener('resize', updateSlider);
 
+  window.addEventListener('keydown', handleKeydown);
+
   if (sliderTrack.value) {
     sliderTrack.value.addEventListener('mouseenter', () => {
-      if (!isCardSelected.value) {
-        clearInterval(autoSlideInterval);
-      }
+      if (!isCardSelected.value) clearInterval(autoSlideInterval);
     });
     sliderTrack.value.addEventListener('mouseleave', () => {
-      if (!isCardSelected.value) {
-        resetAutoSlide();
-      }
+      if (!isCardSelected.value) resetAutoSlide();
     });
   }
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown);
 });
 </script>
 
@@ -172,6 +199,15 @@ onMounted(() => {
 .content-slider {
   width: 100%;
   padding: 2rem 0;
+  font-family: var(--font-primair);
+}
+
+.content-slider::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to top, var(--site-paars), rgba(0,0,0,0.2),rgba(0,0,0,0.2),rgba(0,0,0,0.2),rgba(0,0,0,0.2));
+  z-index: -10000;
 }
 
 .slider-container {
@@ -205,13 +241,13 @@ onMounted(() => {
 
 .slider-card:hover {
   transform: scale(0.98) translateY(-5px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 12px rgba(0, 0, 0, 0.15);
 }
 
 .slider-card.active {
   transform: scale(1.05);
   opacity: 1;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 12px 8px rgba(0, 0, 0, 0.5);
 }
 
 .slider-card.active:hover {
@@ -232,10 +268,11 @@ onMounted(() => {
 
 .card-image {
   width: 100%;
-  height: 180px;
+  height: 20vh;
   background-size: cover;
   background-position: center;
   position: relative;
+  transition: transform 0.6s ease-out;
 }
 
 .date-badge {
@@ -258,7 +295,7 @@ onMounted(() => {
 }
 
 .card-content h1 {
-  font: sans-serif;
+  font-family: var(--font-heading);
   margin: 0 0 0.5rem 0;
   color: var(--site-paars);
   font-size: 1.5rem;
@@ -267,8 +304,7 @@ onMounted(() => {
 }
 
 .card-content p {
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font: Verdana;
+  font-family: var(--font-primair);
   margin: 0;
   color: #232323;
   font-size: 1.1rem;
@@ -496,17 +532,26 @@ onMounted(() => {
 }
 
 .neEv-text {
-  /*margin-left: 2.5%;*/
   padding-left: 2.5%;
   padding-right: 1%;
-  background-color: var(--det);
   width: fit-content;
-  font-size: 2.5rem;
+  font-size: 1.55rem;
   font-weight: lighter;
   text-align: left;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   color: var(--title-text);
+  font-family: var(--font-heading);
+
+  background-image: linear-gradient(
+    to right, 
+    var(--det-1) 0%,
+    var(--det-1) 29.8%,
+    var(--det-2) 30%,
+    var(--det-2) 69.8%,
+    var(--det-3) 70%,
+    var(--det-3) 100%
+  );
 }
 
 </style>

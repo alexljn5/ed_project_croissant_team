@@ -112,3 +112,17 @@ async function addMarker() {
   lng.value = 5.4713;
 }
 </script>
+
+<style scoped>
+section {
+  font-family: var(--font-primair);
+}
+
+h2 {
+  font-family: var(--font-heading);
+}
+
+input, button {
+  font-family: var(--font-primair);
+}
+</style>

@@ -175,6 +175,7 @@ onBeforeUnmount(() => {
   background: var(--site-paars);
   padding: 120px 0 20px;
   overflow: hidden;
+  font-family: var(--font-primair);
 }
 
 .slider-container {
@@ -260,12 +261,14 @@ onBeforeUnmount(() => {
   font-size: 0.6rem;
   line-height: 1.2;
   font-weight: 700;
+  font-family: var(--font-heading);
 }
 
 .card-content p {
   margin: 0;
   color: #555;
   line-height: 1.5;
+  font-family: var(--font-primair);
 }
 
 /* arrows */

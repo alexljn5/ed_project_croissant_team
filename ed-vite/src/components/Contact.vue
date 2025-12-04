@@ -3,6 +3,16 @@
   <link rel="stylesheet" href="css/contact.css" />
 </template>
 
+<style scoped>
+header, h1, p, a {
+  font-family: var(--font-primair);
+}
+
+.dubbeloproute-titel {
+  font-family: var(--font-heading);
+}
+</style>
+
 <template>
   <header>
     <h1 class="dubbeloproute-titel">Dubbeloproute</h1>

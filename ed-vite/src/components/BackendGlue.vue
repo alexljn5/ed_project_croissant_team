@@ -28,3 +28,9 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style scoped>
+p {
+  font-family: var(--font-primair);
+}
+</style>
