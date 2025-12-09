@@ -1,18 +1,10 @@
-<!-- 
-# Rohit - heeft dit gedaan
-Navigatiebalk aangepast: 
-- Logo en knoppen verplaatst naar rechts
-- Alleen logo is klikbaar naar homepage
-- Dubbeloproute titel is niet meer klikbaar
--->
-
+<!-- # Rohit - heeft dit gedaan Navigatiebalk aangepast: - Logo en knoppen verplaatst naar rechts - Alleen logo is klikbaar naar homepage - Dubbeloproute titel is niet meer klikbaar -->
 <template>
   <div class="app-layout">
     <!-- Navigation Header -->
     <header class="header-top">
       <div class="header-container">
         <h1 class="dubbeloproute-titel">Dubbelop-route</h1>
-        
         <div class="header-right">
           <router-link to="/admin" class="admin-button">
             <button class="adminKnop">Admin</button>
@@ -22,25 +14,44 @@ Navigatiebalk aangepast:
           </router-link>
           <router-link to="/" class="logo-link">
             <div class="logo">
-              <img src="/src/assets/img/dubbelop-logo.png" alt="Dubbelop Logo" />
+              <img
+                src="/src/assets/img/dubbelop-logo.png"
+                alt="Dubbelop Logo"
+              />
             </div>
           </router-link>
         </div>
       </div>
     </header>
-
     <!-- Page Content -->
     <router-view />
+    <!-- Middle Section with Image and Text -->
+    <section class="middle-section">
+      <img
+        src="/src/assets/img/btn.png"
+        alt="Bottom section image"
+        class="bottom-image"
+      />
+      <p class="bottom-text">you have been</p>
+    </section>
+    <!-- Bottom Section with Image and Text -->
+    <section class="bottom-section">
+      <img
+        src="/src/assets/img/btn.png"
+        alt="Bottom section image"
+        class="bottom-image"
+      />
+      <p class="bottom-text">
+        Backend: CROISSANT TEAM WINS — FINAL VICTORY 2025!!!
+      </p>
+    </section>
   </div>
 </template>
-
-<script setup lang="ts">
-</script>
-
+<script setup lang="ts"></script>
 <style>
 :root {
   --body: hsla(304, 36%, 42%, 1);
-  --title-text:hsl(0, 0%, 90%);
+  --title-text: hsl(0, 0%, 90%);
   --achtergrond-primair: hsl(0, 0%, 96%);
   --site-paars-xtra-light: hsla(304, 36%, 82%, 1);
   --site-paars-light: hsla(304, 36%, 52%, 1);
@@ -48,9 +59,10 @@ Navigatiebalk aangepast:
   --interactief: hsl(41, 100%, 69%);
   --header-bg: rgba(255, 255, 255, 0.65);
   --header-shadow: rgba(0, 0%, 0.1);
-  --font-primair: 'Inter', Roboto, 'Open Sans', Arial, Helvetica, sans-serif;
-  --font-heading: 'Montserrat', 'Poppins', 'Nunito', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: 'Courier New', Courier, monospace;
+  --font-primair: "Inter", Roboto, "Open Sans", Arial, Helvetica, sans-serif;
+  --font-heading: "Montserrat", "Poppins", "Nunito", "Segoe UI",
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Courier New", Courier, monospace;
   --font-smal: 9px;
   --font-grootte: 16px;
   --font-grootte2: 32px;
@@ -61,13 +73,11 @@ Navigatiebalk aangepast:
   --det-2: hsla(41, 100%, 59%, 0.8);
   --det-3: hsla(41, 100%, 69%, 0.8);
 }
-
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
-
 html,
 body {
   margin: 0;
@@ -80,12 +90,10 @@ body {
   -ms-overflow-style: none;
   overflow-y: auto;
 }
-
 body::-webkit-scrollbar {
   display: none;
 }
 </style>
-
 <style scoped>
 .app-layout {
   min-height: 100vh;
@@ -94,7 +102,6 @@ body::-webkit-scrollbar {
   padding-top: 80px;
   background-color: transparent;
 }
-
 .header-top {
   position: fixed;
   top: 0;
@@ -103,17 +110,16 @@ body::-webkit-scrollbar {
   padding: 1rem 2rem;
   z-index: 1000;
   background-image: linear-gradient(
-    to right, 
+    to right,
     var(--site-paars-xtra-light) 0%,
     var(--site-paars-xtra-light) 20%,
     var(--site-paars-xtra-light) 29.9999%,
     var(--header-bg) 30%,
     var(--header-bg) 70%,
     var(--header-bg) 100%
-  );  
+  );
   box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5);
 }
-
 .header-container {
   display: flex;
   justify-content: space-between;
@@ -122,18 +128,16 @@ body::-webkit-scrollbar {
   max-width: 100%;
   width: 100%;
 }
-
 .dubbeloproute-titel {
   font-family: var(--titel-font);
   font-size: var(--font-grootte2);
-  font-weight:bold;
+  font-weight: bold;
   text-transform: uppercase;
   margin: 0;
   color: rgb(54, 54, 54);
   cursor: default;
   flex-shrink: 0;
 }
-
 .header-right {
   display: flex;
   align-items: center;
@@ -141,7 +145,6 @@ body::-webkit-scrollbar {
   margin-left: auto;
   justify-content: flex-end;
 }
-
 .logo-link {
   text-decoration: none;
   display: flex;
@@ -149,11 +152,9 @@ body::-webkit-scrollbar {
   cursor: pointer;
   transition: transform 0.3s ease;
 }
-
 .logo-link:hover {
   transform: scale(1.1);
 }
-
 .logo {
   width: 50px;
   height: 50px;
@@ -161,18 +162,15 @@ body::-webkit-scrollbar {
   align-items: center;
   justify-content: center;
 }
-
 .logo img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
-
 .contact-button,
 .admin-button {
   text-decoration: none;
 }
-
 .adminKnop {
   padding: 10px 20px;
   background: var(--interactief);
@@ -183,12 +181,10 @@ body::-webkit-scrollbar {
   font-weight: bold;
   color: #333;
 }
-
 .adminKnop:hover {
   background: #e5ad3f;
   transition: all 0.1s;
 }
-
 .contactKnop {
   padding: 10px 20px;
   background: var(--achtergrond-primair);
@@ -199,10 +195,46 @@ body::-webkit-scrollbar {
   font-weight: bold;
   color: var(--site-paars);
 }
-
 .contactKnop:hover {
   background: var(--site-paars);
   color: white;
   transition: all 0.1s;
+}
+.middle-section {
+  padding: 50rem;
+  background-image: linear-gradient(to bottom, #fdfdff 0%, #929192 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.middle-text {
+  margin: 0;
+  padding: 1.5rem;
+  color: white;
+}
+.bottom-section {
+  padding: 2rem;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.bottom-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 1rem;
+}
+.bottom-text {
+  margin: 0;
+  padding: 1.5rem;
+  color: var(--site-paars);
+  font-size: var(--font-grootte2);
+  font-weight: bold;
+  border: 3px solid var(--site-paars);
+  border-radius: 8px;
+  text-align: center;
+  background-color: var(--achtergrond-primair);
 }
 </style>
