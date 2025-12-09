@@ -27,8 +27,11 @@
       </div>
     </div>
 
-
-
+    <!-- Map section (full width below slider) 
+    <section class="home-map-section">
+      <MapView />
+    </section>
+-->
     <div class="backend-section">
       <BackendGlue />
     </div>

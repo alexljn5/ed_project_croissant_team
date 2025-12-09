@@ -1,3 +1,4 @@
+//useMap.ts
 import { ref } from 'vue'
 import {
   initMap as leafletInitMap,
@@ -86,7 +87,7 @@ export function useMap() {
         body: JSON.stringify({ value: coordinates }),
       })
       if (!res.ok) throw new Error('Failed to save route')
-      console.log('✅ Route saved to database!')
+      console.log('Route saved to database!')
       return true
     } catch (e) {
       console.error('Failed to save route:', e)
