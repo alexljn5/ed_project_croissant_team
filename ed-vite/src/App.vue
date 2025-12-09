@@ -31,10 +31,14 @@ Navigatiebalk aangepast:
 
     <!-- Page Content -->
     <router-view />
+
+    <!-- Footer -->
+    <Footer />
   </div>
 </template>
 
 <script setup lang="ts">
+import Footer from './components/Footer.vue'
 </script>
 
 <style>
@@ -195,7 +199,7 @@ body::-webkit-scrollbar {
   border-radius: 20px;
   border: 2px solid var(--site-paars);
   cursor: pointer;
-  transition: background-color 0.45s;
+  transition: background-color 0.15s;
   font-weight: bold;
   color: var(--site-paars);
 }
@@ -203,6 +207,6 @@ body::-webkit-scrollbar {
 .contactKnop:hover {
   background: var(--site-paars);
   color: white;
-  transition: all 0.1s;
+  transition: all 0.15s;
 }
 </style>
