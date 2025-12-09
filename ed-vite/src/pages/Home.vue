@@ -1,7 +1,7 @@
 <template>
-  <div>
-   <div class="content-slider" 
-     :style="{ backgroundImage: 'url(public/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
+  <div class="home-page">
+     <div class="content-slider" 
+       :style="{ backgroundImage: 'url(public/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
      <h1 class="neEv-text">Nieuws & Evenementen</h1> 
      <div class="slider-container"> 
         <button class="slider-arrow prev" @click="prevSlide">❮</button>
@@ -27,6 +27,11 @@
       </div>
     </div>
 
+    <!-- Map section (full width below slider) -->
+    <section class="home-map-section">
+      <MapView />
+    </section>
+
     <div class="backend-section">
       <BackendGlue />
     </div>
@@ -49,6 +54,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import BackendGlue from '../components/BackendGlue.vue';
+import MapView from '../components/MapView.vue';
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown);
@@ -356,7 +362,7 @@ onUnmounted(() => {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #cccccc;
+  background: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -554,4 +560,32 @@ onUnmounted(() => {
   );
 }
 
+</style>
+
+<style scoped>
+/* Homepage map section - full width below slider */
+.home-map-section {
+  width: 100%;
+  padding: 2rem;
+  background: white;
+}
+
+.home-map-section #leaflet-map {
+  height: 500px !important;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .home-map-section {
+    padding: 1rem;
+  }
+
+  .home-map-section #leaflet-map {
+    height: 400px !important;
+  }
+}
 </style>
