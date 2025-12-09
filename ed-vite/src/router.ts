@@ -28,7 +28,7 @@ const routes = [
 console.log('[router] registered routes:', routes.map(r => r.path))
 
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createWebHistory((import.meta as any).env.BASE_URL),
     routes
 })
 

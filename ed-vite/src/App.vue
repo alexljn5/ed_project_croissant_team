@@ -1,11 +1,17 @@
+<!-- 
+# Rohit - heeft dit gedaan
+Navigatiebalk aangepast: 
+- Logo en knoppen verplaatst naar rechts
+- Alleen logo is klikbaar naar homepage
+- Dubbeloproute titel is niet meer klikbaar
+-->
+
 <template>
   <div class="app-layout">
     <!-- Navigation Header -->
     <header class="header-top">
       <div class="header-container">
-        <router-link to="/" class="header-left">
-          <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
-        </router-link>
+        <h1 class="dubbeloproute-titel">Dubbelop-route</h1>
         
         <div class="header-right">
           <router-link to="/admin" class="admin-button">
@@ -14,9 +20,11 @@
           <router-link to="/contact" class="contact-button">
             <button class="contactKnop">Neem Contact Op</button>
           </router-link>
-          <div class="logo">
-            <img src="/src/assets/img/dubbelop-logo.png" alt="Dubbelop Logo" />
-          </div>
+          <router-link to="/" class="logo-link">
+            <div class="logo">
+              <img src="/src/assets/img/dubbelop-logo.png" alt="Dubbelop Logo" />
+            </div>
+          </router-link>
         </div>
       </div>
     </header>
@@ -27,21 +35,31 @@
 </template>
 
 <script setup lang="ts">
-// App layout component
 </script>
 
 <style>
 :root {
   --body: hsla(304, 36%, 42%, 1);
+  --title-text:hsl(0, 0%, 90%);
   --achtergrond-primair: hsl(0, 0%, 96%);
+  --site-paars-xtra-light: hsla(304, 36%, 82%, 1);
+  --site-paars-light: hsla(304, 36%, 52%, 1);
   --site-paars: hsla(304, 36%, 42%, 1);
   --interactief: hsl(41, 100%, 69%);
-  --header-bg: rgba(255, 255, 255, 0.8);
+  --header-bg: rgba(255, 255, 255, 0.65);
   --header-shadow: rgba(0, 0%, 0.1);
-  --font-primair: Arial, Verdana;
+  --font-primair: 'Inter', Roboto, 'Open Sans', Arial, Helvetica, sans-serif;
+  --font-heading: 'Montserrat', 'Poppins', 'Nunito', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Courier New', Courier, monospace;
+  --font-smal: 9px;
   --font-grootte: 16px;
   --font-grootte2: 32px;
+  --font-grootte3: 42px;
+  --titel-font: sans-serif;
   --header-text: hsla(0, 0%, 11%, 1);
+  --det-1: hsla(41, 100%, 49%, 0.8);
+  --det-2: hsla(41, 100%, 59%, 0.8);
+  --det-3: hsla(41, 100%, 69%, 0.8);
 }
 
 *,
@@ -55,7 +73,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: var(--body);
+  background-color: var(--site-paars);
   font-family: var(--font-primair);
   overflow-x: hidden;
   scrollbar-width: none;
@@ -84,7 +102,15 @@ body::-webkit-scrollbar {
   width: 100%;
   padding: 1rem 2rem;
   z-index: 1000;
-  background-color: var(--header-bg);
+  background-image: linear-gradient(
+    to right, 
+    var(--site-paars-xtra-light) 0%,
+    var(--site-paars-xtra-light) 20%,
+    var(--site-paars-xtra-light) 29.9999%,
+    var(--header-bg) 30%,
+    var(--header-bg) 70%,
+    var(--header-bg) 100%
+  );  
   box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5);
 }
 
@@ -93,23 +119,39 @@ body::-webkit-scrollbar {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-}
-
-.header-left {
-  text-decoration: none;
+  max-width: 100%;
+  width: 100%;
 }
 
 .dubbeloproute-titel {
-  font-family: 'Lucida Sans', sans-serif;
+  font-family: var(--titel-font);
   font-size: var(--font-grootte2);
+  font-weight:bold;
+  text-transform: uppercase;
   margin: 0;
-  color: var(--header-text);
+  color: rgb(54, 54, 54);
+  cursor: default;
+  flex-shrink: 0;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 1rem;
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.logo-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo-link:hover {
+  transform: scale(1.1);
 }
 
 .logo {
@@ -126,7 +168,8 @@ body::-webkit-scrollbar {
   object-fit: contain;
 }
 
-.contact-button {
+.contact-button,
+.admin-button {
   text-decoration: none;
 }
 

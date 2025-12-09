@@ -5,7 +5,9 @@
   --interactief: rgb(255, 206, 99);
   --header-bg: rgba(107, 59, 97, 0.3);
   --header-shadow: rgba(0, 0%, 0.1);
-  --font-primair: Arial, Verdana;
+  --font-primair: 'Inter', Roboto, 'Open Sans', Arial, Helvetica, sans-serif;
+  --font-heading: 'Montserrat', 'Poppins', 'Nunito', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Courier New', Courier, monospace;
   --font-grootte: 16px;
   --font-grootte2: 32px;
   --header-text: hsla(0, 0%, 11%, 1);
@@ -57,7 +59,7 @@ header {
 }
 
 .dubbeloproute-titel {
-  font-family: "Lucida Sans", sans-serif;
+  font-family: var(--font-heading);
   font-size: var(--font-grootte2);
   margin: 0;
   color: var(--header-text);

@@ -55,6 +55,15 @@ a {
   transition: all 0.3s ease;
 }
 
+/* Apply global site fonts for contact page */
+.min-h-screen {
+  font-family: var(--font-primair);
+}
+
+h2, h3 {
+  font-family: var(--font-heading);
+}
+
 section {
   animation: fadeIn 0.5s ease-in;
 }
