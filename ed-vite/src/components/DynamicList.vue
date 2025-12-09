@@ -40,3 +40,17 @@ const removeItem = (index: number) => {
     </div>
   </section>
 </template>
+
+<style scoped>
+section {
+  font-family: var(--font-primair);
+}
+
+h2 {
+  font-family: var(--font-heading);
+}
+
+button, input {
+  font-family: var(--font-primair);
+}
+</style>

@@ -202,6 +202,7 @@ onUnmounted(() => {
   background-color: #f5f5f5;
   min-height: 100vh;
   padding: 2rem 0;
+  font-family: var(--font-primair);
 }
 
 .admin-container {
@@ -216,6 +217,7 @@ onUnmounted(() => {
   color: #6b3f7b;
   text-align: center;
   margin-bottom: 0.5rem;
+  font-family: var(--font-heading);
 }
 
 .admin-subtitle {
@@ -266,6 +268,7 @@ onUnmounted(() => {
 .map-header h2 {
   margin: 0;
   font-size: 1.5rem;
+  font-family: var(--font-heading);
 }
 
 .refresh-btn {

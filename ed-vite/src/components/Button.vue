@@ -22,6 +22,7 @@
   transition: background-color 0.45s;
   font-weight: bold;
   transition: background 0.1s;
+  font-family: var(--font-primair);
 }
 
 .contactKnop:hover {
