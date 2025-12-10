@@ -1,3 +1,5 @@
+
+
 <template>
   <div class="home-page">
      <div class="content-slider" 
@@ -35,6 +37,10 @@
     <div class="backend-section">
       <BackendGlue />
     </div>
+    
+  <div class="publicmap">
+  <publicMap />
+</div>
 
     <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
       <div class="modal-content" @click.stop>
@@ -49,12 +55,19 @@
       </div>
     </div>
   </div>
+
+
+
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import BackendGlue from '../components/BackendGlue.vue';
 import MapView from '../components/MapView.vue';
+import PublicMap from '../components/PublicMap.vue';
+
+
+
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown);
@@ -200,6 +213,7 @@ onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown);
 });
 </script>
+
 
 <style scoped>
 .content-slider {
