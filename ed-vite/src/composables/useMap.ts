@@ -1,15 +1,13 @@
-//useMap.ts
+// useMap.ts
 import { ref } from 'vue'
+import * as L from 'leaflet'
 import {
   initMap as leafletInitMap,
-  drawRoute,
-  updateRoute,
   addMarker as mapAddMarker,
   removeMarker as mapRemoveMarker,
 } from '../leaflet/map'
-import type L from 'leaflet'
 
-//Fixed imports for images
+// fixed imports for local assets (if used)
 import markerImg from '/src/assets/img/markers/marker.png'
 import agoraImg from '/src/assets/img/agora.webp'
 
@@ -17,32 +15,101 @@ export interface POI {
   id: string
   lat: number
   lng: number
-  imageUrl: string
+  imageUrl?: string
   shortDescription: string
-  longDescription: string
+  longDescription?: string
 }
 
 let mapInstance: L.Map | null = null
 let routesGroup: L.FeatureGroup | null = null
 let tempGroup: L.FeatureGroup | null = null
+let routeLayer: L.Polyline | null = null      // persisted/saved route
+let previewLayer: L.Polyline | null = null    // live admin preview
 
 export function useMap() {
   const isLoading = ref(false)
   const pois = ref<POI[]>([])
 
-  // ---------- INIT MAP ----------
+  // ---------------- helpers ----------------
+  function ensureGroups() {
+    if (!mapInstance) return
+    if (!routesGroup) {
+      routesGroup = new L.FeatureGroup().addTo(mapInstance)
+    }
+    if (!tempGroup) {
+      tempGroup = new L.FeatureGroup().addTo(mapInstance)
+    }
+  }
+
+  function clearPreview() {
+    try {
+      if (previewLayer && tempGroup) {
+        tempGroup.removeLayer(previewLayer)
+      }
+    } catch (e) { /* ignore */ }
+    previewLayer = null
+  }
+
+  function clearSavedRoute() {
+    try {
+      if (routeLayer && routesGroup) {
+        routesGroup.removeLayer(routeLayer)
+      }
+    } catch (e) { /* ignore */ }
+    routeLayer = null
+  }
+
+  // Render a saved (persistent) route
+  function renderSavedRoute(coords: Array<{ lat: number; lng: number }>, opts?: { name?: string }) {
+    if (!mapInstance) return
+    ensureGroups()
+    clearSavedRoute()
+    if (!coords || coords.length < 2) return
+
+    const cleaned = coords
+      .map(c => ({ lat: Number(c.lat), lng: Number(c.lng) }))
+      .filter(c => !Number.isNaN(c.lat) && !Number.isNaN(c.lng))
+    if (cleaned.length < 2) return
+
+    const latlngs: L.LatLngExpression[] = cleaned.map(p => [p.lat, p.lng])
+    routeLayer = L.polyline(latlngs, {
+      color: '#6b3f7b',
+      weight: 5,
+      opacity: 0.95,
+    }).bindPopup(`<b>${opts?.name ?? 'Route'}</b>`)
+    routesGroup!.addLayer(routeLayer)
+  }
+
+  // Render a preview route (used by admin while editing)
+  function renderPreviewRoute(coords: Array<{ lat: number; lng: number }>) {
+    if (!mapInstance) return
+    ensureGroups()
+    clearPreview()
+    if (!coords || coords.length < 2) return
+
+    const cleaned = coords
+      .map(c => ({ lat: Number(c.lat), lng: Number(c.lng) }))
+      .filter(c => !Number.isNaN(c.lat) && !Number.isNaN(c.lng))
+    if (cleaned.length < 2) return
+
+    const latlngs: L.LatLngExpression[] = cleaned.map(p => [p.lat, p.lng])
+    previewLayer = L.polyline(latlngs, {
+      color: '#ff9800',
+      weight: 4,
+      opacity: 0.9,
+      dashArray: '6,4',
+    })
+    tempGroup!.addLayer(previewLayer)
+  }
+
+  // ---------------- init map ----------------
   function init(containerId: string) {
     mapInstance = leafletInitMap(containerId)
+    routesGroup = new L.FeatureGroup().addTo(mapInstance)
+    tempGroup = new L.FeatureGroup().addTo(mapInstance)
 
-    routesGroup = new L.FeatureGroup()
-    tempGroup = new L.FeatureGroup()
-
-    routesGroup.addTo(mapInstance)
-    tempGroup.addTo(mapInstance)
-
-    // live cursor coords
     const coordsElement = document.getElementById('cursor-coords')
-    if (coordsElement) {
+    if (coordsElement && mapInstance) {
       mapInstance.on('mousemove', (e: L.LeafletMouseEvent) => {
         coordsElement.innerHTML = `Lat: ${e.latlng.lat.toFixed(6)} | Lng: ${e.latlng.lng.toFixed(6)}`
       })
@@ -51,30 +118,22 @@ export function useMap() {
       })
     }
 
-    // voorbeeld markers
     addExampleMarkers()
-
-    // extra routes laden
-    loadExternalRoutes()
-
     return mapInstance
   }
 
-  // ---------- ROUTE API ----------
+  // ---------------- ROUTE API ----------------
   async function loadRoute() {
+    if (!mapInstance) return null
     try {
       const res = await fetch('http://127.0.0.1:8000/api/content/walking-route')
-      if (!res.ok) throw new Error('Failed to load route')
+      if (!res.ok) return null
       const data = await res.json()
-
-      if (mapInstance && data.value) {
-        drawRoute(mapInstance, data.value)
-        console.log('Waypoints loaded from database')
-        return data.value
-      }
-      return null
-    } catch (e) {
-      console.warn('Could not load waypoints:', e)
+      const coords = data?.value ?? data
+      if (!coords || !Array.isArray(coords)) return null
+      renderSavedRoute(coords, { name: data?.name ?? 'Walking route' })
+      return coords
+    } catch {
       return null
     }
   }
@@ -87,31 +146,41 @@ export function useMap() {
         body: JSON.stringify({ value: coordinates }),
       })
       if (!res.ok) throw new Error('Failed to save route')
-      console.log('Route saved to database!')
+      clearPreview()
+      renderSavedRoute(coordinates, { name: 'Saved route' })
       return true
     } catch (e) {
-      console.error('Failed to save route:', e)
+      console.error('saveRoute failed', e)
       alert('Failed to save route')
       return false
     }
   }
 
-  // ---------- POI MARKERS ----------
+  function updateRoute(coords: Array<{ lat: number; lng: number }>) {
+    renderPreviewRoute(coords)
+  }
+
+  // ---------------- POI MARKERS ----------------
   async function loadMarkers() {
+    if (!mapInstance) return null
     try {
       const res = await fetch('http://127.0.0.1:8000/api/content/poi-markers')
       if (!res.ok) throw new Error('Failed to load markers')
       const data = await res.json()
-
-      if (mapInstance && data.value) {
-        pois.value = data.value
-        data.value.forEach((poi: POI) => mapAddMarker(mapInstance!, poi))
-        console.log('Markers loaded from database')
-        return data.value
-      }
-      return null
+      const arr = data?.value ?? data
+      if (!arr || !Array.isArray(arr)) return null
+      pois.value = arr.map((poi: any) => ({
+        id: poi.id || crypto.randomUUID(),
+        lat: Number(poi.lat),
+        lng: Number(poi.lng),
+        shortDescription: poi.shortDescription || 'Nieuwe POI',
+        longDescription: poi.longDescription || '',
+        imageUrl: poi.imageUrl || ''
+      }))
+      pois.value.forEach(poi => mapAddMarker(mapInstance!, poi))
+      return pois.value
     } catch (e) {
-      console.warn('Could not load markers:', e)
+      console.warn('loadMarkers failed', e)
       return null
     }
   }
@@ -124,30 +193,39 @@ export function useMap() {
         body: JSON.stringify({ value: pois.value }),
       })
       if (!res.ok) throw new Error('Failed to save markers')
-      console.log('Markers saved to database!')
       return true
     } catch (e) {
-      console.error('Failed to save markers:', e)
+      console.error('saveMarkers failed', e)
       alert('Failed to save markers')
       return false
     }
   }
 
-  function addPOI(poi: POI) {
-    pois.value.push(poi)
-    if (mapInstance) mapAddMarker(mapInstance, poi)
+  function addPOI(poi: Partial<POI>) {
+    if (!mapInstance) return
+    const newPOI: POI = {
+      id: poi.id || crypto.randomUUID(),
+      lat: poi.lat ?? 0,
+      lng: poi.lng ?? 0,
+      shortDescription: poi.shortDescription?.trim() || 'Nieuwe POI',
+      longDescription: poi.longDescription || '',
+      imageUrl: poi.imageUrl || ''
+    }
+    pois.value.push(newPOI)
+    mapAddMarker(mapInstance, newPOI)
   }
 
   function removePOI(id: string) {
-    const idx = pois.value.findIndex((p) => p.id === id)
+    const idx = pois.value.findIndex(p => p.id === id)
     if (idx !== -1) {
-      mapRemoveMarker(pois.value[idx])
+      const toRemove = pois.value[idx]
+      mapRemoveMarker(toRemove)
       pois.value.splice(idx, 1)
     }
   }
 
   function updatePOI(id: string, updates: Partial<POI>) {
-    const poi = pois.value.find((p) => p.id === id)
+    const poi = pois.value.find(p => p.id === id)
     if (poi) {
       Object.assign(poi, updates)
       if (mapInstance) {
@@ -157,36 +235,47 @@ export function useMap() {
     }
   }
 
-  // ---------- EXAMPLE MARKERS WITH CUSTOM ICON ----------
+  // ---------------- example markers ----------------
   function addExampleMarkers() {
     if (!mapInstance) return
-
     const customPurpleIcon = L.icon({
-      iconUrl: markerImg, // our local marker
+      iconUrl: markerImg,
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
       iconSize: [30, 42],
       iconAnchor: [15, 42],
       popupAnchor: [0, -40],
       shadowSize: [41, 41],
     })
+
+    const examplePoi: POI = {
+      id: 'example-agora',
+      lat: 52.5186,
+      lng: 5.4713,
+      imageUrl: agoraImg,
+      shortDescription: 'Voorbeeld POI',
+      longDescription: 'Een voorbeeldmarker',
+    }
+
+    L.marker([examplePoi.lat, examplePoi.lng], { icon: customPurpleIcon })
+      .bindPopup(`<b>${examplePoi.shortDescription}</b><br>${examplePoi.lat}, ${examplePoi.lng}`)
+      .addTo(mapInstance)
   }
 
-  // ---------- LOAD EXTERNAL ROUTES ----------
+  // ---------------- external routes ----------------
   async function loadExternalRoutes() {
-    if (!routesGroup) return
+    if (!mapInstance) return
+    if (!routesGroup) routesGroup = new L.FeatureGroup().addTo(mapInstance)
     routesGroup.clearLayers()
 
     try {
       const res = await fetch('http://127.0.0.1:8000/api/content/walking-routes')
       if (!res.ok) throw new Error('HTTP ' + res.status)
       const json = await res.json()
-
       const routes = json.value || json.data || json
-
       if (Array.isArray(routes)) {
         routes.forEach((r: any) => {
           if (r.coordinates?.length >= 2) {
-            const coords = r.coordinates.map((p: any) => [p.lat, p.lng] as [number, number])
+            const coords = r.coordinates.map((p: any) => [Number(p.lat), Number(p.lng)] as [number, number])
             L.polyline(coords, {
               color: '#6b3f7b',
               weight: 5,
@@ -197,18 +286,15 @@ export function useMap() {
               .addTo(routesGroup!)
           }
         })
-
-        if (routes.length > 0) {
-          mapInstance?.fitBounds(routesGroup.getBounds(), { padding: [50, 50] })
-        }
       }
     } catch (e) {
-      console.error('Routes laden mislukt', e)
+      console.error('loadExternalRoutes failed', e)
     }
   }
 
   async function refresh() {
-    await loadExternalRoutes()
+    await loadExternalRoutes().catch(() => {})
+    await loadRoute().catch(() => {})
   }
 
   return {
