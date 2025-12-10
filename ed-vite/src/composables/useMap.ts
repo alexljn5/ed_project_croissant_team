@@ -169,16 +169,6 @@ export function useMap() {
       popupAnchor: [0, -40],
       shadowSize: [41, 41],
     })
-
-    // Agora marker with image in popup
-    L.marker([52.5205, 5.479], { icon: customPurpleIcon })
-      .addTo(mapInstance)
-      .bindPopup(`<img src="${agoraImg}" width="200" style="border-radius:8px"><br><strong>De Agora</strong>`)
-
-    // Another example marker
-    L.marker([52.522, 5.481], { icon: customPurpleIcon })
-      .addTo(mapInstance)
-      .bindPopup('Test Marker 2')
   }
 
   // ---------- LOAD EXTERNAL ROUTES ----------
