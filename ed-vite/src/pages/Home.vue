@@ -39,16 +39,16 @@
             <h3>titel1</h3>
             <p>descriptie</p>
           </div>
-          <div class="block-image" style="backgroundImage: 'url(src/assets/img/18c-glas-in-lood.webp)'"></div>
+          <div class="block-image1" :style="{ backgroundImage: 'url(src/assets/img/18c-glas-in-lood.webp)' }"></div>
         </div>
 
         <div class="text-block text-block-2">
-          <div class="block-image" style="backgroundImage: 'url(src/assets/img/17a-gevelschilderingen.webp)'"></div>
           <div class="text-block-shape shape-2"></div>
           <div class="block-text">
             <h3>titel2</h3>
             <p>descriptie</p>
           </div>
+          <div class="block-image" :style="{ backgroundImage: 'url(src/assets/img/17a-gevelschilderingen.webp)' }"></div>
         </div>
 
         <div class="text-block text-block-3">
@@ -57,7 +57,7 @@
             <h3>titel3</h3>
             <p>descriptie</p>
           </div>
-          <div class="block-image" style="backgroundImage: 'url(src/assets/img/agorahof.webp)'"></div>
+          <div class="block-image2" :style="{ backgroundImage: 'url(src/assets/img/agorahof.webp)' }"></div>
         </div>
       </div>
     </section>
@@ -665,11 +665,10 @@ onUnmounted(() => {
 
 .text-block-2 {
   grid-template-columns: 1fr 1fr;
-  direction: rtl;
 }
 
-.text-block-2 > * {
-  direction: ltr;
+.text-block-2 .block-image {
+  order: -1;
 }
 
 .text-block-shape {
@@ -736,17 +735,38 @@ onUnmounted(() => {
   height: 350px;
   background-size: cover;
   background-position: center;
-  border-radius: 12px;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   position: relative;
   z-index: 1;
 }
 
-.block-image:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+.block-image1 {
+  width: 100%;
+  height: 350px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10% 80% 40% 70% / 40% 20% 80% 10%;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  position: relative;
+  z-index: 1;
 }
+
+.block-image2 {
+  width: 100%;
+  height: 350px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 60% 20% 40% 50% / 50% 50% 20% 80%;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  position: relative;
+  z-index: 1;
+}
+
+
 
 /* Responsive Design */
 @media (max-width: 900px) {
