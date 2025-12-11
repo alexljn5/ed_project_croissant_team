@@ -168,7 +168,7 @@ async function deleteWaypoint(idx: number) {
     isLoading.value = true
     await saveRouteToAPI(waypoints.value)
     isLoading.value = false
-    console.log('✅ Waypoint deleted and saved!')
+    console.log('Waypoint deleted and saved!')
   } else {
     alert('Je moet minstens 2 waypoints hebben voor een route!')
   }
@@ -180,7 +180,7 @@ async function updateAndSaveRoute() {
   isLoading.value = false
   
   if (success) {
-    console.log('✅ Route saved and map updated!')
+    console.log('Route saved and map updated!')
     // Update map display with new waypoints
     updateRoute(waypoints.value)
   }

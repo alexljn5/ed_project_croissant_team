@@ -2,7 +2,6 @@
 
 # Node modules and build artifacts
 node_modules/
-<<<<<<< HEAD
 dist/
 dist-ssr/
 public/build/
@@ -76,7 +75,4 @@ main.js
 
 # Misc
 start_frontend_and_backend.sh
-=======
-start_frontend_and_backend.sh/
-start.sh
->>>>>>> debug
+backend/database/migrations/2025_12_10_142940_create_contents_table.php
