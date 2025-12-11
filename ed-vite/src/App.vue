@@ -82,6 +82,10 @@ import Footer from './components/Footer.vue'
   --det-1: hsla(41, 100%, 49%, 0.8);
   --det-2: hsla(41, 100%, 59%, 0.8);
   --det-3: hsla(41, 100%, 69%, 0.8);
+  /**/
+  --a: hsla(41, 100%, 49%, 1);
+  --b: hsla(41, 100%, 59%, 1);
+  --c: hsla(41, 100%, 69%, 1);
 }
 
 *,

@@ -406,9 +406,13 @@ onUnmounted(() => {
 
 .backend-section {
   background: white;
-  min-height: 100vh;
   width: 100%;
-  padding: 2rem 0;
+  padding: 0;
+}
+
+.publicmap {
+  margin: 0;
+  padding: 0;
 }
 
 .modal-overlay {
@@ -587,7 +591,6 @@ onUnmounted(() => {
   );
 }
 
-/* ────────────────────── TEXT SEGMENT SECTION ──────────────────────────────── */
 .text-segment-section {
   width: 100%;
   padding: 4rem 2rem;
