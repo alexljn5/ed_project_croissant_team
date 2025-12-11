@@ -27,12 +27,8 @@
     <router-view />
     <!-- Middle Section with Image and Text -->
     <section class="middle-section">
-      <img
-        src="/src/assets/img/btn.png"
-        alt="Bottom section image"
-        class="bottom-image"
-      />
-      <p class="bottom-text">you have been</p>
+      <img src="/src/assets/img/gnome.jpg" alt="Bottom section image" />
+      <p class="middle-text">hi</p>
     </section>
     <!-- Bottom Section with Image and Text -->
     <section class="bottom-section">
@@ -201,17 +197,27 @@ body::-webkit-scrollbar {
   transition: all 0.1s;
 }
 .middle-section {
-  padding: 50rem;
-  background-image: linear-gradient(to bottom, #fdfdff 0%, #929192 100%);
+  background-color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
-.middle-text {
+.bottom-text {
   margin: 0;
   padding: 1.5rem;
-  color: white;
+  color: var(--site-paars);
+  font-size: var(--font-grootte2);
+  font-weight: bold;
+  border: 3px solid var(--site-paars);
+  border-radius: 8px;
+  text-align: center;
+  background-color: var(--achtergrond-primair);
+}
+.middle-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 1rem;
 }
 .bottom-section {
   padding: 2rem;
