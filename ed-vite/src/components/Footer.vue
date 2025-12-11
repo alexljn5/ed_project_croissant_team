@@ -22,7 +22,7 @@
         <h4>Contactgegevens</h4>
         <ul class="footer-info">
           <li>
-            <a class="unq" href="tel:+31612345678">+31 (0)6 12345678</a>
+            <a href="tel:+31612345678">+31 (0)6 12345678</a>
           </li>
           <li>
             <a href="mailto:test@gmail.com">test@gmail.com</a>
@@ -52,13 +52,15 @@
 </script>
 
 <style scoped>
-.unq {
-  text-decoration: none;
-  color: rgb(28, 28, 28);
-}
 
 .footer-container {
-  background: linear-gradient(135deg, var(--site-paars) 0%, var(--site-paars-light) 100%);
+  background-image: linear-gradient(
+    to top, 
+    var(--site-paars) 0%,
+    var(--site-paars) 29.9999%,
+    var(--site-paars-light) 30%,
+    var(--site-paars-light) 100%
+  );  
   color: white;
   padding-top: 3rem;
   margin-top: auto;

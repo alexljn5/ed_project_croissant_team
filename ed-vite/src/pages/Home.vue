@@ -27,7 +27,6 @@
       </div>
     </div>
 
-    <!-- Map section (full width below slider) -->
     <section class="home-map-section">
       <MapView />
     </section>
@@ -54,7 +53,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import BackendGlue from '../components/BackendGlue.vue';
-import MapView from '../components/MapView.vue';
+//import MapView from '../components/MapView.vue';
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown);
@@ -238,7 +237,7 @@ onUnmounted(() => {
   -webkit-backdrop-filter: blur(100px);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 9px 8px rgba(0, 0, 0, 0.5);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(0.95);
   opacity: 0.7;
@@ -258,7 +257,6 @@ onUnmounted(() => {
 
 .slider-card.active:hover {
   transform: scale(1.08) translateY(-8px);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
 }
 
 .slider-card.active .card-content h1 {
