@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <!-- Map section (full width below slider) -->
+    <!-- Map section (full width below slider) 
     <section class="home-map-section">
       <MapView />
     </section>
@@ -62,20 +62,44 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import BackendGlue from '../components/BackendGlue.vue';
-import MapView from '../components/MapView.vue';
+import { ref, onMounted, onUnmounted } from 'vue'
+import BackendGlue from '../components/BackendGlue.vue'
+import PublicMap from '../components/PublicMap.vue'
+import POIModal from '../components/POIModal.vue'
+import { useMap } from '../composables/useMap'
+import type { POI } from '../composables/useMap'
 
-onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeydown);
-});
+// ────────────────────── GET THE SHARED POIS (REQUIRED) ──────────────────────
+const { initMap, loadRoute, saveRoute: saveRouteToAPI, updateRoute, pois, addPOI, removePOI, saveMarkers, loadMarkers } = useMap()
 
+// ────────────────────── POI MODAL ──────────────────────
+const showPOIModal = ref(false)
+const selectedPOI = ref<POI | null>(null)
 
-const currentIndex = ref(0);
-const sliderTrack = ref<HTMLElement | null>(null);
-const showModal = ref(false);
-const selectedCard = ref<any>(null);
-let autoSlideInterval: ReturnType<typeof setTimeout>;
+// ────────────────────── EXACT SAME LISTENER FROM ADMIN.VUE ──────────────────────
+const setupPoiClickListener = () => {
+  document.addEventListener('click', (e: Event) => {
+    const target = e.target as HTMLElement
+    if (target.classList.contains('poi-more-btn')) {
+      const poiId = target.getAttribute('data-id')
+      if (!poiId) return
+      const poi = pois.value.find(p => p.id === poiId)
+      if (poi) {
+        selectedPOI.value = poi
+        showPOIModal.value = true
+      }
+    }
+  })
+}
+
+// ────────────────────── SLIDER (your original code) ──────────────────────
+const currentIndex = ref(0)
+const sliderTrack = ref<HTMLElement | null>(null)
+const showModal = ref(false)
+const selectedCard = ref<any>(null)
+const isClosing = ref(false)
+const isCardSelected = ref(false)
+let autoSlideInterval: ReturnType<typeof setTimeout>
 
 const sliderCards = [
   { title: 'Titel1', description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore', date: '18-11-25, 8:00', image: 'src/assets/img/18c-glas-in-lood.webp' },
@@ -520,9 +544,9 @@ onUnmounted(() => {
   background-image: linear-gradient(
     to right, 
     var(--det-1) 0%,
-    var(--det-1) 29.8%,
+    var(--det-1) 29.99%,
     var(--det-2) 30%,
-    var(--det-2) 69.8%,
+    var(--det-2) 69.99%,
     var(--det-3) 70%,
     var(--det-3) 100%
   );
@@ -535,13 +559,13 @@ onUnmounted(() => {
 .home-map-section {
   width: 100%;
   padding: 2rem;
-  background: white;
+  background: #ffffff;
 }
 
 .home-map-section #leaflet-map {
   height: 500px !important;
   width: 100%;
-  max-width: 1200px;
+  max-width: 3440vw;
   margin: 0 auto;
   border-radius: 8px;
   overflow: hidden;
@@ -549,7 +573,7 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .home-map-section {
-    padding: 1rem;
+    padding: 10rem;
   }
 
   .home-map-section #leaflet-map {
