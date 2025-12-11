@@ -1,0 +1,15 @@
+{
+    auto_https off
+}
+
+:8000 {
+    root * /var/www/backend/public
+    php_fastcgi app:9000
+    file_server
+}
+
+:5173 {
+    root * /var/www/ed-vite
+    try_files {path} {path}/ /index.html
+    file_server
+}

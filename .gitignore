@@ -76,3 +76,5 @@ main.js
 # Misc
 start_frontend_and_backend.sh
 backend/database/migrations/2025_12_10_142940_create_contents_table.php
+start_docker.sh
+ed-vite/tsconfig.app.tsbuildinfo

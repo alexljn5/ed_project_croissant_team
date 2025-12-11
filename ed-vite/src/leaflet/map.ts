@@ -1,6 +1,6 @@
 // src/leaflet/map.ts
 import L from 'leaflet';
-import markerImg from '/src/assets/img/markers/marker.png'
+const markerImg = new URL("../../assets/img/markers/marker.png", import.meta.url).href
 
 // Global state (zoals jij al had)
 let currentRoutePolyline: L.Polyline | null = null;
@@ -12,9 +12,9 @@ export interface POI {
   id: string
   lat: number
   lng: number
-  imageUrl?: string
+  imageUrl?: string          // ← optional
   shortDescription: string
-  longDescription: string
+  longDescription?: string   // ← THIS MUST BE OPTIONAL
 }
 
 export function initMap(containerId: string): L.Map {
