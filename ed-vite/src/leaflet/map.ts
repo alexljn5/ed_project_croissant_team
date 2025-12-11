@@ -1,5 +1,6 @@
 // src/leaflet/map.ts
 import L from 'leaflet';
+import markerImg from '/src/assets/img/markers/marker.png'
 
 // Global state (zoals jij al had)
 let currentRoutePolyline: L.Polyline | null = null;
@@ -11,7 +12,7 @@ export interface POI {
   id: string
   lat: number
   lng: number
-  imageUrl: string
+  imageUrl?: string
   shortDescription: string
   longDescription: string
 }
@@ -68,7 +69,7 @@ export function drawRoute(map: L.Map, coordinates: Array<{ lat: number; lng: num
   if (currentRoutePolyline) {
     currentRoutePolyline.remove();
   }
-  
+
   currentWaypointCircles.forEach(circle => circle.remove());
   currentWaypointCircles = [];
 
@@ -91,27 +92,39 @@ export function updateRoute(coordinates: Array<{ lat: number; lng: number }>) {
 }
 
 export function addMarker(map: L.Map, poi: POI) {
-  const customIcon = L.icon({
-    iconUrl: poi.imageUrl,
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-    popupAnchor: [0, -40]
-  });
+  // ALWAYS use your purple marker — never poi.imageUrl as icon!
+  const purpleIcon = L.icon({
+    iconUrl: markerImg, // ← THIS IS YOUR HERO
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+    iconSize: [30, 42],
+    iconAnchor: [15, 42],
+    popupAnchor: [0, -40],
+    shadowSize: [41, 41],
+  })
 
-  const marker = L.marker([poi.lat, poi.lng], { icon: customIcon })
+  const marker = L.marker([poi.lat, poi.lng], { icon: purpleIcon })
     .addTo(map)
-    .bindPopup(`
-      <div class="poi-popup-small">
-        <img src="${poi.imageUrl}" width="80" height="80" style="border-radius: 8px; object-fit: cover; margin-bottom: 8px;">
-        <p style="margin: 0 0 8px 0; font-size: 14px;">${poi.shortDescription}</p>
-        <button class="poi-more-btn" data-id="${poi.id}" style="padding: 4px 12px; background: #6b3f7b; color: white; border: none; border-radius: 4px; cursor: pointer;">Meer info</button>
-      </div>
-    `, {
-      maxWidth: 250,
-      className: 'poi-popup'
-    });
 
-  poiMarkers.set(poi.id, marker);
+  // Image goes ONLY in the popup — never as the marker icon
+  const popupImage = poi.imageUrl && poi.imageUrl.trim() !== ''
+    ? `<img src="${poi.imageUrl}" width="200" style="border-radius:8px; margin-bottom:8px; max-height:150px; object-fit:cover;">`
+    : `<div style="width:200px; height:120px; background:#f0f0f0; border-radius:8px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:13px;">Geen foto</div>`
+
+  marker.bindPopup(`
+    <div style="text-align:center; font-family:sans-serif;">
+      ${popupImage}
+      <strong style="font-size:15px; display:block; margin:8px 0;">${poi.shortDescription}</strong>
+      <p style="margin:6px 0; font-size:13px; color:#555; max-width:220px;">${poi.longDescription || ''}</p>
+      <button class="poi-more-btn" data-id="${poi.id}"
+              style="margin-top:8px; padding:6px 12px; background:#6b3f7b; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">
+        Meer info →
+      </button>
+    </div>
+  `, {
+    maxWidth: 280
+  })
+
+  poiMarkers.set(poi.id, marker)
 }
 
 export function removeMarker(poi: POI) {
