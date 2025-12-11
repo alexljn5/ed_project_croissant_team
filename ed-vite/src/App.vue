@@ -6,6 +6,26 @@ Navigatiebalk aangepast:
 - Dubbeloproute titel is niet meer klikbaar
 -->
 
+<!--
+# Jordy - heeft dit gedaan
+App.vue aangepast:
+- globale headers toegevoegd
+- footer aangemaakt en toegevoegd
+- pagina selectie toegevoegd met tekst knoppen
+- pagina selectie = navigate
+- social media links toegevoegd
+- responsive gemaakt
+- footer contactgegevens toegevoegd
+Header aangepast:
+- nieuwe styling
+- nettere layout
+Slider.vue aangepast:
+- verwijdert uit App.vue
+- omgezet naar component
+- nieuwe css styling
+- achtergrond zelfgemaakt en toegevoegd
+-->
+
 <template>
   <div class="app-layout">
     <!-- Navigation Header -->
@@ -28,11 +48,7 @@ Navigatiebalk aangepast:
         </div>
       </div>
     </header>
-
-    <!-- Page Content -->
     <router-view />
-
-    <!-- Footer -->
     <Footer />
   </div>
 </template>
