@@ -29,6 +29,39 @@
       </div>
     </div>
 
+    <section class="text-segment-section">
+      <h2 class="segment-title">segment titel</h2>
+      
+      <div class="segment-content">
+        <div class="text-block text-block-1">
+          <div class="text-block-shape shape-1"></div>
+          <div class="block-text">
+            <h3>titel1</h3>
+            <p>descriptie</p>
+          </div>
+          <div class="block-image" style="backgroundImage: 'url(src/assets/img/18c-glas-in-lood.webp)'"></div>
+        </div>
+
+        <div class="text-block text-block-2">
+          <div class="block-image" style="backgroundImage: 'url(src/assets/img/17a-gevelschilderingen.webp)'"></div>
+          <div class="text-block-shape shape-2"></div>
+          <div class="block-text">
+            <h3>titel2</h3>
+            <p>descriptie</p>
+          </div>
+        </div>
+
+        <div class="text-block text-block-3">
+          <div class="text-block-shape shape-3"></div>
+          <div class="block-text">
+            <h3>titel3</h3>
+            <p>descriptie</p>
+          </div>
+          <div class="block-image" style="backgroundImage: 'url(src/assets/img/agorahof.webp)'"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- Map section (full width below slider) 
     <section class="home-map-section">
       <MapView />
@@ -199,6 +232,7 @@ onUnmounted(() => {
   width: 100%;
   padding: 2rem 0;
   font-family: var(--font-primair);
+  position: relative;
 }
 
 .content-slider::before {
@@ -226,12 +260,13 @@ onUnmounted(() => {
 .slider-card {
   flex: 0 0 auto;
   width: 300px;
-  background: rgb(255, 255, 255);
-  backdrop-filter: blur(100px);
-  -webkit-backdrop-filter: blur(100px);
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 9px 8px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(0.95);
   opacity: 0.7;
@@ -550,6 +585,222 @@ onUnmounted(() => {
     var(--det-3) 70%,
     var(--det-3) 100%
   );
+}
+
+/* ────────────────────── TEXT SEGMENT SECTION ──────────────────────────────── */
+.text-segment-section {
+  width: 100%;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #f5f0f8 0%, #faf8fc 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.segment-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+  font-family: var(--font-heading);
+  color: var(--site-paars);
+  margin: 0 0 3rem 0;
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+}
+
+.segment-title::before {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: var(--site-paars);
+  border-radius: 50%;
+  opacity: 0.1;
+  left: -40px;
+  z-index: 0;
+}
+
+.segment-title::after {
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: var(--interactief);
+  border-radius: 50%;
+  opacity: 0.15;
+  right: -30px;
+  z-index: 0;
+}
+
+.segment-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.text-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  position: relative;
+}
+
+.text-block-1,
+.text-block-3 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.text-block-2 {
+  grid-template-columns: 1fr 1fr;
+  direction: rtl;
+}
+
+.text-block-2 > * {
+  direction: ltr;
+}
+
+.text-block-shape {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.shape-1 {
+  width: 200px;
+  height: 200px;
+  background: var(--site-paars);
+  border-radius: 45% 55% 52% 48% / 48% 45% 55% 52%;
+  opacity: 0.08;
+  top: -50px;
+  left: -100px;
+}
+
+.shape-2 {
+  width: 180px;
+  height: 180px;
+  background: var(--interactief);
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  opacity: 0.1;
+  bottom: -60px;
+  right: -90px;
+}
+
+.shape-3 {
+  width: 220px;
+  height: 220px;
+  background: var(--site-paars);
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  opacity: 0.08;
+  bottom: -80px;
+  left: -110px;
+}
+
+.block-text {
+  position: relative;
+  z-index: 1;
+  padding: 1.5rem 0;
+}
+
+.block-text h3 {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--site-paars);
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
+}
+
+.block-text p {
+  font-family: var(--font-primair);
+  font-size: 1.05rem;
+  color: #555;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.block-image {
+  width: 100%;
+  height: 350px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.block-image:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .text-block {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .text-block-2 {
+    direction: ltr;
+  }
+
+  .block-image {
+    height: 300px;
+  }
+
+  .block-text h3 {
+    font-size: 1.5rem;
+  }
+
+  .block-text p {
+    font-size: 1rem;
+  }
+
+  .shape-1,
+  .shape-2,
+  .shape-3 {
+    opacity: 0.05;
+  }
+}
+
+@media (max-width: 600px) {
+  .text-segment-section {
+    padding: 2rem 1rem;
+  }
+
+  .segment-title {
+    font-size: 1.6rem;
+    padding: 0.8rem 1.5rem;
+  }
+
+  .segment-content {
+    gap: 3rem;
+  }
+
+  .block-text h3 {
+    font-size: 1.3rem;
+  }
+
+  .block-text p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .block-image {
+    height: 250px;
+  }
 }
 
 </style>

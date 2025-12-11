@@ -34,9 +34,11 @@ Slider.vue aangepast:
         <h1 class="dubbeloproute-titel">Dubbelop-route</h1>
         
         <div class="header-right">
+          <!--
           <router-link to="/admin" class="admin-button">
             <button class="adminKnop">Admin</button>
           </router-link>
+          -->
           <router-link to="/contact" class="contact-button">
             <button class="contactKnop">Neem Contact Op</button>
           </router-link>
