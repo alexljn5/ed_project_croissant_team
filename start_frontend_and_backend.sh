@@ -1,6 +1,4 @@
 #!/bin/bash
-# ♡ Cream the Rabbit's Super Compatible Dual-Server Starter ♡
-# Now works on ALL Git Bash versions!
 
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
@@ -9,35 +7,35 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${CYAN}=======================================${NC}"
-echo -e "${YELLOW}   Cream & Cheese are starting both    ${NC}"
-echo -e "${YELLOW}   servers with extra love! ✿          ${NC}"
+echo -e "${YELLOW}   Cream & Cheese are waking up… ♡    ${NC}"
 echo -e "${CYAN}=======================================${NC}"
 
-# Start Laravel backend
-echo -e "${GREEN}[1/2] Starting Laravel backend...${NC}"
-cd backend
-php artisan serve --port=8000 &
-BACKEND_PID=$!
-cd ..
+# ✅ Build Docker image if missing
+if [[ "$(docker images -q ed_project_croissant_team-app 2>/dev/null)" == "" ]]; then
+  echo -e "${YELLOW}First time? Building the magic container… (~60s)${NC}"
+  docker compose build
+else
+  echo -e "${GREEN}Container image already exists — skipping build ♡${NC}"
+fi
 
-sleep 2
+# ✅ Start backend containers in the background, rebuild app container if needed
+echo -e "${GREEN}[1/2] Starting backend containers...${NC}"
+docker compose up -d --build db app
+sleep 5  # Give Laravel a moment to boot
 
-# Start Vite frontend
-echo -e "${GREEN}[2/2] Starting ed-vite frontend...${NC}"
-cd ed-vite
-npm run dev -- --port=5173 --host &
-FRONTEND_PID=$!
-cd ..
+# ✅ Start frontend dev server inside the container
+echo -e "${GREEN}[2/2] Starting frontend dev server inside container...${NC}"
+docker compose exec -T app sh -c "cd /var/www/ed-vite && npm install --silent && npm run dev -- --host 0.0.0.0 --port 5173" &
+VITE_PID=$!
 
 echo -e "${CYAN}=======================================${NC}"
-echo -e "${GREEN}Both servers are running! ♡${NC}"
+echo -e "${GREEN}Everything is running! ♡${NC}"
+echo -e "   Backend → http://localhost:8000"
 echo -e "   Frontend → http://localhost:5173"
-echo -e "   Backend  → http://localhost:8000"
 echo -e "${CYAN}=======================================${NC}"
-echo -e "${YELLOW}Press Ctrl+C to stop both ♡${NC}"
+echo -e "${YELLOW}Press Ctrl+C to stop everything ♡${NC}"
 
-# Old-school way that works everywhere: trap Ctrl+C and kill both
-trap 'echo -e "\n${RED}Stopping both servers... bye bye! ♡${NC}"; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; exit' INT
+# ✅ Clean shutdown
+trap 'echo -e "\n${RED}Stopping everything… bye bye! ♡${NC}"; docker compose down; kill $VITE_PID 2>/dev/null; exit' INT
 
-# Just wait forever until Ctrl+C is pressed
-wait
+wait $VITE_PID
