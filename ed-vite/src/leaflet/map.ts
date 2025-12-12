@@ -91,10 +91,11 @@ export function updateRoute(coordinates: Array<{ lat: number; lng: number }>) {
   }
 }
 
+import markerImg from '@/assets/img/markers/marker.png?url'
+
 export function addMarker(map: L.Map, poi: POI) {
-  // ALWAYS use your purple marker — never poi.imageUrl as icon!
   const purpleIcon = L.icon({
-    iconUrl: markerImg, // ← THIS IS YOUR HERO
+    iconUrl: markerImg,
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
     iconSize: [30, 42],
     iconAnchor: [15, 42],
@@ -105,24 +106,21 @@ export function addMarker(map: L.Map, poi: POI) {
   const marker = L.marker([poi.lat, poi.lng], { icon: purpleIcon })
     .addTo(map)
 
-  // Image goes ONLY in the popup — never as the marker icon
   const popupImage = poi.imageUrl && poi.imageUrl.trim() !== ''
     ? `<img src="${poi.imageUrl}" width="200" style="border-radius:8px; margin-bottom:8px; max-height:150px; object-fit:cover;">`
-    : `<div style="width:200px; height:120px; background:#f0f0f0; border-radius:8px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:13px;">Geen foto</div>`
+    : `<div style="width:200px;height:120px;background:#f0f0f0;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:13px;">Geen foto</div>`
 
   marker.bindPopup(`
-    <div style="text-align:center; font-family:sans-serif;">
+    <div style="text-align:center;font-family:sans-serif;">
       ${popupImage}
-      <strong style="font-size:15px; display:block; margin:8px 0;">${poi.shortDescription}</strong>
-      <p style="margin:6px 0; font-size:13px; color:#555; max-width:220px;">${poi.longDescription || ''}</p>
+      <strong style="font-size:15px;display:block;margin:8px 0;">${poi.shortDescription}</strong>
+      <p style="margin:6px 0;font-size:13px;color:#555;max-width:220px;">${poi.longDescription || ''}</p>
       <button class="poi-more-btn" data-id="${poi.id}"
-              style="margin-top:8px; padding:6px 12px; background:#6b3f7b; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">
+              style="margin-top:8px;padding:6px 12px;background:#6b3f7b;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:bold;">
         Meer info →
       </button>
     </div>
-  `, {
-    maxWidth: 280
-  })
+  `, { maxWidth: 280 })
 
   poiMarkers.set(poi.id, marker)
 }
