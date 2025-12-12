@@ -1,6 +1,6 @@
 // src/leaflet/map.ts
 import L from 'leaflet';
-import markerImg from '@/assets/img/markers/marker.png?url'
+const markerImg = '/img/markers/marker.png';
 
 // Global state (zoals jij al had)
 let currentRoutePolyline: L.Polyline | null = null;
@@ -90,8 +90,6 @@ export function updateRoute(coordinates: Array<{ lat: number; lng: number }>) {
     drawRoute(currentMap, coordinates);
   }
 }
-
-import markerImg from '@/assets/img/markers/marker.png?url'
 
 export function addMarker(map: L.Map, poi: POI) {
   const purpleIcon = L.icon({
