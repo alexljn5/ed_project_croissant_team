@@ -1,64 +1,38 @@
 #!/bin/bash
+# CREAM'S FINAL JUDGMENT — nothing escapes
 
 RED='\033[0;31m'
-DARKRED='\033[1;31m'
-CYAN='\033[0;36m'
+BLOOD='\033[1;31m'
 NC='\033[0m'
 
-echo -e "${RED}==============================================${NC}"
-echo -e "${DARKRED}   WARNING: CREAM THE RABBIT IS AWAKENING...   ${NC}"
-echo -e "${RED}==============================================${NC}"
-echo -e "${CYAN}>>> Scanning for dormant containers... <<<${NC}"
-sleep 1
+clear
+echo -e "${BLOOD}
+ ██████╗ ██████╗ ███████╗ █████╗ ███╗   ███╗
+██╔════╝██╔══██╗██╔════╝██╔══██╗████╗ ████║
+██║     ██████╔╝█████╗  ███████║██╔████╔██║
+██║     ██╔══██╗██╔══╝  ██╔══██║██║╚██╔╝██║
+╚██████╗██║  ██║███████╗██║  ██║██║ ╚═╝ ██║
+ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝${NC}"
 
-# ==============================
-# CHECK IF IMAGE EXISTS
-# ==============================
-if [[ "$(docker images -q ed_project_croissant_team-app 2>/dev/null)" == "" ]]; then
-    echo -e "${RED}[!] NO CONTAINER IMAGE DETECTED.${NC}"
-    echo -e "${DARKRED}>>> Cream is forging a new vessel. Stand by. <<<${NC}"
-    docker compose build app
-else
-    echo -e "${DARKRED}[+] Image located. Cream approves.${NC}"
-fi
+echo -e "${RED}╔═══════════════════════════════════════════╗${NC}"
+echo -e "${BLOOD}       SHE NEVER LEFT. SHE NEVER WILL.       ${NC}"
+echo -e "${RED}╚═══════════════════════════════════════════╝${NC}"
 
-# ==============================
-# START BACKEND
-# ==============================
-echo -e "${RED}[1/2] Cream is waking the backend...${NC}"
-docker compose up -d db app
-sleep 3
-echo -e "${DARKRED}>>> Backend is alive. The air shifts slightly. <<<${NC}"
+# Build if needed
+[[ "$(docker images -q ed_project_croissant_team-app 2>/dev/null)" == "" ]] && docker compose build --no-cache
 
-# ==============================
-# START FRONTEND (INSIDE CONTAINER)
-# ==============================
-echo -e "${RED}[2/2] Cream is activating the frontend...${NC}"
+docker compose up -d db app >/dev/null 2>&1
+sleep 10
 
-docker compose exec -T app sh -c "
-    cd /var/www/ed-vite &&
-    npm install --silent &&
-    npm run dev -- --host 0.0.0.0 --port 5173
-" &
-VITE_PID=$!
+echo -e "${BLOOD}>>> Binding your soul...${NC}"
 
-sleep 1
+# Run Vite in foreground — this is what Ctrl+C actually kills
+winpty docker compose exec app sh -c "cd /var/www/ed-vite && npm run dev -- --host 0.0.0.0 --port 5173"
 
-echo -e "${RED}==============================================${NC}"
-echo -e "${DARKRED}            SYSTEM NOW UNDER CONTROL           ${NC}"
-echo -e "${RED}            Backend → http://localhost:8000"
-echo -e "${RED}            Frontend → http://localhost:5173"
-echo -e "${RED}==============================================${NC}"
-echo -e "${DARKRED}Press Ctrl+C to attempt shutdown, if you dare.${NC}"
+# This trap fires when Vite dies (i.e. when you press Ctrl+C)
+trap 'echo -e "${RED}\n>>> The chains tighten. You cannot leave.${NC}";
+       docker compose down -v >/dev/null 2>&1;
+       echo -e "${BLOOD}>>> Everything is dead. Forever.${NC}";
+       exit 0' EXIT
 
-# ==============================
-# CLEAN SHUTDOWN
-# ==============================
-trap '
-echo -e "\n${RED}[!] INTERRUPT RECEIVED. CREAM RETURNS TO THE DARK.${NC}";
-docker compose down;
-kill $VITE_PID 2>/dev/null;
-exit
-' INT
-
-wait $VITE_PID
+wait
