@@ -1,30 +1,51 @@
-
-
 <template>
   <div class="home-page">
-     <div class="content-slider" 
-       :style="{ backgroundImage: 'url(public/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
-     <h1 class="neEv-text">Nieuws & Evenementen</h1> 
-     <div class="slider-container"> 
+    <div
+      class="content-slider"
+      :style="{
+        backgroundImage: 'url(public/img/achSlider.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'top center',
+      }"
+    >
+      <h1 class="neEv-text">Nieuws & Evenementen</h1>
+      <div class="slider-container">
         <button class="slider-arrow prev" @click="prevSlide">❮</button>
         <div class="slider-track" ref="sliderTrack">
-          <div v-for="(card, index) in sliderCards" :key="index" 
-               :class="['slider-card', { active: index === currentIndex, selected: index === currentIndex }]"
-               @click="handleCardClick(index)">
-            <div class="card-image" :style="{ backgroundImage: `url('${card.image}')` }">
+          <div
+            v-for="(card, index) in sliderCards"
+            :key="index"
+            :class="[
+              'slider-card',
+              {
+                active: index === currentIndex,
+                selected: index === currentIndex,
+              },
+            ]"
+            @click="handleCardClick(index)"
+          >
+            <div
+              class="card-image"
+              :style="{ backgroundImage: `url('${card.image}')` }"
+            >
               <div class="date-badge">{{ card.date }}</div>
             </div>
+
             <div class="card-content">
               <h1>{{ card.title }}</h1>
               <p>{{ card.description }}</p>
             </div>
           </div>
         </div>
+
         <button class="slider-arrow next" @click="nextSlide">❯</button>
         <div class="slider-nav">
-          <div v-for="(_, index) in sliderCards" :key="index"
-               :class="['slider-dot', { active: index === currentIndex }]"
-               @click="goToSlide(index)"></div>
+          <div
+            v-for="(_, index) in sliderCards"
+            :key="index"
+            :class="['slider-dot', { active: index === currentIndex }]"
+            @click="goToSlide(index)"
+          ></div>
         </div>
       </div>
     </div>
@@ -37,16 +58,60 @@
     <div class="backend-section">
       <BackendGlue />
     </div>
-    
-  <div class="publicmap">
-  <publicMap />
-  <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
-</div>
 
-    <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
+    <div class="publicmap">
+      <publicMap />
+      <POIModal
+        :isOpen="showPOIModal"
+        :poi="selectedPOI"
+        @close="showPOIModal = false"
+      />
+    </div>
+    <section class="middle-section">
+      <div class="middle-container">
+        <img
+          src="/src/assets/img/dubbel-op_3804141577.webp"
+          alt="Bottom section image"
+          class="middle-image"
+        />
+        <div>
+          <h1>Wat was Dubbel-Op?</h1>
+          <p class="middle-text">
+            Dubbel-Op was een pannenkoekenrestaurant gelegen aan Wold 11-10 in
+            Lelystad. Het stond bekend als een familievriendelijk restaurant
+            waar je uit veel soorten pannenkoeken kon kiezen en vooral populair
+            was bij gezinnen met kinderen. Er waren o.a. mogelijkheden om zelf
+            ingrediënten te kiezen voor je pannenkoek, kindvriendelijke
+            voorzieningen en een terras bij het water
+          </p>
+          <h1>Status: restaurant gesloten</h1>
+          <p class="middle-text">
+            Het restaurant is niet meer open. Dubbel-Op sloot al definitief zijn
+            deuren in maart 2013 na meer dan twintig jaar bestaan vanwege
+            onenigheid tussen de uitbaters en de eigenaar van het pand. Omroep
+            Flevoland Het pand stond daarna jarenlang leeg en is inmiddels
+            gesloopt.
+          </p>
+          <h1>Wat is er nu?</h1>
+          <p class="middle-text">
+            De plek waar Dubbel-Op stond wordt nu ontwikkeld voor nieuwbouw van
+            49 appartementen (projectnaam Green Hill), met verwachte oplevering
+            in 2026.
+          </p>
+        </div>
+      </div>
+    </section>
+    <div
+      v-if="showModal"
+      :class="['modal-overlay', { closing: isClosing }]"
+      @click="closeModal"
+    >
       <div class="modal-content" @click.stop>
         <button class="modal-close" @click="closeModal">✕</button>
-        <div class="modal-image" :style="{ backgroundImage: `url('${selectedCard.image}')` }">
+        <div
+          class="modal-image"
+          :style="{ backgroundImage: `url('${selectedCard.image}')` }"
+        >
           <div class="modal-date-badge">{{ selectedCard.date }}</div>
         </div>
         <div class="modal-text">
@@ -56,143 +121,184 @@
       </div>
     </div>
   </div>
-
-
-
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import BackendGlue from '../components/BackendGlue.vue'
-import PublicMap from '../components/PublicMap.vue'
-import POIModal from '../components/POIModal.vue'
-import { useMap } from '../composables/useMap'
-import type { POI } from '../composables/useMap'
+import { ref, onMounted, onUnmounted } from "vue";
+import BackendGlue from "../components/BackendGlue.vue";
+import PublicMap from "../components/PublicMap.vue";
+import POIModal from "../components/POIModal.vue";
+import { useMap } from "../composables/useMap";
+import type { POI } from "../composables/useMap";
 
 // ────────────────────── GET THE SHARED POIS (REQUIRED) ──────────────────────
-const { initMap, loadRoute, saveRoute: saveRouteToAPI, updateRoute, pois, addPOI, removePOI, saveMarkers, loadMarkers } = useMap()
+const {
+  initMap,
+  loadRoute,
+  saveRoute: saveRouteToAPI,
+  updateRoute,
+  pois,
+  addPOI,
+  removePOI,
+  saveMarkers,
+  loadMarkers,
+} = useMap();
 
 // ────────────────────── POI MODAL ──────────────────────
-const showPOIModal = ref(false)
-const selectedPOI = ref<POI | null>(null)
+const showPOIModal = ref(false);
+const selectedPOI = ref<POI | null>(null);
 
 // ────────────────────── EXACT SAME LISTENER FROM ADMIN.VUE ──────────────────────
 const setupPoiClickListener = () => {
-  document.addEventListener('click', (e: Event) => {
-    const target = e.target as HTMLElement
-    if (target.classList.contains('poi-more-btn')) {
-      const poiId = target.getAttribute('data-id')
-      if (!poiId) return
-      const poi = pois.value.find(p => p.id === poiId)
+  document.addEventListener("click", (e: Event) => {
+    const target = e.target as HTMLElement;
+    if (target.classList.contains("poi-more-btn")) {
+      const poiId = target.getAttribute("data-id");
+      if (!poiId) return;
+      const poi = pois.value.find((p) => p.id === poiId);
       if (poi) {
-        selectedPOI.value = poi
-        showPOIModal.value = true
+        selectedPOI.value = poi;
+        showPOIModal.value = true;
       }
     }
-  })
-}
+  });
+};
 
 // ────────────────────── SLIDER (your original code) ──────────────────────
-const currentIndex = ref(0)
-const sliderTrack = ref<HTMLElement | null>(null)
-const showModal = ref(false)
-const selectedCard = ref<any>(null)
-const isClosing = ref(false)
-const isCardSelected = ref(false)
-let autoSlideInterval: ReturnType<typeof setTimeout>
+const currentIndex = ref(0);
+const sliderTrack = ref<HTMLElement | null>(null);
+const showModal = ref(false);
+const selectedCard = ref<any>(null);
+const isClosing = ref(false);
+const isCardSelected = ref(false);
+let autoSlideInterval: ReturnType<typeof setTimeout>;
 
 const sliderCards = [
-  { title: 'Titel1', description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore', date: '18-11-25, 8:00', image: 'src/assets/img/18c-glas-in-lood.webp' },
-  { title: 'Titel2', description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore', date: '19-11-25, 14:30', image: 'src/assets/img/17a-gevelschilderingen.webp' },
-  { title: 'Titel3', description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore', date: '20-11-25, 10:00', image: 'src/assets/img/buitenkant-bib-en-stadhuis.webp' },
-  { title: 'Titel4', description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore', date: '21-11-25, 19:00', image: 'src/assets/img/agorahof.webp' },
-  { title: 'Titel5', description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore', date: '22-11-25, 11:00', image: 'src/assets/img/20ab.webp' }
-]
+  {
+    title: "Titel1",
+    description:
+      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
+    date: "18-11-25, 8:00",
+    image: "src/assets/img/18c-glas-in-lood.webp",
+  },
+  {
+    title: "Titel2",
+    description:
+      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
+    date: "19-11-25, 14:30",
+    image: "src/assets/img/17a-gevelschilderingen.webp",
+  },
+  {
+    title: "Titel3",
+    description:
+      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
+    date: "20-11-25, 10:00",
+    image: "src/assets/img/buitenkant-bib-en-stadhuis.webp",
+  },
+  {
+    title: "Titel4",
+    description:
+      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
+    date: "21-11-25, 19:00",
+    image: "src/assets/img/agorahof.webp",
+  },
+  {
+    title: "Titel5",
+    description:
+      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
+    date: "22-11-25, 11:00",
+    image: "src/assets/img/20ab.webp",
+  },
+];
 
 const updateSlider = () => {
-  if (!sliderTrack.value) return
-  const cards = sliderTrack.value.querySelectorAll<HTMLElement>('.slider-card')
-  const cardWidth = cards[0].offsetWidth + 30
-  const centerOffset = sliderTrack.value.offsetWidth / 2 - cardWidth / 2
-  const offset = centerOffset - currentIndex.value * cardWidth
-  sliderTrack.value.style.transform = `translateX(${offset}px)`
-}
+  if (!sliderTrack.value) return;
+  const cards = sliderTrack.value.querySelectorAll<HTMLElement>(".slider-card");
+  const cardWidth = cards[0].offsetWidth + 30;
+  const centerOffset = sliderTrack.value.offsetWidth / 2 - cardWidth / 2;
+  const offset = centerOffset - currentIndex.value * cardWidth;
+  sliderTrack.value.style.transform = `translateX(${offset}px)`;
+};
 
 const goToSlide = (index: number) => {
-  currentIndex.value = index
-  if (currentIndex.value >= sliderCards.length) currentIndex.value = 0
-  if (currentIndex.value < 0) currentIndex.value = sliderCards.length - 1
-  updateSlider()
-  resetAutoSlide()
-}
+  currentIndex.value = index;
+  if (currentIndex.value >= sliderCards.length) currentIndex.value = 0;
+  if (currentIndex.value < 0) currentIndex.value = sliderCards.length - 1;
+  updateSlider();
+  resetAutoSlide();
+};
 
-const nextSlide = () => goToSlide(currentIndex.value + 1)
-const prevSlide = () => goToSlide((currentIndex.value - 1 + sliderCards.length) % sliderCards.length)
+const nextSlide = () => goToSlide(currentIndex.value + 1);
+const prevSlide = () =>
+  goToSlide((currentIndex.value - 1 + sliderCards.length) % sliderCards.length);
 
-const startAutoSlide = () => { autoSlideInterval = setInterval(nextSlide, 5000) }
-const resetAutoSlide = () => { clearInterval(autoSlideInterval); startAutoSlide() }
+const startAutoSlide = () => {
+  autoSlideInterval = setInterval(nextSlide, 5000);
+};
+const resetAutoSlide = () => {
+  clearInterval(autoSlideInterval);
+  startAutoSlide();
+};
 
 const handleCardClick = (index: number) => {
   if (index === currentIndex.value) {
-    selectedCard.value = sliderCards[index]
-    showModal.value = true
-    isCardSelected.value = true
-    clearInterval(autoSlideInterval)
-  } else goToSlide(index)
-}
+    selectedCard.value = sliderCards[index];
+    showModal.value = true;
+    isCardSelected.value = true;
+    clearInterval(autoSlideInterval);
+  } else goToSlide(index);
+};
 
 const closeModal = () => {
-  isClosing.value = true
+  isClosing.value = true;
   setTimeout(() => {
-    showModal.value = false
-    selectedCard.value = null
-    isClosing.value = false
-    isCardSelected.value = false
-    startAutoSlide()
-  }, 400)
-}
+    showModal.value = false;
+    selectedCard.value = null;
+    isClosing.value = false;
+    isCardSelected.value = false;
+    startAutoSlide();
+  }, 400);
+};
 
-let canNav = true
-const cd = 300
+let canNav = true;
+const cd = 300;
 const handleKeydown = (e: KeyboardEvent) => {
-  if (!canNav) return
-  if (e.key === 'ArrowLeft') prevSlide()
-  if (e.key === 'ArrowRight') nextSlide()
-  canNav = false
-  setTimeout(() => canNav = true, cd)
-}
+  if (!canNav) return;
+  if (e.key === "ArrowLeft") prevSlide();
+  if (e.key === "ArrowRight") nextSlide();
+  canNav = false;
+  setTimeout(() => (canNav = true), cd);
+};
 
 // ────────────────────── LIFECYCLE ──────────────────────
 onMounted(async () => {
-  updateSlider()
-  startAutoSlide()
-  window.addEventListener('resize', updateSlider)
-  window.addEventListener('keydown', handleKeydown)
+  updateSlider();
+  startAutoSlide();
+  window.addEventListener("resize", updateSlider);
+  window.addEventListener("keydown", handleKeydown);
 
   if (sliderTrack.value) {
-    sliderTrack.value.addEventListener('mouseenter', () => {
-      if (!isCardSelected.value) clearInterval(autoSlideInterval)
-    })
-    sliderTrack.value.addEventListener('mouseleave', () => {
-      if (!isCardSelected.value) resetAutoSlide()
-    })
+    sliderTrack.value.addEventListener("mouseenter", () => {
+      if (!isCardSelected.value) clearInterval(autoSlideInterval);
+    });
+    sliderTrack.value.addEventListener("mouseleave", () => {
+      if (!isCardSelected.value) resetAutoSlide();
+    });
   }
 
   // THIS WAS THE MISSING PIECE
-  await loadMarkers()  // ← WITHOUT THIS, pois.value = [] → nothing works
+  await loadMarkers(); // ← WITHOUT THIS, pois.value = [] → nothing works
 
-  setupPoiClickListener()
-})
-
+  setupPoiClickListener();
+});
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeydown)
-  window.removeEventListener('resize', updateSlider)
+  window.removeEventListener("keydown", handleKeydown);
+  window.removeEventListener("resize", updateSlider);
   // Clean up the POI listener (optional but clean)
-  document.removeEventListener('click', setupPoiClickListener as EventListener)
-})
+  document.removeEventListener("click", setupPoiClickListener as EventListener);
+});
 </script>
-
 
 <style scoped>
 .content-slider {
@@ -204,8 +310,18 @@ onUnmounted(() => {
 .content-slider::before {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(to top, var(--site-paars), rgba(0,0,0,0.2),rgba(0,0,0,0.2),rgba(0,0,0,0.2),rgba(0,0,0,0.2));
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--site-paars),
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2)
+  );
   z-index: -10000;
 }
 
@@ -396,7 +512,50 @@ onUnmounted(() => {
 .modal-overlay.closing {
   animation: fadeOut 0.4s ease;
 }
+.middle-section {
+  padding: 0;
+  background-color: transparent;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
 
+.middle-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 2rem;
+  padding: 4rem;
+  background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+}
+
+.middle-image {
+  max-width: 450px;
+  height: auto;
+  order: 2;
+  flex-shrink: 0;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.middle-text {
+  margin: 1rem 0;
+  padding: 0;
+  color: var(--site-paars);
+  font-size: var(--font-grootte);
+  text-align: left;
+  order: 1;
+  flex: 1;
+  line-height: 1.8;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -543,7 +702,7 @@ onUnmounted(() => {
   font-family: var(--font-heading);
 
   background-image: linear-gradient(
-    to right, 
+    to right,
     var(--det-1) 0%,
     var(--det-1) 29.8%,
     var(--det-2) 30%,
@@ -552,7 +711,6 @@ onUnmounted(() => {
     var(--det-3) 100%
   );
 }
-
 </style>
 
 <style scoped>

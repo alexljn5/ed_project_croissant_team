@@ -26,50 +26,10 @@
     <!-- Page Content -->
     <router-view />
     <!-- Middle Section with Image and Text -->
-    <section class="middle-section">
-      <div class="middle-container">
-        <img
-          src="/src/assets/img/dubbel-op_3804141577.webp"
-          alt="Bottom section image"
-          class="middle-image"
-        />
-        <div>
-          <h1>Wat was Dubbel-Op?</h1>
-          <p class="middle-text">
-            Dubbel-Op was een pannenkoekenrestaurant gelegen aan Wold 11-10 in
-            Lelystad. Het stond bekend als een familievriendelijk restaurant
-            waar je uit veel soorten pannenkoeken kon kiezen en vooral populair
-            was bij gezinnen met kinderen. Er waren o.a. mogelijkheden om zelf
-            ingrediënten te kiezen voor je pannenkoek, kindvriendelijke
-            voorzieningen en een terras bij het water
-          </p>
-          <h1>Status: restaurant gesloten</h1>
-          <p class="middle-text">
-            Het restaurant is niet meer open. Dubbel-Op sloot al definitief zijn
-            deuren in maart 2013 na meer dan twintig jaar bestaan vanwege
-            onenigheid tussen de uitbaters en de eigenaar van het pand. Omroep
-            Flevoland Het pand stond daarna jarenlang leeg en is inmiddels
-            gesloopt.
-          </p>
-          <h1>Wat is er nu?</h1>
-          <p class="middle-text">
-            De plek waar Dubbel-Op stond wordt nu ontwikkeld voor nieuwbouw van
-            49 appartementen (projectnaam Green Hill), met verwachte oplevering
-            in 2026.
-          </p>
-        </div>
-      </div>
-    </section>
+
     <!-- Bottom Section with Image and Text -->
     <section class="bottom-section">
-      <img
-        src="/src/assets/img/btn.png"
-        alt="Bottom section image"
-        class="bottom-image"
-      />
-      <p class="bottom-text">
-        Backend: CROISSANT TEAM WINS — FINAL VICTORY 2025!!!
-      </p>
+      <p class="bottom-text">hi</p>
     </section>
   </div>
 </template>
@@ -225,50 +185,6 @@ body::-webkit-scrollbar {
   background: var(--site-paars);
   color: white;
   transition: all 0.1s;
-}
-.middle-section {
-  padding: 0;
-  background-color: transparent;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.middle-container {
-  max-width: 1200px;
-  width: 100%;
-  margin: 2rem;
-  padding: 4rem;
-  background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 3rem;
-}
-
-.middle-image {
-  max-width: 450px;
-  height: auto;
-  order: 2;
-  flex-shrink: 0;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  overflow: hidden;
-}
-
-.middle-text {
-  margin: 1rem 0;
-  padding: 0;
-  color: var(--site-paars);
-  font-size: var(--font-grootte);
-  text-align: left;
-  order: 1;
-  flex: 1;
-  line-height: 1.8;
 }
 .bottom-section {
   padding: 2rem;
