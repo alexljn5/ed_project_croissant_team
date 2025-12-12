@@ -1,6 +1,6 @@
 // src/leaflet/map.ts
 import L from 'leaflet';
-const markerImg = new URL("../../assets/img/markers/marker.png", import.meta.url).href
+import markerImg from '@/assets/img/markers/marker.png?url'
 
 // Global state (zoals jij al had)
 let currentRoutePolyline: L.Polyline | null = null;

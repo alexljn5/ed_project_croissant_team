@@ -8,8 +8,8 @@ import {
 } from '../leaflet/map'
 
 // fixed imports for local assets (if used)
-const markerImg = new URL("../../assets/img/markers/marker.png", import.meta.url).href
-const agoraImg   = new URL("../../assets/img/agora.webp", import.meta.url).href
+import markerImg from '@/assets/img/markers/marker.png?url'
+import agoraImg from '@/assets/img/agora.webp?url'
 
 export interface POI {
   id: string
