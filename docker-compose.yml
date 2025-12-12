@@ -1,25 +1,15 @@
 services:
   app:
     build: .
-    container_name: croissant-app
-    restart: unless-stopped
-    working_dir: /var/www
     ports:
-      - "8000:8000"    # Laravel (and final app in prod)
-      - "5173:5173"    # Vite dev server
+      - "8000:8000"
     volumes:
       - .:/var/www
-      - ./backend/storage:/var/www/storage
-      - ./backend/bootstrap/cache:/var/www/bootstrap/cache
-    environment:
-      - APP_ENV=local
-      - APP_DEBUG=true
     depends_on:
       - db
 
   db:
     image: mariadb:11.5
-    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: croissant
@@ -27,8 +17,6 @@ services:
       MYSQL_PASSWORD: secret
     volumes:
       - dbdata:/var/lib/mysql
-    ports:
-      - "3306:3306"
 
 volumes:
   dbdata:
