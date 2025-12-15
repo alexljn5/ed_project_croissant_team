@@ -32,7 +32,6 @@ Slider.vue aangepast:
     <header class="header-top">
       <div class="header-container">
         <h1 class="dubbeloproute-titel">Dubbelop-route</h1>
-        
         <div class="header-right">
           <!--
           <router-link to="/admin" class="admin-button">
