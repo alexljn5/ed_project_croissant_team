@@ -81,3 +81,4 @@ start_docker.sh
 /package-lock.json
 .docker_built
 ed-vite/package-lock.json
+backend/croissant
