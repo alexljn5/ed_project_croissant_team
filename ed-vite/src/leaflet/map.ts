@@ -95,9 +95,9 @@ export function addMarker(map: L.Map, poi: POI) {
   const purpleIcon = L.icon({
     iconUrl: markerImg,
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-    iconSize: [30, 42],
-    iconAnchor: [15, 42],
-    popupAnchor: [0, -40],
+    iconSize: [24, 48],
+    iconAnchor: [12, 48],
+    popupAnchor: [0, -48],
     shadowSize: [41, 41],
   })
 
