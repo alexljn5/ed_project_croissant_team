@@ -1,11 +1,12 @@
 <template>
-  <div class="fixed bottom-4 right-4 z-50">
+  <!-- <div class="fixed bottom-4 right-4 z-50">
     <div class="bg-white rounded-e-1g shadow-2xl px-6 py-4 border-4 border-purple-300">
       <p class="text-sm font-bold text-purple-800 whitespace-nowrap">
         Backend: {{ msg }}
       </p>
     </div>
-  </div>
+  </div> 
+  -->
 </template>
 
 <script setup lang="ts">

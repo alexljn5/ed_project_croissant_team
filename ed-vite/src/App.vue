@@ -6,6 +6,26 @@ Navigatiebalk aangepast:
 - Dubbeloproute titel is niet meer klikbaar
 -->
 
+<!--
+# Jordy - heeft dit gedaan
+App.vue aangepast:
+- globale headers toegevoegd
+- footer aangemaakt en toegevoegd
+- pagina selectie toegevoegd met tekst knoppen
+- pagina selectie = navigate
+- social media links toegevoegd
+- responsive gemaakt
+- footer contactgegevens toegevoegd
+Header aangepast:
+- nieuwe styling
+- nettere layout
+Slider.vue aangepast:
+- verwijdert uit App.vue
+- omgezet naar component
+- nieuwe css styling
+- achtergrond zelfgemaakt en toegevoegd
+-->
+
 <template>
   <div class="app-layout">
     <!-- Navigation Header -->
@@ -14,9 +34,11 @@ Navigatiebalk aangepast:
         <h1 class="dubbeloproute-titel">Dubbelop-route</h1>
         
         <div class="header-right">
+          <!--
           <router-link to="/admin" class="admin-button">
             <button class="adminKnop">Admin</button>
           </router-link>
+          -->
           <router-link to="/contact" class="contact-button">
             <button class="contactKnop">Neem Contact Op</button>
           </router-link>
@@ -28,13 +50,13 @@ Navigatiebalk aangepast:
         </div>
       </div>
     </header>
-
-    <!-- Page Content -->
     <router-view />
+    <Footer />
   </div>
 </template>
 
 <script setup lang="ts">
+import Footer from './components/Footer.vue'
 </script>
 
 <style>
@@ -60,6 +82,10 @@ Navigatiebalk aangepast:
   --det-1: hsla(41, 100%, 49%, 0.8);
   --det-2: hsla(41, 100%, 59%, 0.8);
   --det-3: hsla(41, 100%, 69%, 0.8);
+  /**/
+  --a: hsla(41, 100%, 49%, 1);
+  --b: hsla(41, 100%, 59%, 1);
+  --c: hsla(41, 100%, 69%, 1);
 }
 
 *,
@@ -195,7 +221,7 @@ body::-webkit-scrollbar {
   border-radius: 20px;
   border: 2px solid var(--site-paars);
   cursor: pointer;
-  transition: background-color 0.45s;
+  transition: background-color 0.15s;
   font-weight: bold;
   color: var(--site-paars);
 }
@@ -203,6 +229,6 @@ body::-webkit-scrollbar {
 .contactKnop:hover {
   background: var(--site-paars);
   color: white;
-  transition: all 0.1s;
+  transition: all 0.15s;
 }
 </style>
