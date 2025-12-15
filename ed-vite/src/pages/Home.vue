@@ -1,5 +1,3 @@
-
-
 <template>
   <div class="home-page">
      <div class="content-slider" 
@@ -89,8 +87,6 @@
       </div>
     </div>
   </div>
-
-
 
 </template>
 
