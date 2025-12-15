@@ -98,6 +98,7 @@ import POIModal from '../components/POIModal.vue'
 import { useMap } from '../composables/useMap'
 import type { POI } from '../composables/useMap'
 import '@/assets/css/home.css'
+import '@/assets/css/styles.css'
 
 // ────────────────────── GET THE SHARED POIS (REQUIRED) ──────────────────────
 const { initMap, loadRoute, saveRoute: saveRouteToAPI, updateRoute, pois, addPOI, removePOI, saveMarkers, loadMarkers } = useMap()

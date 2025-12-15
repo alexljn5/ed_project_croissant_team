@@ -41,6 +41,7 @@
     grid-template-columns: 1fr 1fr;
 }
 
+
 /* Op kleine schermen onder elkaar */
 @media (max-width: 900px) {
     .admin-grid {
@@ -148,6 +149,7 @@
     border-radius: 6px;
     border: 1px solid #ddd;
 }
+
 
 .waypoint-number {
     font-weight: bold;

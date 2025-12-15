@@ -48,7 +48,7 @@
     
     <div class="save-section">
       <button @click="savePOIs" class="save-pois-btn" :disabled="props.isLoading">
-        {{ props.isLoading ? 'Opslaan...' : '💾 Alle POIs opslaan' }}
+        {{ props.isLoading ? 'Opslaan...' : 'Alle POIs opslaan' }}
       </button>
     </div>
   </div>
