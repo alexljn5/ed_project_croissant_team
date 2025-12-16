@@ -21,7 +21,7 @@ RUN composer install --optimize-autoloader
 
 # Install frontend dependencies
 WORKDIR /var/www/ed-vite
-RUN npm ci
+RUN npm install
 
 # Fix permissions
 RUN chown -R www-data:www-data /var/www
