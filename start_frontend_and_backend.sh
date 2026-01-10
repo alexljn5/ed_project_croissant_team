@@ -1,43 +1,150 @@
 #!/bin/bash
-# ♡ Cream the Rabbit's Super Compatible Dual-Server Starter ♡
-# Now works on ALL Git Bash versions!
 
-GREEN='\033[0;32m'
-CYAN='\033[0;36m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
+PURPLE='\033[0;35m'
+LIGHT_PURPLE='\033[1;35m'
 NC='\033[0m'
 
-echo -e "${CYAN}=======================================${NC}"
-echo -e "${YELLOW}   Cream & Cheese are starting both    ${NC}"
-echo -e "${YELLOW}   servers with extra love! ✿          ${NC}"
-echo -e "${CYAN}=======================================${NC}"
+clear
+echo
+echo -e "${LIGHT_PURPLE}
+ ___  _  _  ___  ___  ___  __       __  ___    ___   __  _  _  ____  ___
+(   \( )( )(  ,)(  ,)(  _)(  )     /  \(  ,\  (  ,) /  \( )( )(_  _)(  _)
+ ) ) ))()(  ) ,\ ) ,\ ) _) )(__   ( () )) _/   )  \( () ))()(   )(   ) _)
+(___/ \__/ (___/(___/(___)(____)   \__/(_)    (_)\_)\__/ \__/  (__) (___)
+${NC}"
+echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
+echo -e "${LIGHT_PURPLE}                    DUBBEL OP ROUTE                       ${NC}"
+echo -e "${LIGHT_PURPLE}                Fullstack Development Environment         ${NC}"
+echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
+echo
 
-# Start Laravel backend
-echo -e "${GREEN}[1/2] Starting Laravel backend...${NC}"
-cd backend
-php artisan serve --port=8000 &
-BACKEND_PID=$!
-cd ..
+# === PRE-FLIGHT CHECKS ===
+echo -e "${LIGHT_PURPLE}>>> Running pre-flight checks...${NC}"
+ISSUES=false
 
-sleep 2
+if [[ ! -f "ed-vite/package-lock.json" ]]; then
+  echo -e "${PURPLE}>>> package-lock.json missing — regenerating${NC}"
+  (cd ed-vite && npm install) || ISSUES=true
+fi
 
-# Start Vite frontend
-echo -e "${GREEN}[2/2] Starting ed-vite frontend...${NC}"
-cd ed-vite
-npm run dev -- --port=5173 --host &
-FRONTEND_PID=$!
-cd ..
+if [[ ! -f "backend/.env" ]]; then
+  echo -e "${PURPLE}>>> backend/.env missing — copying from example${NC}"
+  cp backend/.env.example backend/.env || ISSUES=true
+fi
 
-echo -e "${CYAN}=======================================${NC}"
-echo -e "${GREEN}Both servers are running! ♡${NC}"
-echo -e "   Frontend → http://localhost:5173"
-echo -e "   Backend  → http://localhost:8000"
-echo -e "${CYAN}=======================================${NC}"
-echo -e "${YELLOW}Press Ctrl+C to stop both ♡${NC}"
+[[ ! -f "Dockerfile" ]] && echo -e "${PURPLE}>>> Dockerfile missing!${NC}" && ISSUES=true
+[[ ! -f "docker-compose.yml" ]] && echo -e "${PURPLE}>>> docker-compose.yml missing!${NC}" && ISSUES=true
 
-# Old-school way that works everywhere: trap Ctrl+C and kill both
-trap 'echo -e "\n${RED}Stopping both servers... bye bye! ♡${NC}"; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; exit' INT
+if $ISSUES; then
+  echo -e "${PURPLE}>>> Critical issues found. Fix and retry.${NC}"
+  exit 1
+fi
 
-# Just wait forever until Ctrl+C is pressed
-wait
+echo -e "${LIGHT_PURPLE}>>> All good. Proceeding...${NC}"
+
+# === BUILD ===
+FORCE_BUILD=false
+[[ "$1" == "--force" || "$1" == "-f" ]] && FORCE_BUILD=true && echo -e "${LIGHT_PURPLE}>>> Force rebuild requested${NC}"
+
+NEED_BUILD=false
+if $FORCE_BUILD || [[ ! -f .docker_built ]] || \
+   [[ Dockerfile -nt .docker_built ]] || [[ docker-compose.yml -nt .docker_built ]] || \
+   ! docker image inspect ed_project_croissant_team-app >/dev/null 2>&1; then
+  NEED_BUILD=true
+fi
+
+if $NEED_BUILD; then
+  echo -e "${LIGHT_PURPLE}>>> Building containers...${NC}"
+  docker compose build --no-cache > /tmp/docker_build.log 2>&1 &
+  BUILD_PID=$!
+  spin='⣾⣽⣻⢿⡿⣟⣯⣷'
+  i=0
+  while kill -0 $BUILD_PID 2>/dev/null; do
+    i=$(( (i+1) %8 ))
+    printf "\r${PURPLE}Building... ${spin:$i:1}${NC}"
+    sleep .1
+  done
+  wait $BUILD_PID
+  echo -e "\r${LIGHT_PURPLE}>>> Build complete!                               ${NC}"
+  touch .docker_built
+else
+  echo -e "${LIGHT_PURPLE}>>> Reusing existing image...${NC}"
+fi
+
+# === START ===
+echo -e "${PURPLE}>>> Starting services...${NC}"
+if ! docker compose up -d; then
+  echo -e "${LIGHT_PURPLE}>>> Docker Desktop might not be running.${NC}"
+  echo -e "${LIGHT_PURPLE}>>> Please open Docker Desktop and try again :)${NC}"
+  exit 1
+fi
+
+sleep 3
+
+# === LARAVEL SETUP ===
+echo -e "${LIGHT_PURPLE}>>> Checking Laravel setup...${NC}"
+
+if $FORCE_BUILD || [[ ! -f .laravel_setup_done ]] || [[ ! -f backend/.env ]] || \
+   find backend/database/migrations -newer .laravel_setup_done 2>/dev/null | grep -q . ; then
+  echo -e "${LIGHT_PURPLE}>>> Running Laravel setup...${NC}"
+
+  # Run setup in a fresh container to ensure proper permissions and environment
+  docker compose run --rm app sh -c "
+    set -e
+    cd /var/www/backend
+
+    # Ensure .env exists
+    cp -n .env.example .env
+
+    # Install Composer dependencies if vendor missing
+    if [ ! -d vendor ]; then
+      echo '>>> Installing Composer dependencies...'
+      composer install --optimize-autoloader --no-dev --no-interaction --no-plugins
+    fi
+
+    # Run Artisan setup
+    echo '>>> Generating app key...'
+    php artisan key:generate --force
+
+    echo '>>> Caching config & routes...'
+    php artisan config:cache
+    php artisan route:cache
+
+    echo '>>> Running migrations...'
+    php artisan migrate --force --no-interaction
+
+    echo '>>> Creating storage symlink...'
+    php artisan storage:link
+  "
+
+  # Mark setup as done
+  touch .laravel_setup_done
+else
+  echo -e "${LIGHT_PURPLE}>>> Laravel setup skipped (already done)${NC}"
+fi
+
+
+# === READY ===
+echo -e "${LIGHT_PURPLE}>>> Services ready!${NC}"
+echo ""
+echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
+echo -e "${LIGHT_PURPLE}   Laravel: http://localhost:8000                         ${NC}"
+echo -e "${LIGHT_PURPLE}   Vite Dev: http://localhost:5173                        ${NC}"
+echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
+echo ""
+echo -e "${PURPLE}Press any key for live logs, Ctrl+C to stop services${NC}"
+
+# Wait for key press
+read -n 1 -s -r
+
+# Show logs after key press
+docker compose logs -f &
+LOGS_PID=$!
+
+trap 'echo -e "\n${PURPLE}>>> Stopping services...${NC}";
+      kill $LOGS_PID 2>/dev/null;
+      docker compose stop;
+      echo -e "${LIGHT_PURPLE}>>> Stopped cleanly — fast restart next time${NC}";
+      exit 0' INT TERM
+
+wait $LOGS_PID
