@@ -26,3 +26,42 @@ Thumbs.db
 # Add these for SQLite databases
 /database/*.sqlite
 /database/database.sqlite
+/artisan
+/croissant
+/.env.example
+/.gitattributes
+/.php-cs-fixer.dist.php
+/.editorconfig
+/.composer.json
+/.composer.lock
+/.package.json
+
+# Laravel-specific (common additions)
+bootstrap/cache/
+storage/framework/cache/data/
+storage/framework/sessions/
+storage/framework/views/
+storage/logs/*.log
+storage/app/public/   # if you don't commit uploaded files
+
+# Database (if using SQLite locally)
+database/database.sqlite
+database/*.sqlite
+
+# Composer
+composer.lock          # optional — usually commit it, but if you don't want
+.phpunit.result.cache
+
+# Node/Vite build artifacts (if any frontend bleed)
+public/build/
+public/hot/
+
+# Misc Laravel generated
+.php-cs-fixer.cache
+.phpstorm.meta.php
+_ide_helper.php
+_ide_helper_models.php
+
+# Testing / CI
+.phpunit.result.cache
+/coverage

@@ -44,7 +44,7 @@ import { useContent } from "../composables/useContent";
 import L from "leaflet";
 
 // Marker PNG with timestamp to prevent caching
-const markerIconUrl = `/src/assets/img/markers/marker.png?ts=${new Date().getTime()}`;
+const markerIconUrl = "/img/markers/marker.png";
 
 const shadowUrl = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png";
 

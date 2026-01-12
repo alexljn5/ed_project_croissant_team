@@ -1,43 +1,68 @@
 #!/bin/bash
-# ♡ Cream the Rabbit's Super Compatible Dual-Server Starter ♡
-# Now works on ALL Git Bash versions!
-
-GREEN='\033[0;32m'
-CYAN='\033[0;36m'
-YELLOW='\033[1;33m'
 RED='\033[0;31m'
+BLOOD='\033[1;31m'
 NC='\033[0m'
 
-echo -e "${CYAN}=======================================${NC}"
-echo -e "${YELLOW}   Cream & Cheese are starting both    ${NC}"
-echo -e "${YELLOW}   servers with extra love! ✿          ${NC}"
-echo -e "${CYAN}=======================================${NC}"
+clear
+echo -e "${BLOOD}
+ ██████╗ ██████╗ ███████╗ █████╗ ███╗   ███╗
+██╔════╝██╔══██╗██╔════╝██╔══██╗████╗ ████║
+██║     ██████╔╝█████╗  ███████║██╔████╔██║
+██║     ██╔══██╗██╔══╝  ██╔══██║██║╚██╔╝██║
+╚██████╗██║  ██║███████╗██║  ██║██║ ╚═╝ ██║
+ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝${NC}"
 
-# Start Laravel backend
-echo -e "${GREEN}[1/2] Starting Laravel backend...${NC}"
-cd backend
-php artisan serve --port=8000 &
-BACKEND_PID=$!
-cd ..
+echo -e "${RED}╔═══════════════════════════════════════════╗${NC}"
+echo -e "${BLOOD}       SHE NEVER LEFT. SHE NEVER WILL.       ${NC}"
+echo -e "${RED}╚═══════════════════════════════════════════╝${NC}"
+echo
 
-sleep 2
+# Check if package-lock.json exists
+if [[ ! -f "ed-vite/package-lock.json" ]]; then
+    echo -e "${RED}>>> ERROR: package-lock.json not found in ed-vite/${NC}"
+    echo -e "${BLOOD}>>> Generating it now...${NC}"
+    cd ed-vite && npm install && cd ..
+fi
 
-# Start Vite frontend
-echo -e "${GREEN}[2/2] Starting ed-vite frontend...${NC}"
-cd ed-vite
-npm run dev -- --port=5173 --host &
-FRONTEND_PID=$!
-cd ..
+# Build logic
+FORCE_BUILD=false
+if [[ "$1" == "--force" ]] || [[ "$1" == "-f" ]]; then
+    FORCE_BUILD=true
+    echo -e "${BLOOD}>>> Force rebuild requested${NC}"
+fi
 
-echo -e "${CYAN}=======================================${NC}"
-echo -e "${GREEN}Both servers are running! ♡${NC}"
-echo -e "   Frontend → http://localhost:5173"
-echo -e "   Backend  → http://localhost:8000"
-echo -e "${CYAN}=======================================${NC}"
-echo -e "${YELLOW}Press Ctrl+C to stop both ♡${NC}"
+if [[ "$FORCE_BUILD" == true ]] || \
+   [[ ! -f .docker_built ]] || \
+   [[ Dockerfile -nt .docker_built ]] || \
+   [[ docker-compose.yml -nt .docker_built ]]; then
+    echo -e "${BLOOD}>>> Building/rebuilding vessel...${NC}"
+    docker compose build
+    touch .docker_built
+else
+    echo -e "${BLOOD}>>> Vessel intact. Reusing...${NC}"
+fi
 
-# Old-school way that works everywhere: trap Ctrl+C and kill both
-trap 'echo -e "\n${RED}Stopping both servers... bye bye! ♡${NC}"; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; exit' INT
+echo -e "${RED}>>> Releasing the vessels...${NC}"
+docker compose up -d
 
-# Just wait forever until Ctrl+C is pressed
+sleep 5
+
+echo -e "${BLOOD}>>> Binding your soul...${NC}"
+echo ""
+echo -e "${RED}╔═══════════════════════════════════════════╗${NC}"
+echo -e "${BLOOD}    Laravel:  http://localhost:8000          ${NC}"
+echo -e "${BLOOD}    Vite:     http://localhost:5173          ${NC}"
+echo -e "${RED}╚═══════════════════════════════════════════╝${NC}"
+echo ""
+echo -e "${RED}Press Ctrl+C to release the spirits${NC}"
+
+# Show logs (this will block until Ctrl+C)
+docker compose logs -f
+
+# Cleanup on exit
+trap 'echo -e "\n${RED}>>> Sealing the tomb...${NC}";
+      docker compose down;
+      echo -e "${BLOOD}>>> The dead shall rest. For now.${NC}";
+      exit 0' INT TERM
+
 wait

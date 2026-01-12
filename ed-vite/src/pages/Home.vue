@@ -1,9 +1,19 @@
 <template>
   <div class="home-page">
+    <nav style="text-align: right; margin: 1rem 0">
+      <router-link to="/reviews" class="reviews-link styled-link"
+        >Reviews</router-link
+      >
+    </nav>
+
+    <!-- Floating Reviews Button -->
+    <router-link to="/reviews" class="floating-reviews-btn">
+      <span>Reviews</span>
+    </router-link>
     <div
       class="content-slider"
       :style="{
-        backgroundImage: 'url(public/img/achSlider.png)',
+        backgroundImage: 'url(/img/achSlider.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'top center',
       }"
@@ -49,6 +59,53 @@
         </div>
       </div>
     </div>
+
+    <section class="text-segment-section">
+      <h2 class="segment-title">segment titel</h2>
+
+      <div class="segment-content">
+        <div class="text-block text-block-1">
+          <div class="text-block-shape shape-1"></div>
+          <div class="block-text">
+            <h3>titel1</h3>
+            <p>descriptie</p>
+          </div>
+          <div
+            class="block-image1"
+            :style="{
+              backgroundImage: 'url(src/assets/img/18c-glas-in-lood.webp)',
+            }"
+          ></div>
+        </div>
+
+        <div class="text-block text-block-2">
+          <div class="text-block-shape shape-2"></div>
+          <div class="block-text">
+            <h3>titel2</h3>
+            <p>descriptie</p>
+          </div>
+          <div
+            class="block-image"
+            :style="{
+              backgroundImage:
+                'url(src/assets/img/17a-gevelschilderingen.webp)',
+            }"
+          ></div>
+        </div>
+
+        <div class="text-block text-block-3">
+          <div class="text-block-shape shape-3"></div>
+          <div class="block-text">
+            <h3>titel3</h3>
+            <p>descriptie</p>
+          </div>
+          <div
+            class="block-image2"
+            :style="{ backgroundImage: 'url(src/assets/img/agorahof.webp)' }"
+          ></div>
+        </div>
+      </div>
+    </section>
 
     <!-- Map section (full width below slider) 
     <section class="home-map-section">
@@ -130,6 +187,8 @@ import PublicMap from "../components/PublicMap.vue";
 import POIModal from "../components/POIModal.vue";
 import { useMap } from "../composables/useMap";
 import type { POI } from "../composables/useMap";
+import "@/assets/css/home.css";
+import "@/assets/css/styles.css";
 
 // ────────────────────── GET THE SHARED POIS (REQUIRED) ──────────────────────
 const {
@@ -512,50 +571,7 @@ onUnmounted(() => {
 .modal-overlay.closing {
   animation: fadeOut 0.4s ease;
 }
-.middle-section {
-  padding: 0;
-  background-color: transparent;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
 
-.middle-container {
-  max-width: 1200px;
-  width: 100%;
-  margin: 2rem;
-  padding: 4rem;
-  background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 3rem;
-}
-
-.middle-image {
-  max-width: 450px;
-  height: auto;
-  order: 2;
-  flex-shrink: 0;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  overflow: hidden;
-}
-
-.middle-text {
-  margin: 1rem 0;
-  padding: 0;
-  color: var(--site-paars);
-  font-size: var(--font-grootte);
-  text-align: left;
-  order: 1;
-  flex: 1;
-  line-height: 1.8;
-}
 @keyframes fadeIn {
   from {
     opacity: 0;
