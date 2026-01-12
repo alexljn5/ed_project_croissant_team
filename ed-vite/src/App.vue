@@ -38,6 +38,9 @@ Slider.vue aangepast:
             <button class="adminKnop">Admin</button>
           </router-link>
           -->
+          <router-link to="/reviews" class="reviews-button">
+            <button class="reviewsKnop">Reviews</button>
+          </router-link>
           <router-link to="/contact" class="contact-button">
             <button class="contactKnop">Neem Contact Op</button>
           </router-link>
