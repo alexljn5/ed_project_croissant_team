@@ -35,9 +35,16 @@ const routes = [
 
 console.log('[router] registered routes:', routes.map(r => r.path))
 
+// Log component details for debugging
+console.log('[router] Reviews component loaded:', Reviews)
+
 const router = createRouter({
     history: createWebHistory((import.meta as any).env.BASE_URL),
     routes
+})
+
+router.onError((error) => {
+    console.error('[router] Navigation error:', error)
 })
 
 export default router
