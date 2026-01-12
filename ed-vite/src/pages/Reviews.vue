@@ -94,6 +94,7 @@ function removeReview(idx: number) {
 </script>
 
 <style scoped>
+
 .reviews-page {
   max-width: 600px;
   margin: 2rem auto;
@@ -118,7 +119,7 @@ function removeReview(idx: number) {
   border-bottom: 1px solid #eee;
   position: relative;
 }
-...existing code...
+
 .review-meta {
   font-size: 0.9em;
   color: #888;

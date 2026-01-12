@@ -132,7 +132,7 @@ const setupPoiClickListener = () => {
   })
 }
 
-// ────────────────────── SLIDER (your original code) ──────────────────────
+// ────────────────────── SLIDER ──────────────────────
 const currentIndex = ref(0)
 const sliderTrack = ref<HTMLElement | null>(null)
 const showModal = ref(false)

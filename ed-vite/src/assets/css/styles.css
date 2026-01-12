@@ -1,6 +1,5 @@
         @import "tailwindcss";
 
-        /* Jullie bestaande variabelen – blijven staan */
         :root {
             --achtergrond-primair: hsl(0, 0%, 96%);
             --site-paars: hsla(304, 36%, 42%, 1);
