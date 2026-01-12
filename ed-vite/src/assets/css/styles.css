@@ -1,5 +1,5 @@
         @import "tailwindcss";
-        
+
         /* Jullie bestaande variabelen – blijven staan */
         :root {
             --achtergrond-primair: hsl(0, 0%, 96%);
@@ -16,12 +16,13 @@
         }
 
         *,
-        *::before, 
+        *::before,
         *::after {
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
             height: 100%;
@@ -240,9 +241,9 @@
             .slider-card {
                 flex: 0 0 250px;
             }
-            
+
             .slider-arrow {
                 width: 35px;
                 height: 35px;
             }
-        }        
+        }

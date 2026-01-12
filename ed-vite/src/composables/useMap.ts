@@ -8,16 +8,16 @@ import {
 } from '../leaflet/map'
 
 // fixed imports for local assets (if used)
-import markerImg from '/src/assets/img/markers/marker.png'
-import agoraImg from '/src/assets/img/agora.webp'
+const markerImg = '/img/markers/marker.png';
+const agoraImg = '/img/agora.webp';
 
 export interface POI {
   id: string
   lat: number
   lng: number
-  imageUrl?: string
+  imageUrl?: string          // ← optional
   shortDescription: string
-  longDescription?: string
+  longDescription?: string   // ← THIS MUST BE OPTIONAL
 }
 
 let mapInstance: L.Map | null = null
@@ -253,7 +253,7 @@ export function useMap() {
       lng: 5.4713,
       imageUrl: agoraImg,
       shortDescription: 'Voorbeeld POI',
-      longDescription: 'Een voorbeeldmarker',
+      longDescription: 'Een voorbeeldmarker'  // ← add this line
     }
 
     L.marker([examplePoi.lat, examplePoi.lng], { icon: customPurpleIcon })
@@ -293,8 +293,8 @@ export function useMap() {
   }
 
   async function refresh() {
-    await loadExternalRoutes().catch(() => {})
-    await loadRoute().catch(() => {})
+    await loadExternalRoutes().catch(() => { })
+    await loadRoute().catch(() => { })
   }
 
   return {

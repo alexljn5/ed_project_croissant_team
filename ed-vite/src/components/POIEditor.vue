@@ -38,7 +38,7 @@
         <div class="poi-info">
           <strong>{{ poi.shortDescription }}</strong>
           <p>{{ poi.lat }}, {{ poi.lng }}</p>
-          <small>{{ poi.longDescription.substring(0, 50) }}...</small>
+          <small>{{ poi.longDescription?.substring(0, 50) ?? 'Geen beschrijving' }}...</small>
         </div>
         <div class="poi-actions">
           <button @click="deletePOI(poi.id)" class="delete-poi-btn">🗑️</button>
@@ -48,7 +48,7 @@
     
     <div class="save-section">
       <button @click="savePOIs" class="save-pois-btn" :disabled="props.isLoading">
-        {{ props.isLoading ? 'Opslaan...' : '💾 Alle POIs opslaan' }}
+        {{ props.isLoading ? 'Opslaan...' : 'Alle POIs opslaan' }}
       </button>
     </div>
   </div>

@@ -5,7 +5,7 @@ import { ref } from 'vue'
 // Tekst (blijft zoals het was)
 const { data: text, save: saveText, loading: textLoading } = useContent<string>(
   'editable_section',
-  'Placeholder text! Edit me and watch the DOM change right away. ♡'
+  'Lorem ipsum Lorem ipsum'
 )
 
 // Foto URL (nieuwe key)
