@@ -31,7 +31,7 @@
           <button @click="removeReview(idx)" class="remove-btn">Verwijder <p id="liltekst">"(temporary ofc)"</p></button>
         </li>
       </ul>
-      <button v-if="visibleReviews.length < reviews.length" @click="showMoreReviews" class="show-more-btn">Show more</button>
+      <button v-if="visibleReviews.length < reviews.length" @click="showMoreReviews" class="show-more-btn">Bekijk meer</button>
     </div>
     <div v-else class="no-reviews">...</div>
   </div>
