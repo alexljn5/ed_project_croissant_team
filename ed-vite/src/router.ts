@@ -4,6 +4,7 @@ import Home from './pages/Home.vue'
 import Contact from './pages/Contact.vue'
 import Admin from './pages/Admin.vue'
 import Reviews from './pages/Reviews.vue'
+import LocationDetector from './pages/LocationDetector.vue'
 
 const routes = [
     {
@@ -26,6 +27,11 @@ const routes = [
         path: '/reviews',
         name: 'Reviews',
         component: Reviews
+    },
+    {
+        path: '/locations',
+        name: 'LocationDetector',
+        component: LocationDetector
     },
     {
         path: '/:pathMatch(.*)*',
