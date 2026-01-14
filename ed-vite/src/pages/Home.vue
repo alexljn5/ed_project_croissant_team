@@ -69,10 +69,11 @@
       <BackendGlue />
     </div>
     
-  <div class="publicmap">
-  <publicMap />
+<div class="publicmap">
+  <PublicMap />
   <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
 </div>
+
 
     <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
       <div class="modal-content" @click.stop>
