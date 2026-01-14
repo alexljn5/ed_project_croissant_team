@@ -4,7 +4,10 @@
 </template>
 
 <style scoped>
-header, h1, p, a {
+header,
+h1,
+p,
+a {
   font-family: var(--font-primair);
 }
 
