@@ -1,27 +1,39 @@
-/* Floating Reviews Button */
+        :root {
+            --achtergrond-primair: hsl(0, 0%, 96%);
+            --site-paars: hsla(304, 36%, 42%, 1);
+            --interactief: hsl(41, 100%, 69%);
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --header-shadow: rgba(0, 0%, 0.1);
+            --font-primair: 'Inter', Roboto, 'Open Sans', Arial, Helvetica, sans-serif;
+            --font-heading: 'Montserrat', 'Poppins', 'Nunito', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+            --font-grootte: 16px;
+            --font-grootte2: 32px;
+            --header-text: hsla(0, 0%, 11%, 1);
+        }
+
 .floating-reviews-btn {
     position: fixed;
     bottom: 32px;
     right: 32px;
     z-index: 10001;
-    background: #7c3aed;
+    background: var(--site-paars) !important;
     color: #fff !important;
     padding: 1rem 2rem;
     border-radius: 32px;
     font-size: 1.2rem;
     font-weight: bold;
-    box-shadow: 0 4px 24px rgba(124, 58, 237, 0.18);
-    border: none;
+    box-shadow: 0 4px 24px var(--header-shadow);
+    border: none !important;
     cursor: pointer;
     transition: background 0.2s, transform 0.2s;
-    text-decoration: none;
+    text-decoration: none !important;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
-
 .floating-reviews-btn:hover {
-    background: #5b21b6;
+    background: var(--interactief) !important;
     transform: scale(1.06);
 }
 

@@ -1,13 +1,5 @@
 <template>
   <div class="home-page">
-        <nav style="text-align:right; margin: 1rem 0;">
-          <router-link to="/reviews" class="reviews-link styled-link">Reviews</router-link>
-        </nav>
-
-        <!-- Floating Reviews Button -->
-        <router-link to="/reviews" class="floating-reviews-btn">
-      <span>Reviews</span>
-        </router-link>
      <div class="content-slider" 
        :style="{ backgroundImage: 'url(/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
      <h1 class="neEv-text">Nieuws & Evenementen</h1> 
@@ -77,10 +69,11 @@
       <BackendGlue />
     </div>
     
-  <div class="publicmap">
-  <publicMap />
+<div class="publicmap">
+  <PublicMap />
   <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
 </div>
+
 
     <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
       <div class="modal-content" @click.stop>
@@ -132,7 +125,7 @@ const setupPoiClickListener = () => {
   })
 }
 
-// ────────────────────── SLIDER (your original code) ──────────────────────
+// ────────────────────── SLIDER ──────────────────────
 const currentIndex = ref(0)
 const sliderTrack = ref<HTMLElement | null>(null)
 const showModal = ref(false)
