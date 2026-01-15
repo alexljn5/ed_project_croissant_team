@@ -119,3 +119,7 @@ backend.log
 frontend.log
 start_frontend_and_backend.sh
 backend/croissant
+.frontend_done
+.laravel_done
+backend/croissant
+backend/database/migrations/2026_01_15_082937_testtodeletelater.php
