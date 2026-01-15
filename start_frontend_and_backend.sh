@@ -18,9 +18,31 @@ echo -e "${LIGHT_PURPLE}                Fullstack Development Environment       
 echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
 echo
 
+# === HELPER FUNCTIONS ===
+check_command() {
+  if ! command -v "$1" &> /dev/null; then
+    echo -e "${RED}✗ $1 not found${NC}"
+    return 1
+  fi
+  echo -e "${GREEN}✓ $1 found${NC}"
+  return 0
+}
+
+# === ARGUMENT PARSING ===
+WATCH_MODE=false
+FORCE_BUILD=false
+for arg in "$@"; do
+  case "$arg" in
+    --watch) WATCH_MODE=true ;;
+    --force|-f) FORCE_BUILD=true ;;
+  esac
+done
+
 # === PRE-FLIGHT CHECKS ===
 echo -e "${LIGHT_PURPLE}>>> Running pre-flight checks...${NC}"
 ISSUES=false
+
+check_command "docker" || ISSUES=true
 
 if [[ ! -f "ed-vite/package-lock.json" ]]; then
   echo -e "${PURPLE}>>> package-lock.json missing — regenerating${NC}"
@@ -35,116 +57,72 @@ fi
 [[ ! -f "Dockerfile" ]] && echo -e "${PURPLE}>>> Dockerfile missing!${NC}" && ISSUES=true
 [[ ! -f "docker-compose.yml" ]] && echo -e "${PURPLE}>>> docker-compose.yml missing!${NC}" && ISSUES=true
 
+if $WATCH_MODE && ! docker compose watch --help >/dev/null 2>&1; then
+  echo -e "${RED}✗ docker compose watch not available. Requires Docker Compose v2.24+${NC}"
+  ISSUES=true
+fi
+
 if $ISSUES; then
-  echo -e "${PURPLE}>>> Critical issues found. Fix and retry.${NC}"
+  echo -e "${RED}>>> Critical issues found. Fix and retry.${NC}"
   exit 1
 fi
 
-echo -e "${LIGHT_PURPLE}>>> All good. Proceeding...${NC}"
+echo -e "${GREEN}>>> All good. Proceeding...${NC}"
 
 # === BUILD ===
-FORCE_BUILD=false
-[[ "$1" == "--force" || "$1" == "-f" ]] && FORCE_BUILD=true && echo -e "${LIGHT_PURPLE}>>> Force rebuild requested${NC}"
-
-NEED_BUILD=false
 if $FORCE_BUILD || [[ ! -f .docker_built ]] || \
    [[ Dockerfile -nt .docker_built ]] || [[ docker-compose.yml -nt .docker_built ]] || \
    ! docker image inspect ed_project_croissant_team-app >/dev/null 2>&1; then
-  NEED_BUILD=true
-fi
-
-if $NEED_BUILD; then
   echo -e "${LIGHT_PURPLE}>>> Building containers...${NC}"
-  docker compose build --no-cache > /tmp/docker_build.log 2>&1 &
-  BUILD_PID=$!
-  spin='⣾⣽⣻⢿⡿⣟⣯⣷'
-  i=0
-  while kill -0 $BUILD_PID 2>/dev/null; do
-    i=$(( (i+1) %8 ))
-    printf "\r${PURPLE}Building... ${spin:$i:1}${NC}"
-    sleep .1
-  done
-  wait $BUILD_PID
-  echo -e "\r${LIGHT_PURPLE}>>> Build complete!                               ${NC}"
+  docker compose build --no-cache || { echo -e "${RED}✗ Build failed${NC}"; exit 1; }
   touch .docker_built
 else
   echo -e "${LIGHT_PURPLE}>>> Reusing existing image...${NC}"
 fi
 
-# === START ===
-echo -e "${PURPLE}>>> Starting services...${NC}"
-if ! docker compose up -d; then
-  echo -e "${LIGHT_PURPLE}>>> Docker Desktop might not be running.${NC}"
-  echo -e "${LIGHT_PURPLE}>>> Please open Docker Desktop and try again :)${NC}"
-  exit 1
-fi
-
-sleep 3
-
-# === LARAVEL SETUP ===
-echo -e "${LIGHT_PURPLE}>>> Checking Laravel setup...${NC}"
-
-if $FORCE_BUILD || [[ ! -f .laravel_setup_done ]] || [[ ! -f backend/.env ]] || \
-   find backend/database/migrations -newer .laravel_setup_done 2>/dev/null | grep -q . ; then
+# === LARAVEL SETUP (only on force or if needed) ===
+if $FORCE_BUILD || [[ ! -f .laravel_setup_done ]]; then
   echo -e "${LIGHT_PURPLE}>>> Running Laravel setup...${NC}"
-
-  # Run setup in a fresh container to ensure proper permissions and environment
   docker compose run --rm app sh -c "
     set -e
     cd /var/www/backend
-
-    # Ensure .env exists
     cp -n .env.example .env
-
-    # Install Composer dependencies if vendor missing
     if [ ! -d vendor ]; then
-      echo '>>> Installing Composer dependencies...'
       composer install --optimize-autoloader --no-dev --no-interaction --no-plugins
     fi
-
-    # Run Artisan setup
-    echo '>>> Generating app key...'
     php artisan key:generate --force
-
-    echo '>>> Caching config & routes...'
     php artisan config:cache
     php artisan route:cache
-
-    echo '>>> Running migrations...'
     php artisan migrate --force --no-interaction
-
-    echo '>>> Creating storage symlink...'
     php artisan storage:link
-  "
-
-  # Mark setup as done
+  " || { echo -e "${RED}✗ Laravel setup failed${NC}"; exit 1; }
   touch .laravel_setup_done
 else
-  echo -e "${LIGHT_PURPLE}>>> Laravel setup skipped (already done)${NC}"
+  echo -e "${LIGHT_PURPLE}>>> Laravel setup skipped${NC}"
 fi
 
+# === START ===
+echo -e "${PURPLE}>>> Starting services...${NC}"
 
-# === READY ===
-echo -e "${LIGHT_PURPLE}>>> Services ready!${NC}"
-echo ""
-echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${LIGHT_PURPLE}   Laravel: http://localhost:8000                         ${NC}"
-echo -e "${LIGHT_PURPLE}   Vite Dev: http://localhost:5173                        ${NC}"
-echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
-echo ""
-echo -e "${PURPLE}Press any key for live logs, Ctrl+C to stop services${NC}"
+if $WATCH_MODE; then
+  echo -e "${LIGHT_PURPLE}>>> Running in watch mode...${NC}"
+  echo -e "${PURPLE}Files will be watched for changes. Press Ctrl+C to stop.${NC}"
+  docker compose watch || { echo -e "${RED}✗ Watch mode failed${NC}"; exit 1; }
+else
+  docker compose up -d || { echo -e "${RED}✗ Failed to start services${NC}"; exit 1; }
+  sleep 3
 
-# Wait for key press
-read -n 1 -s -r
+  echo -e "${LIGHT_PURPLE}>>> Services ready!${NC}"
+  echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
+  echo -e "${LIGHT_PURPLE}   Laravel: http://localhost:8000                         ${NC}"
+  echo -e "${LIGHT_PURPLE}   Vite Dev: http://localhost:5173                        ${NC}"
+  echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
+  echo ""
+  echo -e "${PURPLE}Press any key for live logs, Ctrl+C to stop${NC}"
 
-# Show logs after key press
-docker compose logs -f &
-LOGS_PID=$!
-
-trap 'echo -e "\n${PURPLE}>>> Stopping services...${NC}";
-      kill $LOGS_PID 2>/dev/null;
-      docker compose stop;
-      echo -e "${LIGHT_PURPLE}>>> Stopped cleanly — fast restart next time${NC}";
-      exit 0' INT TERM
-
-wait $LOGS_PID
+  read -n 1 -s -r
+  docker compose logs -f &
+  LOGS_PID=$!
+  trap 'echo ""; kill $LOGS_PID 2>/dev/null; docker compose stop; echo "Stopped."; exit 0' INT TERM
+  wait $LOGS_PID
+fi

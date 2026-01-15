@@ -1,20 +1,49 @@
 <template>
   <div class="reviews-page">
     <h1>Reviews</h1>
+
+    <!-- REVIEW FORM -->
     <form @submit.prevent="addReview" class="review-form">
-      <textarea v-model="newReview.text" placeholder="laat hier een review achter..." required rows="3"></textarea>
+      <textarea
+        v-model="newReview.text"
+        placeholder="Laat hier een review achter..."
+        required
+        rows="3"
+      ></textarea>
+
       <div class="review-options">
         <label>
-          <input type="checkbox" v-model="newReview.anonymous" /> Plaats als anoniem
+          <input type="checkbox" v-model="newReview.anonymous" />
+          Plaats als anoniem
         </label>
-        <input v-if="!newReview.anonymous" v-model="newReview.name" placeholder="Naam (optioneel)" />
-        <input v-model="newReview.email" placeholder="Email (optioneel)" type="email" />
+
+        <input
+          v-if="!newReview.anonymous"
+          v-model="newReview.name"
+          placeholder="Naam (optioneel)"
+        />
+        <input
+          v-model="newReview.email"
+          placeholder="Email (optioneel)"
+          type="email"
+        />
+
         <div class="star-rating">
-          <span v-for="star in 5" :key="star" @click="newReview.stars = star" :class="['star', { active: newReview.stars >= star }]">&#9733;</span>
+          <span
+            v-for="star in 5"
+            :key="star"
+            @click="newReview.stars = star"
+            :class="['star', { active: newReview.stars >= star }]"
+          >
+            ★
+          </span>
         </div>
       </div>
+
       <button type="submit">Submit</button>
     </form>
+
+    <!-- REVIEWS LIST -->
     <div class="reviews-list" v-if="reviews.length">
       <h2>Reviews:</h2>
       <ul>
@@ -23,17 +52,36 @@
           <div class="review-meta">
             <span v-if="review.anonymous">(anoniem)</span>
             <span v-else-if="review.name">- {{ review.name }}</span>
-            <span v-if="review.email" class="review-email"> ({{ review.email }})</span>
+            <span v-if="review.email" class="review-email">({{ review.email }})</span>
             <span v-if="review.stars" class="review-stars">
-              <span v-for="star in 5" :key="star" :class="['star', { active: review.stars >= star }]">&#9733;</span>
+              <span
+                v-for="star in 5"
+                :key="star"
+                :class="['star', { active: review.stars >= star }]"
+              >
+                ★
+              </span>
             </span>
           </div>
-          <button @click="removeReview(idx)" class="remove-btn">Verwijder <p id="liltekst">"(temporary ofc)"</p></button>
+
+          <!-- REMOVE BUTTON FIXED -->
+          <button @click="removeReview(idx)" class="remove-btn">
+            Verwijder
+            <span id="liltekst">(temporary ofc)</span>
+          </button>
         </li>
       </ul>
-      <button v-if="visibleReviews.length < reviews.length" @click="showMoreReviews" class="show-more-btn">Show more</button>
+
+      <button
+        v-if="visibleReviews.length < reviews.length"
+        @click="showMoreReviews"
+        class="show-more-btn"
+      >
+        Show more
+      </button>
     </div>
-    <div v-else class="no-reviews">...</div>
+
+    <div v-else class="no-reviews">Geen reviews...</div>
   </div>
 </template>
 
@@ -41,34 +89,46 @@
 import { ref, onMounted, watch } from 'vue'
 
 const STORAGE_KEY = 'site-reviews-v2'
+
 interface Review {
-  text: string;
-  anonymous: boolean;
-  name?: string;
-  email?: string;
-  stars?: number;
+  text: string
+  anonymous: boolean
+  name?: string
+  email?: string
+  stars?: number
 }
-const newReview = ref<Review>({ text: '', anonymous: false, name: '', email: '', stars: 0 })
+
+const newReview = ref<Review>({
+  text: '',
+  anonymous: false,
+  name: '',
+  email: '',
+  stars: 0,
+})
 const reviews = ref<Review[]>([])
 const visibleReviews = ref<Review[]>([])
 const REVIEWS_TO_SHOW = 3
-
-
 
 onMounted(() => {
   const saved = localStorage.getItem(STORAGE_KEY)
   if (saved) {
     try {
       reviews.value = JSON.parse(saved)
-    } catch {}
+    } catch (e) {
+      console.error('Failed to parse saved reviews', e)
+    }
   }
   visibleReviews.value = reviews.value.slice(0, REVIEWS_TO_SHOW)
 })
 
-watch(reviews, (val) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(val))
-  visibleReviews.value = val.slice(0, REVIEWS_TO_SHOW)
-}, { deep: true })
+watch(
+  reviews,
+  (val) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(val))
+    visibleReviews.value = val.slice(0, REVIEWS_TO_SHOW)
+  },
+  { deep: true }
+)
 
 function addReview() {
   if (newReview.value.text.trim()) {
@@ -77,7 +137,7 @@ function addReview() {
       anonymous: newReview.value.anonymous,
       name: newReview.value.anonymous ? '' : newReview.value.name?.trim() || '',
       email: newReview.value.email?.trim() || '',
-      stars: newReview.value.stars || 0
+      stars: newReview.value.stars || 0,
     })
     newReview.value = { text: '', anonymous: false, name: '', email: '', stars: 0 }
   }
@@ -100,7 +160,7 @@ function removeReview(idx: number) {
   padding: 2rem;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 .review-form {
   display: flex;
@@ -118,7 +178,6 @@ function removeReview(idx: number) {
   border-bottom: 1px solid #eee;
   position: relative;
 }
-...existing code...
 .review-meta {
   font-size: 0.9em;
   color: #888;
@@ -170,11 +229,13 @@ function removeReview(idx: number) {
 .show-more-btn:hover {
   background: #ddd;
 }
-
 #liltekst {
   font-size: 0.45em;
   color: #888;
 }
+.no-reviews {
+  text-align: center;
+  color: #666;
+  margin-top: 1rem;
+}
 </style>
-
-
