@@ -1,77 +1,111 @@
 <template>
   <div class="contact-page">
-    <div class="contact-container">
-      <h1>Neem Contact Op</h1>
+    <div class="contact-header">
+      <div class="header-content">
+        <h1>Neem Contact Met Ons Op</h1>
+        <p class="header-subtitle">
+          We helpen je graag! Stuur ons een bericht of bel ons direct.
+        </p>
+      </div>
+    </div>
 
+    <div class="contact-container">
       <div class="contact-content">
+        <!-- Contact Info Cards -->
+        <div class="info-cards">
+          <div class="info-card phone-card">
+            <div class="card-icon">📞</div>
+            <h3>Bel ons</h3>
+            <p class="contact-detail">+31 (0)6 12345678</p>
+            <p class="contact-hours">
+              Maandag - Vrijdag<br />
+              <span class="bold">12:00 - 18:00</span> uur
+            </p>
+          </div>
+
+          <div class="info-card email-card">
+            <div class="card-icon">✉️</div>
+            <h3>Email</h3>
+            <p class="contact-detail">Alle berichten</p>
+            <router-link to="/emails" class="view-emails-link">
+              <button class="view-emails-btn">Bekijk emails</button>
+            </router-link>
+          </div>
+
+          <div class="info-card location-card">
+            <div class="card-icon">📍</div>
+            <h3>Locatie</h3>
+            <p class="contact-detail">Netherlands</p>
+            <p class="contact-hours">Bezoek ons naar afspraak</p>
+          </div>
+        </div>
+
+        <!-- Form Section -->
         <div class="form-section">
           <h2>Stuur ons een bericht</h2>
+          <p class="form-description">
+            We nemen contact met je op binnen 24 uur
+          </p>
 
           <form @submit.prevent="handleSubmit" class="contact-form">
-            <div class="form-group">
-              <label for="name">Naam:</label>
-              <input
-                v-model="form.name"
-                id="name"
-                type="text"
-                placeholder="Uw naam"
-                required
-              />
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Naam</label>
+                <input
+                  v-model="form.name"
+                  id="name"
+                  type="text"
+                  placeholder="Uw volledige naam"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input
+                  v-model="form.email"
+                  id="email"
+                  type="email"
+                  placeholder="uw@email.com"
+                  required
+                />
+              </div>
             </div>
 
             <div class="form-group">
-              <label for="email">Email:</label>
-              <input
-                v-model="form.email"
-                id="email"
-                type="email"
-                placeholder="Uw email adres"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="subject">Onderwerp:</label>
+              <label for="subject">Onderwerp</label>
               <input
                 v-model="form.subject"
                 id="subject"
                 type="text"
-                placeholder="Onderwerp van uw bericht"
+                placeholder="Waar gaat uw bericht over?"
                 required
               />
             </div>
 
             <div class="form-group">
-              <label for="message">Bericht:</label>
+              <label for="message">Bericht</label>
               <textarea
                 v-model="form.message"
                 id="message"
-                placeholder="Uw bericht..."
+                placeholder="Schrijf hier uw bericht..."
                 rows="6"
                 required
               ></textarea>
             </div>
 
-            <button type="submit" class="submit-btn">Verstuur Bericht</button>
+            <button type="submit" class="submit-btn">
+              <span>Verstuur Bericht</span>
+              <span class="btn-arrow">→</span>
+            </button>
           </form>
 
-          <div v-if="successMessage" class="success-message">
-            {{ successMessage }}
-          </div>
-        </div>
-
-        <div class="info-section">
-          <h2>Bel ons</h2>
-          <p class="phone-number">+31 (0)6 12345678</p>
-          <p class="availability">
-            Van <span class="bold">12:00</span> tot
-            <span class="bold">18:00</span> uur beschikbaar
-          </p>
-
-          <h2 style="margin-top: 2rem">Emails bekijken</h2>
-          <router-link to="/emails" class="emails-link">
-            <button class="view-emails-btn">Bekijk alle emails →</button>
-          </router-link>
+          <transition name="slide-fade">
+            <div v-if="successMessage" class="success-message">
+              <span class="success-icon">✓</span>
+              {{ successMessage }}
+            </div>
+          </transition>
         </div>
       </div>
     </div>
@@ -124,48 +158,201 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
+/* Header Section */
 .contact-page {
   min-height: 100vh;
-  background: #f5f5f5;
-  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 0;
 }
 
-.contact-container {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-h1 {
+.contact-header {
+  background: linear-gradient(
+    135deg,
+    var(--site-paars, #6b4e99) 0%,
+    #8b5fcf 100%
+  );
+  color: white;
+  padding: 4rem 1rem;
   text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 3rem;
-  color: #333;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.header-content h1 {
+  font-size: 2.8rem;
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+  animation: slideDown 0.6s ease-out;
+}
+
+.header-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.95;
+  margin: 0;
+  animation: slideDown 0.8s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Container & Content */
+.contact-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
 }
 
 .contact-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
 }
 
-.form-section,
-.info-section {
+/* Info Cards */
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 1rem;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.info-card {
   background: white;
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-top: 4px solid transparent;
 }
 
-h2 {
-  font-size: 1.5rem;
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+.phone-card {
+  border-top-color: #ff6b6b;
+}
+
+.email-card {
+  border-top-color: #4ecdc4;
+}
+
+.location-card {
+  border-top-color: #ffd93d;
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.info-card h3 {
+  font-size: 1.3rem;
   color: #333;
-  margin-bottom: 1.5rem;
+  margin: 1rem 0;
+  font-weight: 600;
+}
+
+.contact-detail {
+  font-size: 1.1rem;
+  color: #666;
+  font-weight: 500;
+  margin: 0.5rem 0;
+}
+
+.contact-hours {
+  font-size: 0.95rem;
+  color: #999;
+  margin: 1rem 0 0 0;
+  line-height: 1.6;
+}
+
+.bold {
+  font-weight: 600;
+  color: #333;
+}
+
+.view-emails-link {
+  text-decoration: none;
+  display: block;
+}
+
+.view-emails-btn {
+  width: 100%;
+  padding: 0.7rem 1.5rem;
+  background: #4ecdc4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.view-emails-btn:hover {
+  background: #45b8ae;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(78, 205, 196, 0.3);
+}
+
+.view-emails-btn:active {
+  transform: translateY(0);
+}
+
+/* Form Section */
+.form-section {
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  animation: fadeInUp 1s ease-out;
+}
+
+.form-section h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.form-description {
+  color: #999;
+  margin: 0 0 2rem 0;
+  font-size: 0.95rem;
 }
 
 .contact-form {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
 }
 
@@ -175,117 +362,177 @@ h2 {
 }
 
 label {
-  margin-bottom: 0.5rem;
-  color: #555;
-  font-weight: 500;
+  margin-bottom: 0.7rem;
+  color: #333;
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
 input,
 textarea {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 0.9rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
   font-family: inherit;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
+  background: #fafafa;
 }
 
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  border-color: var(--site-paars, #6b4e99);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(107, 78, 153, 0.1);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 150px;
 }
 
 .submit-btn {
-  padding: 0.75rem 1.5rem;
-  background: #4caf50;
+  padding: 1rem 2rem;
+  background: linear-gradient(
+    135deg,
+    var(--site-paars, #6b4e99) 0%,
+    #8b5fcf 100%
+  );
   color: white;
   border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 15px rgba(107, 78, 153, 0.3);
 }
 
 .submit-btn:hover {
-  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(107, 78, 153, 0.4);
 }
 
 .submit-btn:active {
-  transform: scale(0.98);
+  transform: translateY(0);
+}
+
+.btn-arrow {
+  transition: transform 0.3s ease;
+}
+
+.submit-btn:hover .btn-arrow {
+  transform: translateX(3px);
 }
 
 .success-message {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #d4edda;
+  margin-top: 1.5rem;
+  padding: 1.2rem 1.5rem;
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
   color: #155724;
-  border: 1px solid #c3e6cb;
-  border-radius: 4px;
+  border: 2px solid #c3e6cb;
+  border-radius: 8px;
   text-align: center;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  animation: slideDown 0.4s ease-out;
 }
 
-.info-section p {
-  margin: 0.5rem 0;
-  color: #666;
-  line-height: 1.6;
+.success-icon {
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
-.phone-number {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #333;
-  margin: 1rem 0 !important;
+/* Animations */
+.slide-fade-enter-active {
+  transition: all 0.3s ease;
 }
 
-.availability {
-  color: #999;
-  font-size: 0.95rem;
+.slide-fade-leave-active {
+  transition: all 0.2s ease;
 }
 
-.bold {
-  font-weight: 600;
+.slide-fade-enter-from {
+  transform: translateX(-10px);
+  opacity: 0;
 }
 
-.emails-link {
-  text-decoration: none;
-  display: block;
+.slide-fade-leave-to {
+  transform: translateX(10px);
+  opacity: 0;
 }
 
-.view-emails-btn {
-  width: 100%;
-  padding: 0.75rem 1.5rem;
-  background: #2196f3;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  margin-top: 1rem;
-}
-
-.view-emails-btn:hover {
-  background: #0b7dda;
-}
-
-/* Responsive design */
+/* Responsive Design */
 @media (max-width: 768px) {
-  .contact-content {
+  .contact-header {
+    padding: 2.5rem 1rem;
+  }
+
+  .header-content h1 {
+    font-size: 2rem;
+  }
+
+  .header-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .contact-container {
+    padding: 2rem 1rem;
+  }
+
+  .info-cards {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
-  h1 {
-    font-size: 1.8rem;
+  .form-section {
+    padding: 2rem 1.5rem;
   }
 
-  .form-section,
-  .info-section {
+  .form-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  input,
+  textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .submit-btn {
+    font-size: 1rem;
+    padding: 0.9rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content h1 {
+    font-size: 1.6rem;
+  }
+
+  .info-card {
     padding: 1.5rem;
+  }
+
+  .form-section {
+    padding: 1.5rem 1rem;
+  }
+
+  .contact-detail {
+    font-size: 1rem;
   }
 }
 </style>

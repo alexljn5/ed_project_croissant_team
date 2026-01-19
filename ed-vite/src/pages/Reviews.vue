@@ -6,7 +6,7 @@
       <div class="reviews-form-section">
         <h2>Schrijf een review</h2>
         <form @submit.prevent="addReview" class="review-form">
-          <input v-model="newReview.name" placeholder="Naam" />
+          <input v-model="newReview.name" placeholder="Review" />
           <textarea
             v-model="newReview.text"
             placeholder="Text"
