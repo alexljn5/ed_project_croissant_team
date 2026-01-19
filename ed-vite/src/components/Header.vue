@@ -38,7 +38,6 @@ header {
   color: var(--header-text);
 }
 
-/* right group: button + logo */
 .header-right {
   display: flex;
   align-items: center;

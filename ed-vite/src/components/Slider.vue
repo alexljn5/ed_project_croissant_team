@@ -169,11 +169,12 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+
 .content-slider {
   position: relative;
   z-index: 2;
   background: var(--site-paars);
-  padding: 120px 0 20px;
+  padding: 0;
   overflow: hidden;
   font-family: var(--font-primair);
 }
