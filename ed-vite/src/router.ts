@@ -44,6 +44,13 @@ console.log(
   routes.map((r) => r.path)
 );
 
+// Log component details for debugging
+console.log("[router] Reviews component loaded:", Reviews);
+console.log(
+  "[router] registered routes:",
+  routes.map((r) => r.path)
+);
+
 const router = createRouter({
   history: createWebHistory((import.meta as any).env.BASE_URL),
   routes,
