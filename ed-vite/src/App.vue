@@ -46,7 +46,10 @@ Slider.vue aangepast:
           </router-link>
           <router-link to="/" class="logo-link">
             <div class="logo">
-              <img src="/src/assets/img/dubbelop-logo.png" alt="Dubbelop Logo" />
+              <img
+                src="/src/assets/img/dubbelop-logo.png"
+                alt="Dubbelop Logo"
+              />
             </div>
           </router-link>
         </div>
