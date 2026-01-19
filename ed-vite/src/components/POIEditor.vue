@@ -1,7 +1,8 @@
 <template>
   <div class="poi-editor">
     <h3>Individuele POI Markers</h3>
-    
+
+    <!-- Form to add markers -->
     <div class="poi-form">
       <div class="form-row">
         <div class="form-group">
@@ -13,28 +14,32 @@
           <input v-model.number="form.lng" type="number" step="0.0001" placeholder="5.4790" />
         </div>
       </div>
-      
+
       <div class="form-group">
-        <label>Image URL:</label>
-        <input v-model="form.imageUrl" type="text" placeholder="https://..." />
+        <label>Image:</label>
+        <input type="file" accept="image/*" @change="onFileChange" />
+        <small v-if="form.imageUrl">Current: <img :src="form.imageUrl" alt="preview" class="preview-thumb" /></small>
       </div>
-      
+
       <div class="form-group">
         <label>Korte beschrijving:</label>
         <input v-model="form.shortDescription" type="text" placeholder="Bijv: De Agora" />
       </div>
-      
+
       <div class="form-group">
         <label>Uitgebreide beschrijving:</label>
         <textarea v-model="form.longDescription" placeholder="Uitgebreide info hier..." rows="4"></textarea>
       </div>
-      
-      <button @click="addNewPOI" class="add-poi-btn">+ Nieuwe POI toevoegen</button>
+
+      <button @click="addNewPOI" class="add-poi-btn" :disabled="uploading">
+        {{ uploading ? 'Uploaden...' : '+ Nieuwe POI toevoegen' }}
+      </button>
     </div>
-    
+
+    <!-- POI list -->
     <div class="poi-list">
       <div v-for="poi in props.pois" :key="poi.id" class="poi-item">
-        <img :src="poi.imageUrl" :alt="poi.shortDescription" class="poi-thumb">
+        <img :src="poi.imageUrl" :alt="poi.shortDescription" class="poi-thumb" />
         <div class="poi-info">
           <strong>{{ poi.shortDescription }}</strong>
           <p>{{ poi.lat }}, {{ poi.lng }}</p>
@@ -45,7 +50,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="save-section">
       <button @click="savePOIs" class="save-pois-btn" :disabled="props.isLoading">
         {{ props.isLoading ? 'Opslaan...' : 'Alle POIs opslaan' }}
@@ -71,17 +76,50 @@ const props = defineProps<Props>()
 const form = ref({
   lat: 52.5180,
   lng: 5.4800,
-  imageUrl: 'https://via.placeholder.com/100',
+  imageUrl: '/img/markers/placeholder.png',
   shortDescription: '',
   longDescription: ''
 })
 
+const uploading = ref(false)
+
+// -------------------------
+// Handle image upload via Base64 (works on Docker too)
+// -------------------------
+function onFileChange(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+
+  uploading.value = true
+
+  const reader = new FileReader()
+  reader.onload = () => {
+    form.value.imageUrl = reader.result as string
+    uploading.value = false
+  }
+  reader.onerror = (err) => {
+    console.error('File read error', err)
+    alert('Kon afbeelding niet lezen, probeer opnieuw.')
+    uploading.value = false
+  }
+
+  reader.readAsDataURL(file)
+}
+
+// -------------------------
+// Add new POI
+// -------------------------
 function addNewPOI() {
   if (!form.value.shortDescription) {
     alert('Korte beschrijving is verplicht')
     return
   }
-  
+
+  if (uploading.value) {
+    alert('Wacht tot de afbeelding is geüpload')
+    return
+  }
+
   const newPOI: POI = {
     id: Date.now().toString(),
     lat: form.value.lat,
@@ -90,14 +128,14 @@ function addNewPOI() {
     shortDescription: form.value.shortDescription,
     longDescription: form.value.longDescription
   }
-  
+
   props.onAddPOI(newPOI)
-  
+
   // Reset form
   form.value = {
     lat: 52.5180,
     lng: 5.4800,
-    imageUrl: 'https://via.placeholder.com/100',
+    imageUrl: '/img/markers/placeholder.png',
     shortDescription: '',
     longDescription: ''
   }
@@ -171,6 +209,15 @@ async function savePOIs() {
   box-shadow: 0 0 4px rgba(107, 63, 123, 0.3);
 }
 
+.preview-thumb {
+  max-width: 60px;
+  max-height: 60px;
+  display: inline-block;
+  margin-top: 0.3rem;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
 .add-poi-btn {
   width: 100%;
   padding: 0.8rem;
@@ -183,7 +230,7 @@ async function savePOIs() {
   transition: background 0.3s;
 }
 
-.add-poi-btn:hover {
+.add-poi-btn:hover:not(:disabled) {
   background: #1976d2;
 }
 
