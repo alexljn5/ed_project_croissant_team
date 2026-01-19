@@ -1,18 +1,16 @@
 #!/bin/bash
-set -e
 
 PURPLE='\033[0;35m'
 LIGHT_PURPLE='\033[1;35m'
-RED='\033[0;31m'
-GREEN='\033[0;32m'
 NC='\033[0m'
 
 clear
+echo
 echo -e "${LIGHT_PURPLE}
  ___  _  _  ___  ___  ___  __       __  ___    ___   __  _  _  ____  ___
-(   \\( )( )(  ,)(  ,)(  _)(  )     /  \\(  ,\\  (  ,) /  \\( )( )(_  _)(  _)
- ) ) ))()(  ) ,\\ ) ,\\ ) _) )(__   ( () )) _/   )  \\( () ))()(   )(   ) _)
-(___/ \\__/ (___/(___/(___)(____)   \\__/(_)    (_)\\_)\\__/ \\__/  (__) (___)
+(   \( )( )(  ,)(  ,)(  _)(  )     /  \(  ,\  (  ,) /  \( )( )(_  _)(  _)
+ ) ) ))()(  ) ,\ ) ,\ ) _) )(__   ( () )) _/   )  \( () ))()(   )(   ) _)
+(___/ \__/ (___/(___/(___)(____)   \__/(_)    (_)\_)\__/ \__/  (__) (___)
 ${NC}"
 echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
 echo -e "${LIGHT_PURPLE}                    DUBBEL OP ROUTE                       ${NC}"
@@ -20,90 +18,133 @@ echo -e "${LIGHT_PURPLE}                Fullstack Development Environment       
 echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
 echo
 
-# === ARGUMENTS ===
-WATCH_MODE=false
-FORCE=false
-for arg in "$@"; do
-  case "$arg" in
-    --watch) WATCH_MODE=true ;;
-    --force|-f) FORCE=true ;;
-  esac
-done
+# === PRE-FLIGHT CHECKS ===
+echo -e "${LIGHT_PURPLE}>>> Running pre-flight checks...${NC}"
+ISSUES=false
 
-# === PREFLIGHT CHECKS ===
-echo -e "${LIGHT_PURPLE}>>> Pre-flight checks...${NC}"
-
-command -v docker >/dev/null || { echo -e "${RED}Docker not found${NC}"; exit 1; }
-[[ -f docker-compose.yml ]] || { echo -e "${RED}docker-compose.yml missing${NC}"; exit 1; }
-[[ -f Dockerfile ]] || { echo -e "${RED}Dockerfile missing${NC}"; exit 1; }
-
-[[ -f backend/.env ]] || cp backend/.env.example backend/.env
-
-echo -e "${GREEN}>>> Pre-flight OK${NC}"
-
-# === FORCE CLEAN ===
-if $FORCE; then
-  echo -e "${RED}>>> FORCE: cleaning old builds, containers, and frontend deps${NC}"
-  docker compose down -v --remove-orphans || true
-  rm -f .docker_built .laravel_done .frontend_done
-  rm -rf ed-vite/node_modules
+if [[ ! -f "ed-vite/package-lock.json" ]]; then
+  echo -e "${PURPLE}>>> package-lock.json missing — regenerating${NC}"
+  (cd ed-vite && npm install) || ISSUES=true
 fi
 
-# === BUILD CONTAINERS ===
-if [[ ! -f .docker_built ]]; then
-  echo -e "${LIGHT_PURPLE}>>> Building Docker images...${NC}"
-  docker compose build --no-cache
+if [[ ! -f "backend/.env" ]]; then
+  echo -e "${PURPLE}>>> backend/.env missing — copying from example${NC}"
+  cp backend/.env.example backend/.env || ISSUES=true
+fi
+
+[[ ! -f "Dockerfile" ]] && echo -e "${PURPLE}>>> Dockerfile missing!${NC}" && ISSUES=true
+[[ ! -f "docker-compose.yml" ]] && echo -e "${PURPLE}>>> docker-compose.yml missing!${NC}" && ISSUES=true
+
+if $ISSUES; then
+  echo -e "${PURPLE}>>> Critical issues found. Fix and retry.${NC}"
+  exit 1
+fi
+
+echo -e "${LIGHT_PURPLE}>>> All good. Proceeding...${NC}"
+
+# === BUILD ===
+FORCE_BUILD=false
+[[ "$1" == "--force" || "$1" == "-f" ]] && FORCE_BUILD=true && echo -e "${LIGHT_PURPLE}>>> Force rebuild requested${NC}"
+
+NEED_BUILD=false
+if $FORCE_BUILD || [[ ! -f .docker_built ]] || \
+   [[ Dockerfile -nt .docker_built ]] || [[ docker-compose.yml -nt .docker_built ]] || \
+   ! docker image inspect ed_project_croissant_team-app >/dev/null 2>&1; then
+  NEED_BUILD=true
+fi
+
+if $NEED_BUILD; then
+  echo -e "${LIGHT_PURPLE}>>> Building containers...${NC}"
+  docker compose build --no-cache > /tmp/docker_build.log 2>&1 &
+  BUILD_PID=$!
+  spin='⣾⣽⣻⢿⡿⣟⣯⣷'
+  i=0
+  while kill -0 $BUILD_PID 2>/dev/null; do
+    i=$(( (i+1) %8 ))
+    printf "\r${PURPLE}Building... ${spin:$i:1}${NC}"
+    sleep .1
+  done
+  wait $BUILD_PID
+  echo -e "\r${LIGHT_PURPLE}>>> Build complete!                               ${NC}"
   touch .docker_built
 else
-  echo -e "${LIGHT_PURPLE}>>> Using existing Docker images${NC}"
+  echo -e "${LIGHT_PURPLE}>>> Reusing existing image...${NC}"
 fi
 
-# === BACKEND / LARAVEL SETUP ===
-if [[ ! -f .laravel_done ]]; then
-  echo -e "${LIGHT_PURPLE}>>> Setting up Laravel...${NC}"
+# === START ===
+echo -e "${PURPLE}>>> Starting services...${NC}"
+if ! docker compose up -d; then
+  echo -e "${LIGHT_PURPLE}>>> Docker Desktop might not be running.${NC}"
+  echo -e "${LIGHT_PURPLE}>>> Please open Docker Desktop and try again :)${NC}"
+  exit 1
+fi
+
+sleep 3
+
+# === LARAVEL SETUP ===
+echo -e "${LIGHT_PURPLE}>>> Checking Laravel setup...${NC}"
+
+if $FORCE_BUILD || [[ ! -f .laravel_setup_done ]] || [[ ! -f backend/.env ]] || \
+   find backend/database/migrations -newer .laravel_setup_done 2>/dev/null | grep -q . ; then
+  echo -e "${LIGHT_PURPLE}>>> Running Laravel setup...${NC}"
+
+  # Run setup in a fresh container to ensure proper permissions and environment
   docker compose run --rm app sh -c "
-    cd /var/www/backend &&
-    cp -n .env.example .env &&
-    [ -d vendor ] || composer install --no-interaction --no-dev --optimize-autoloader &&
-    php artisan key:generate --force &&
-    php artisan migrate --force --no-interaction &&
+    set -e
+    cd /var/www/backend
+
+    # Ensure .env exists
+    cp -n .env.example .env
+
+    # Install Composer dependencies if vendor missing
+    if [ ! -d vendor ]; then
+      echo '>>> Installing Composer dependencies...'
+      composer install --optimize-autoloader --no-dev --no-interaction --no-plugins
+    fi
+
+    # Run Artisan setup
+    echo '>>> Generating app key...'
+    php artisan key:generate --force
+
+    echo '>>> Caching config & routes...'
+    php artisan config:cache
+    php artisan route:cache
+
+    echo '>>> Running migrations...'
+    php artisan migrate --force --no-interaction
+
+    echo '>>> Creating storage symlink...'
     php artisan storage:link
   "
-  touch .laravel_done
+
+  # Mark setup as done
+  touch .laravel_setup_done
 else
-  echo -e "${LIGHT_PURPLE}>>> Laravel already set up${NC}"
+  echo -e "${LIGHT_PURPLE}>>> Laravel setup skipped (already done)${NC}"
 fi
 
-# === FRONTEND / VITE SETUP ===
-echo -e "${LIGHT_PURPLE}>>> Checking frontend dependencies...${NC}"
-docker compose run --rm app sh -c "
-  cd /var/www/ed-vite &&
-  if [ ! -d node_modules ] || [ ! -f node_modules/.bin/vite ]; then
-    echo '>>> Reinstalling frontend dependencies'
-    rm -rf node_modules
-    npm install
-  fi
-"
-touch .frontend_done
 
-# === START SERVICES ===
-echo -e "${PURPLE}>>> Starting services...${NC}"
+# === READY ===
+echo -e "${LIGHT_PURPLE}>>> Services ready!${NC}"
+echo ""
+echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
+echo -e "${LIGHT_PURPLE}   Laravel: http://localhost:8000                         ${NC}"
+echo -e "${LIGHT_PURPLE}   Vite Dev: http://localhost:5173                        ${NC}"
+echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
+echo ""
+echo -e "${PURPLE}Press any key for live logs, Ctrl+C to stop services${NC}"
 
-if $WATCH_MODE; then
-  echo -e "${LIGHT_PURPLE}>>> Watch mode enabled${NC}"
-  docker compose watch
-else
-  docker compose up -d
-  sleep 3
-  echo -e "${GREEN}>>> Services ready!${NC}"
-  echo -e "${PURPLE}Laravel: http://localhost:8000${NC}"
-  echo -e "${PURPLE}Vite:    http://localhost:5173${NC}"
+# Wait for key press
+read -n 1 -s -r
 
-  echo -e "${PURPLE}Press any key for live logs, Ctrl+C to stop${NC}"
-  read -n 1 -s -r
+# Show logs after key press
+docker compose logs -f &
+LOGS_PID=$!
 
-  docker compose logs -f &
-  PID=$!
-  trap 'kill $PID 2>/dev/null; docker compose stop; echo "Stopped."; exit 0' INT TERM
-  wait $PID
-fi
+trap 'echo -e "\n${PURPLE}>>> Stopping services...${NC}";
+      kill $LOGS_PID 2>/dev/null;
+      docker compose stop;
+      echo -e "${LIGHT_PURPLE}>>> Stopped cleanly — fast restart next time${NC}";
+      exit 0' INT TERM
+
+wait $LOGS_PID
