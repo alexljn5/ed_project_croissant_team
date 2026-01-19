@@ -209,6 +209,7 @@ onBeforeUnmount(() => {
 /* card styling */
 .slider-card {
   flex: 0 0 300px;
+  height: 35%;
   margin: 0 15px;
   border-radius: 15px;
   overflow: hidden;

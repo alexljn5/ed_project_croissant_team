@@ -115,6 +115,23 @@
     transition: all 0.15s;
 }
 
+.reviewsKnop {
+    padding: 10px 20px;
+    background: var(--achtergrond-primair);
+    border-radius: 20px;
+    border: 2px solid var(--site-paars);
+    cursor: pointer;
+    transition: background-color 0.15s;
+    font-weight: bold;
+    color: var(--site-paars);
+}
+
+.reviewsKnop:hover {
+    background: var(--site-paars);
+    color: white;
+    transition: all 0.15s;
+}
+
 :root {
     --body: hsla(304, 36%, 42%, 1);
     --title-text: hsl(0, 0%, 90%);

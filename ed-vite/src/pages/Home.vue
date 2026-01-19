@@ -1,25 +1,9 @@
 <template>
   <div class="home-page">
-    <nav style="text-align: right; margin: 1rem 0">
-      <router-link to="/reviews" class="reviews-link styled-link"
-        >Reviews</router-link
-      >
-    </nav>
-
-    <!-- Floating Reviews Button -->
-    <router-link to="/reviews" class="floating-reviews-btn">
-      <span>Reviews</span>
-    </router-link>
-    <div
-      class="content-slider"
-      :style="{
-        backgroundImage: 'url(/img/achSlider.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'top center',
-      }"
-    >
-      <h1 class="neEv-text">Nieuws & Evenementen</h1>
-      <div class="slider-container">
+     <div class="content-slider" 
+       :style="{ backgroundImage: 'url(/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
+     <h1 class="neEv-text">Nieuws & Evenementen</h1> 
+     <div class="slider-container"> 
         <button class="slider-arrow prev" @click="prevSlide">❮</button>
         <div class="slider-track" ref="sliderTrack">
           <div
@@ -115,54 +99,14 @@
     <div class="backend-section">
       <BackendGlue />
     </div>
+    
+<div class="publicmap">
+  <PublicMap />
+  <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
+</div>
 
-    <div class="publicmap">
-      <publicMap />
-      <POIModal
-        :isOpen="showPOIModal"
-        :poi="selectedPOI"
-        @close="showPOIModal = false"
-      />
-    </div>
-    <section class="middle-section">
-      <div class="middle-container">
-        <img
-          src="/src/assets/img/dubbel-op_3804141577.webp"
-          alt="Bottom section image"
-          class="middle-image"
-        />
-        <div>
-          <h1>Wat was Dubbel-Op?</h1>
-          <p class="middle-text">
-            Dubbel-Op was een pannenkoekenrestaurant gelegen aan Wold 11-10 in
-            Lelystad. Het stond bekend als een familievriendelijk restaurant
-            waar je uit veel soorten pannenkoeken kon kiezen en vooral populair
-            was bij gezinnen met kinderen. Er waren o.a. mogelijkheden om zelf
-            ingrediënten te kiezen voor je pannenkoek, kindvriendelijke
-            voorzieningen en een terras bij het water
-          </p>
-          <h1>Status: restaurant gesloten</h1>
-          <p class="middle-text">
-            Het restaurant is niet meer open. Dubbel-Op sloot al definitief zijn
-            deuren in maart 2013 na meer dan twintig jaar bestaan vanwege
-            onenigheid tussen de uitbaters en de eigenaar van het pand. Omroep
-            Flevoland Het pand stond daarna jarenlang leeg en is inmiddels
-            gesloopt.
-          </p>
-          <h1>Wat is er nu?</h1>
-          <p class="middle-text">
-            De plek waar Dubbel-Op stond wordt nu ontwikkeld voor nieuwbouw van
-            49 appartementen (projectnaam Green Hill), met verwachte oplevering
-            in 2026.
-          </p>
-        </div>
-      </div>
-    </section>
-    <div
-      v-if="showModal"
-      :class="['modal-overlay', { closing: isClosing }]"
-      @click="closeModal"
-    >
+
+    <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
       <div class="modal-content" @click.stop>
         <button class="modal-close" @click="closeModal">✕</button>
         <div
@@ -223,14 +167,14 @@ const setupPoiClickListener = () => {
   });
 };
 
-// ────────────────────── SLIDER (your original code) ──────────────────────
-const currentIndex = ref(0);
-const sliderTrack = ref<HTMLElement | null>(null);
-const showModal = ref(false);
-const selectedCard = ref<any>(null);
-const isClosing = ref(false);
-const isCardSelected = ref(false);
-let autoSlideInterval: ReturnType<typeof setTimeout>;
+// ────────────────────── SLIDER ──────────────────────
+const currentIndex = ref(0)
+const sliderTrack = ref<HTMLElement | null>(null)
+const showModal = ref(false)
+const selectedCard = ref<any>(null)
+const isClosing = ref(false)
+const isCardSelected = ref(false)
+let autoSlideInterval: ReturnType<typeof setTimeout>
 
 const sliderCards = [
   {
