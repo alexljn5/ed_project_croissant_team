@@ -117,4 +117,3 @@ backend/croissant
 start_docker.sh
 backend.log
 frontend.log
-start_frontend_and_backend.sh

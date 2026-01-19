@@ -1,3 +1,31 @@
+<!-- 
+# Rohit - heeft dit gedaan
+Navigatiebalk aangepast: 
+- Logo en knoppen verplaatst naar rechts
+- Alleen logo is klikbaar naar homepage
+- Dubbeloproute titel is niet meer klikbaar
+-->
+
+<!--
+# Jordy - heeft dit gedaan
+App.vue aangepast:
+- globale headers toegevoegd
+- footer aangemaakt en toegevoegd
+- pagina selectie toegevoegd met tekst knoppen
+- pagina selectie = navigate
+- social media links toegevoegd
+- responsive gemaakt
+- footer contactgegevens toegevoegd
+Header aangepast:
+- nieuwe styling
+- nettere layout
+Slider.vue aangepast:
+- verwijdert uit App.vue
+- omgezet naar component
+- nieuwe css styling
+- achtergrond zelfgemaakt en toegevoegd
+-->
+
 <template>
   <div class="app-layout">
     <!-- Navigation Header -->
@@ -27,11 +55,9 @@
     <router-view />
     <Footer />
   </div>
-  <EditButton />
 </template>
 
 <script setup lang="ts">
 import Footer from './components/Footer.vue'
-import EditButton from './components/editToolKnop.vue'
 import '@/assets/css/app.css'
 </script>
