@@ -231,23 +231,27 @@
 }
 
 .view-emails-btn {
-  padding: 0.8rem 1.5rem;
+  padding: 1rem 2rem;
   background: #6b3f7b;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
   font-size: 1rem;
-  transition: background 0.3s, transform 0.2s;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
   margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(107, 63, 123, 0.3);
 }
 
 .view-emails-btn:hover {
   background: #553369;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(107, 63, 123, 0.4);
 }
 
 .view-emails-btn:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(107, 63, 123, 0.3);
 }
