@@ -2,21 +2,22 @@
   <div class="reviews-page">
     <h1>Reviews</h1>
     <div class="reviews-container">
+
       <!-- Left side: Form -->
       <div class="reviews-form-section">
         <h2>Schrijf een review</h2>
         <form @submit.prevent="addReview" class="review-form">
-          <input v-model="newReview.name" placeholder="Review" />
+          <input v-model="newReview.name" placeholder="Naam" />
           <textarea
             v-model="newReview.text"
-            placeholder="Text"
+            placeholder="Review tekst"
             required
             rows="4"
           ></textarea>
+
           <div class="form-additional">
             <label>
-              <input type="checkbox" v-model="newReview.anonymous" /> Plaats als
-              anoniem
+              <input type="checkbox" v-model="newReview.anonymous" /> Plaats als anoniem
             </label>
             <input
               v-if="!newReview.anonymous"
@@ -25,63 +26,63 @@
               type="email"
             />
           </div>
+
           <div class="star-rating">
             <span
               v-for="star in 5"
               :key="star"
               @click="newReview.stars = star"
               :class="['star', { active: newReview.stars >= star }]"
-              >★</span
-            >
+            >★</span>
           </div>
+
           <button type="submit" class="submit-btn">Submit</button>
         </form>
       </div>
 
       <!-- Right side: Reviews list -->
       <div class="reviews-list-section">
-        <div class="reviews-list" v-if="reviews.length">
+        <div v-if="reviews.length" class="reviews-list">
+          <h2>Reviews:</h2>
           <ul>
-            <li
-              v-for="(review, idx) in visibleReviews"
-              :key="idx"
-              class="review-item"
-            >
-              <h3>Review</h3>
+            <li v-for="(review, idx) in visibleReviews" :key="idx" class="review-item">
               <span class="review-text">{{ review.text }}</span>
               <div class="review-meta">
                 <span v-if="review.anonymous">(anoniem)</span>
                 <span v-else-if="review.name">- {{ review.name }}</span>
-                <span v-if="review.email" class="review-email">
-                  ({{ review.email }})</span
-                >
+                <span v-if="review.email" class="review-email">({{ review.email }})</span>
                 <span v-if="review.stars" class="review-stars">
                   <span
                     v-for="star in 5"
                     :key="star"
                     :class="['star', { active: review.stars >= star }]"
-                    >★</span
-                  >
+                  >★</span>
                 </span>
               </div>
               <button @click="removeReview(idx)" class="remove-btn">
-                Verwijder
+                Verwijder <p id="liltekst">"(temporary ofc)"</p>
               </button>
             </li>
           </ul>
+
           <button
             v-if="visibleReviews.length < reviews.length"
             @click="showMoreReviews"
             class="show-more-btn"
           >
-            Show more
+            Bekijk meer
           </button>
         </div>
-        <div v-else class="no-reviews">...</div>
+
+        <div v-else class="no-reviews">
+          Er zijn nog geen reviews...
+        </div>
       </div>
+
     </div>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";

@@ -2,8 +2,13 @@
 <template>
   <div class="admin-wrapper">
     <div class="admin-container">
-      <h1 class="admin-title">Admin Panel</h1>
-      <p class="admin-subtitle">Manage all editable content for your site</p>
+      <div class="admin-header">
+        <div>
+          <h1 class="admin-title">Admin Panel</h1>
+          <p class="admin-subtitle">Manage all editable content for your site</p>
+        </div>
+        <button @click="handleLogout" class="logout-btn">Logout</button>
+      </div>
 
       <div class="test-button">
         Admin Panel Loaded! Vue is working! {{ testCounter }}
@@ -16,7 +21,6 @@
 
         <!-- EMAILS CARD -->
         <div class="map-card">
-          <h2 style="margin-top: 2rem">Emails bekijken</h2>
           <router-link to="/emails" class="emails-link">
             <button class="view-emails-btn">Bekijk alle emails →</button>
           </router-link>
@@ -107,18 +111,27 @@
 </template>
 
 <script setup lang="ts">
-import "leaflet/dist/leaflet.css";
-import { ref, onMounted, watch, nextTick } from "vue";
-import EditableSection from "../components/EditableSection.vue";
-import DynamicList from "../components/DynamicList.vue";
-import POIEditor from "../components/POIEditor.vue";
-import POIModal from "../components/POIModal.vue";
-import { useMap } from "../composables/useMap";
-import type { POI } from "../composables/useMap";
-import "@/assets/css/admin.css";
+import 'leaflet/dist/leaflet.css'
+import { ref, onMounted, watch, nextTick } from 'vue'
+import EditableSection from '../components/EditableSection.vue'
+import DynamicList from '../components/DynamicList.vue'
+import POIEditor from '../components/POIEditor.vue'
+import POIModal from '../components/POIModal.vue'
+import { useMap } from '../composables/useMap'
+import { useAdminAuth } from '../composables/useAdminAuth'
+import type { POI } from '../composables/useMap'
+import '@/assets/css/admin.css'
 
 const testCounter = ref(0);
 const isLoading = ref(false);
+
+const { logout } = useAdminAuth()
+
+function handleLogout() {
+  if (confirm('Ben je zeker dat je wil uitloggen?')) {
+    logout()
+  }
+}
 
 interface Waypoint {
   lat: number;
@@ -159,7 +172,7 @@ onMounted(async () => {
         updateRoute(newWaypoints);
       }
     },
-    { deep: true }
+    { deep: true },
   );
 
   // "Meer info" buttons
