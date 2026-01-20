@@ -8,6 +8,7 @@ services:
     volumes:
       - ./backend:/var/www/backend
       - ./ed-vite:/var/www/ed-vite
+      - ed_vite_node_modules:/var/www/ed-vite/node_modules
     depends_on:
       - db
     environment:
@@ -18,7 +19,27 @@ services:
       CHOKIDAR_USEPOLLING: "true"
     command: >
       sh -c "cd /var/www/ed-vite && npm run dev -- --host 0.0.0.0 --port 5173 & 
-        cd /var/www/backend && php artisan serve --host=0.0.0.0 --port=8000"
+             cd /var/www/backend && php artisan serve --host=0.0.0.0 --port=8000"
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend
+          target: /var/www/backend
+          ignore:
+            - ./backend/vendor
+            - ./backend/storage/logs
+        - action: sync+restart
+          path: ./ed-vite
+          target: /var/www/ed-vite
+          ignore:
+            - ./ed-vite/node_modules
+            - ./ed-vite/dist
+        - action: rebuild
+          path: ./ed-vite/package.json
+        - action: rebuild
+          path: ./ed-vite/package-lock.json
+        - action: rebuild
+          path: ./Dockerfile
 
   db:
     image: mariadb:11.5
@@ -32,3 +53,4 @@ services:
 
 volumes:
   dbdata:
+  ed_vite_node_modules:
