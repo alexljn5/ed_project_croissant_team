@@ -21,7 +21,6 @@
 
         <!-- EMAILS CARD -->
         <div class="map-card">
-          <h2 style="margin-top: 2rem">Emails bekijken</h2>
           <router-link to="/emails" class="emails-link">
             <button class="view-emails-btn">Bekijk alle emails →</button>
           </router-link>
@@ -173,7 +172,7 @@ onMounted(async () => {
         updateRoute(newWaypoints);
       }
     },
-    { deep: true }
+    { deep: true },
   );
 
   // "Meer info" buttons
