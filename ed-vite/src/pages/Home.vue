@@ -2,7 +2,7 @@
   <div class="home-page">
      <div class="content-slider" 
        :style="{ backgroundImage: 'url(/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
-     <h1 class="neEv-text">Nieuws & EvenementenTEST</h1> 
+     <h1 class="neEv-text">Nieuws & Evenementen</h1> 
      <div class="slider-container"> 
         <button class="slider-arrow prev" @click="prevSlide">❮</button>
         <div class="slider-track" ref="sliderTrack">
