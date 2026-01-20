@@ -125,6 +125,7 @@
 </template>
 
 <script setup lang="ts">
+<<<<<<< Updated upstream
 import { ref, onMounted, onUnmounted } from "vue";
 import BackendGlue from "../components/BackendGlue.vue";
 import PublicMap from "../components/PublicMap.vue";
@@ -133,6 +134,15 @@ import { useMap } from "../composables/useMap";
 import type { POI } from "../composables/useMap";
 import "@/assets/css/home.css";
 import "@/assets/css/styles.css";
+=======
+import { ref, onMounted, onUnmounted } from 'vue'
+import BackendGlue from '../components/BackendGlue.vue'
+import PublicMap from '../components/PublicMap.vue'
+import POIModal from '../components/POIModal.vue'
+import { useMap } from '../composables/useMap'
+import type { POI } from '../composables/useMap'
+import '@/assets/css/home.css'
+>>>>>>> Stashed changes
 
 // ────────────────────── GET THE SHARED POIS (REQUIRED) ──────────────────────
 const {
@@ -296,11 +306,18 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+<<<<<<< Updated upstream
   window.removeEventListener("keydown", handleKeydown);
   window.removeEventListener("resize", updateSlider);
   // Clean up the POI listener (optional but clean)
   document.removeEventListener("click", setupPoiClickListener as EventListener);
 });
+=======
+  window.removeEventListener('keydown', handleKeydown)
+  window.removeEventListener('resize', updateSlider)
+  document.removeEventListener('click', setupPoiClickListener as EventListener)
+})
+>>>>>>> Stashed changes
 </script>
 
 <style scoped>

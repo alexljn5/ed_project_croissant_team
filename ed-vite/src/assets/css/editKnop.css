@@ -1,0 +1,53 @@
+.editor-bg-box {
+    position: fixed;
+    bottom: 60px;
+    right: 60px;
+    background: transparent;
+    border-radius: 80px;
+    padding: 1.5px;
+    display: inline-block;
+    z-index: 999;
+}
+
+.img-scaler {
+    width: 60%;
+    height: 60%;
+    position: absolute;
+    align-items: center;
+    filter: brightness(0.35);
+    transition: brightness 0.3s, transform 0.3s;
+}
+
+.img-scaler:hover {
+    filter: brightness(2);
+}
+
+.img-scaler:active {
+    filter: brightness(3);
+}
+
+.edit-tool-knop {
+    position: absolute;
+    background-color: var(--standaard);
+    border:solid;
+    border-color: transparent;
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor:pointer;
+    transition: background-color 0.3s, border-color 0.3s, scale 0.5s, transform 0.2s;
+}
+
+.edit-tool-knop:hover {
+    background-color: var(--interactief);
+    border-color: var(--interactief);
+    transform: scale(1.05);
+}
+
+.edit-tool-knop:active {
+    transform: scale(0.95);
+}

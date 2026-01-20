@@ -120,7 +120,6 @@ import POIModal from '../components/POIModal.vue'
 import { useMap } from '../composables/useMap'
 import { useAdminAuth } from '../composables/useAdminAuth'
 import type { POI } from '../composables/useMap'
-import '@/assets/css/admin.css'
 
 const testCounter = ref(0);
 const isLoading = ref(false);
@@ -227,4 +226,10 @@ async function savePOIsWrapper() {
   await saveMarkers();
   isLoading.value = false;
 }
+<<<<<<< Updated upstream
 </script>
+=======
+
+import '@/assets/css/admin.css'
+</script>
+>>>>>>> Stashed changes

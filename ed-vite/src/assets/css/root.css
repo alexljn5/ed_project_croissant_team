@@ -1,0 +1,27 @@
+:root {
+    --a: hsla(41, 100%, 49%, 1);
+    --achtergrond-primair: hsl(0, 0%, 96%);
+    --b: hsla(41, 100%, 59%, 1);
+    --body: hsla(304, 36%, 42%, 1);
+    --c: hsla(41, 100%, 69%, 1);
+    --det-1: hsla(41, 100%, 49%, 0.8);
+    --det-2: hsla(41, 100%, 59%, 0.8);
+    --det-3: hsla(41, 100%, 69%, 0.8);
+    --font-grootte: 16px;
+    --font-grootte2: 32px;
+    --font-grootte3: 42px;
+    --font-heading: 'Montserrat', 'Poppins', 'Nunito', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'Courier New', Courier, monospace;
+    --font-primair: 'Inter', Roboto, 'Open Sans', Arial, Helvetica, sans-serif;
+    --font-smal: 9px;
+    --header-bg: rgba(255, 255, 255, 0.8);
+    --header-shadow: rgba(0, 0%, 0.1);
+    --header-text: hsla(0, 0%, 11%, 1);
+    --interactief: hsl(41, 100%, 69%);
+    --site-paars: hsla(304, 70%, 42%, 1);
+    --site-paars-light: hsla(304, 36%, 52%, 1);
+    --site-paars-xtra-light: hsla(304, 36%, 82%, 1);
+    --standaard: hsl(311, 32%, 90%);
+    --titel-font: sans-serif;
+    --title-text: hsl(0, 0%, 90%);
+}

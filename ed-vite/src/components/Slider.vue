@@ -184,7 +184,7 @@ onBeforeUnmount(() => {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px 0;
+  padding: 0 20px;
   top: 0;
   bottom: 0;
 }
