@@ -9,7 +9,6 @@
 
     <div class="emails-container">
       <div v-if="emails.length === 0" class="no-emails">
-        <p class="empty-icon">📧</p>
         <p class="empty-text">Nog geen berichten ontvangen</p>
         <router-link to="/contact" class="back-to-contact">
           <button class="back-btn">Terug naar contactformulier</button>
@@ -30,17 +29,17 @@
                 <h2>{{ email.subject }}</h2>
                 <div class="email-meta">
                   <div class="meta-row">
-                    <span class="meta-label">👤 Van:</span>
+                    <span class="meta-label">Van:</span>
                     <span class="meta-value">{{ email.name }}</span>
                   </div>
                   <div class="meta-row">
-                    <span class="meta-label">📧 Email:</span>
+                    <span class="meta-label">Email:</span>
                     <a :href="'mailto:' + email.email" class="email-link">{{
                       email.email
                     }}</a>
                   </div>
                   <div class="meta-row">
-                    <span class="meta-label">📅 Datum:</span>
+                    <span class="meta-label">Datum:</span>
                     <span class="meta-value">{{ email.date }}</span>
                   </div>
                 </div>
@@ -50,7 +49,7 @@
                 class="delete-btn"
                 title="Verwijder dit bericht"
               >
-                🗑️
+                X
               </button>
             </div>
             <div class="email-body">
