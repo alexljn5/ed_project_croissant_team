@@ -85,7 +85,7 @@
 }
 
 .contact-header {
-  background: linear-gradient(135deg, var(--site-paars) 0%, #4a2d5a 100%);
+  background: var(--site-paars);
   color: white;
   padding: 3rem 2rem;
   text-align: center;

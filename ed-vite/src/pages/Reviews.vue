@@ -79,25 +79,6 @@
         </div>
         <div v-else class="no-reviews">...</div>
       </div>
-      <button type="submit">Submit</button>
-    </form>
-    <div class="reviews-list" v-if="reviews.length">
-      <h2>Reviews:</h2>
-      <ul>
-        <li v-for="(review, idx) in visibleReviews" :key="idx" class="review-item">
-          <span class="review-text">{{ review.text }}</span>
-          <div class="review-meta">
-            <span v-if="review.anonymous">(anoniem)</span>
-            <span v-else-if="review.name">- {{ review.name }}</span>
-            <span v-if="review.email" class="review-email"> ({{ review.email }})</span>
-            <span v-if="review.stars" class="review-stars">
-              <span v-for="star in 5" :key="star" :class="['star', { active: review.stars >= star }]">&#9733;</span>
-            </span>
-          </div>
-          <button @click="removeReview(idx)" class="remove-btn">Verwijder <p id="liltekst">"(temporary ofc)"</p></button>
-        </li>
-      </ul>
-      <button v-if="visibleReviews.length < reviews.length" @click="showMoreReviews" class="show-more-btn">Bekijk meer</button>
     </div>
   </div>
 </template>
