@@ -14,7 +14,7 @@
         <!-- Contact Info Cards -->
         <div class="info-cards">
           <div class="info-card phone-card">
-            <div class="card-icon">📞</div>
+            <div class="card-icon"></div>
             <h3>Bel ons</h3>
             <p class="contact-detail">+31 (0)6 12345678</p>
             <p class="contact-hours">
@@ -24,7 +24,7 @@
           </div>
 
           <div class="info-card email-card">
-            <div class="card-icon">✉️</div>
+            <div class="card-icon"></div>
             <h3>Email</h3>
             <p class="contact-detail">Alle berichten</p>
             <router-link to="/emails" class="view-emails-link">
@@ -33,7 +33,7 @@
           </div>
 
           <div class="info-card location-card">
-            <div class="card-icon">📍</div>
+            <div class="card-icon"></div>
             <h3>Locatie</h3>
             <p class="contact-detail">Netherlands</p>
             <p class="contact-hours">Bezoek ons naar afspraak</p>
