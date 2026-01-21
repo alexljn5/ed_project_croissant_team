@@ -19,7 +19,15 @@
                 :key="star"
                 type="button"
                 @click="newReview.stars = star"
-                :class="['star-btn', { active: newReview.stars >= star }]"
+                @mouseenter="hoverRating = star"
+                @mouseleave="hoverRating = 0"
+                :class="[
+                  'star-btn',
+                  {
+                    active: newReview.stars >= star,
+                    hover: hoverRating >= star,
+                  },
+                ]"
                 :aria-label="`${star} sterren`"
                 tabindex="0"
               >
@@ -196,6 +204,7 @@ const newReview = ref<Review>({
 });
 const reviews = ref<Review[]>([]);
 const visibleReviews = ref<Review[]>([]);
+const hoverRating = ref(0);
 
 const averageRating = computed(() => {
   const reviewsWithStars = reviews.value.filter((r) => r.stars && r.stars > 0);

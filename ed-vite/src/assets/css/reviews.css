@@ -198,6 +198,10 @@ textarea.form-input {
   transform: scale(1.15);
 }
 
+.star-btn.hover {
+  color: var(--interactief);
+}
+
 .star-btn.active {
   color: var(--interactief);
 }
