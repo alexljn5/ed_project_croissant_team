@@ -2,21 +2,13 @@
 import { useContent } from '../composables/useContent'
 import { ref } from 'vue'
 
-// Tekst (blijft zoals het was)
+// Tekst deel (blijft hetzelfde)
 const { data: text, save: saveText, loading: textLoading } = useContent<string>(
   'editable_section',
   'Lorem ipsum Lorem ipsum'
 )
 
-// Foto URL (nieuwe key)
-const { data: photoUrl, save: savePhoto, loading: photoLoading, reload } = useContent<string>(
-  'homepage_photo',
-  '' // geen foto standaard
-)
-
 const savingText = ref(false)
-const uploadingPhoto = ref(false)
-const fileInput = ref<HTMLInputElement | null>(null)
 
 const saveChanges = async () => {
   savingText.value = true
@@ -30,41 +22,43 @@ const saveChanges = async () => {
   }
 }
 
-const triggerUpload = () => fileInput.value?.click()
+// Foto deel – nu met base64 (kopie van POIEditor logica)
+const { data: photoUrl, save: savePhoto, loading: photoLoading, reload } = useContent<string>(
+  'homepage_photo',
+  '' // geen foto standaard
+)
 
-const uploadPhoto = async (e: Event) => {
+const uploadingPhoto = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
+
+function handlePhotoChange(e: Event) {
   const input = e.target as HTMLInputElement
   if (!input.files?.length) return
 
   const file = input.files[0]
   uploadingPhoto.value = true
 
-  const formData = new FormData()
-  formData.append('photo', file)
-
-  try {
-    const res = await fetch('/api/upload-photo', {
-      method: 'POST',
-      body: formData
-    })
-
-    if (!res.ok) throw new Error('Upload mislukt')
-
-    const json = await res.json()
-    const newUrl = (json.url || json.path) + '?t=' + Date.now() // cache busting
-
-    photoUrl.value = newUrl
-    await savePhoto()  // slaat de URL op in dezelfde content-tabel
-
-    alert('Foto geüpload & opgeslagen!')
-    reload() // forceer herladen (niet echt nodig, maar veilig)
-  } catch (err) {
-    alert('Fout: ' + (err as Error).message)
-  } finally {
+  const reader = new FileReader()
+  reader.onload = () => {
+    photoUrl.value = reader.result as string  // base64 string: data:image/...
     uploadingPhoto.value = false
-    input.value = '' // zodat je dezelfde foto opnieuw kunt kiezen
+
+    // Optioneel: automatisch opslaan na upload
+    savePhoto().then(() => {
+      alert('Foto succesvol geüpload en opgeslagen!')
+      reload() // herlaad eventueel andere data
+    }).catch(err => {
+      alert('Opslaan mislukt: ' + err.message)
+    })
   }
+  reader.onerror = () => {
+    alert('Kon afbeelding niet lezen')
+    uploadingPhoto.value = false
+  }
+  reader.readAsDataURL(file)
 }
+
+const triggerUpload = () => fileInput.value?.click()
 </script>
 
 <template>
@@ -104,18 +98,21 @@ const uploadPhoto = async (e: Event) => {
 
     <!-- FOTO DEEL -->
     <div class="bg-white p-6 rounded-lg shadow">
-      <h3 class="text-xl font-semibold text-pink-700 mb-4">Homepage foto (wordt vervangen)</h3>
+      <h3 class="text-xl font-semibold text-pink-700 mb-4">Homepage foto</h3>
 
       <div v-if="photoLoading" class="text-pink-600">Foto laden...</div>
 
-      <!-- Huidige foto tonen -->
+      <!-- Huidige foto tonen (werkt met base64 én oude URLs) -->
       <div v-if="photoUrl && !photoLoading" class="mb-6">
         <img 
           :src="photoUrl" 
-          alt="Huidige foto"
+          alt="Huidige homepage foto"
           class="max-w-full h-auto rounded-lg shadow-md mx-auto"
+          @error="() => { photoUrl = '' }"  <!-- fallback als src kapot is -->
         />
-        <p class="text-center text-sm text-gray-600 mt-2">Huidige foto – wordt overschreven bij nieuwe upload</p>
+        <p class="text-center text-sm text-gray-600 mt-2">
+          Huidige foto – vervang door nieuwe upload
+        </p>
       </div>
 
       <div v-else-if="!photoLoading" class="text-center py-16 border-2 border-dashed border-gray-300 rounded-lg text-gray-500">
@@ -128,16 +125,16 @@ const uploadPhoto = async (e: Event) => {
           ref="fileInput"
           type="file"
           accept="image/*"
-          @change="uploadPhoto"
+          @change="handlePhotoChange"
           class="hidden"
         />
 
         <button
           @click="triggerUpload"
-          :disabled="uploadingPhoto"
+          :disabled="uploadingPhoto || photoLoading"
           class="px-8 py-4 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-lg text-lg disabled:opacity-70"
         >
-          {{ uploadingPhoto ? 'Uploaden...' : 'Nieuwe foto kiezen & uploaden' }}
+          {{ uploadingPhoto ? 'Bezig met verwerken...' : 'Nieuwe foto kiezen & uploaden' }}
         </button>
       </div>
     </div>
