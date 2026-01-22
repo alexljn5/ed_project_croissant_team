@@ -1,14 +1,11 @@
 :root {
   --site-paars: hsla(304, 36%, 42%, 1);
-  --interactief: hsl(56, 100%, 50%);
+  --interactief: hsl(41, 100%, 69%);
   --achtergrond-primair: hsl(0, 0%, 96%);
-  --font-primair: "Inter", Roboto, "Open Sans", Arial, Helvetica, sans-serif;
-  --font-heading:
-    "Montserrat", "Poppins", "Nunito", "Segoe UI", "Helvetica Neue", Arial,
-    sans-serif;
+  --font-primair: 'Inter', Roboto, 'Open Sans', Arial, Helvetica, sans-serif;
+  --font-heading: 'Montserrat', 'Poppins', 'Nunito', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* Page Layout */
 .reviews-page {
   min-height: calc(100vh - 100px);
   padding: 3rem 2rem;

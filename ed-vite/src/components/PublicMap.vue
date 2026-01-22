@@ -23,6 +23,8 @@ onMounted(async () => {
 
 <style scoped>
 .map-container {
+  background-color: none;
+  background: transparent;
   width: 100%;
   display: flex;
   justify-content: center;

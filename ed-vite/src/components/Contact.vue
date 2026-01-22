@@ -85,7 +85,7 @@
 }
 
 .contact-header {
-  background: linear-gradient(135deg, var(--site-paars) 0%, #4a2d5a 100%);
+  background: var(--site-paars);
   color: white;
   padding: 3rem 2rem;
   text-align: center;
@@ -298,3 +298,22 @@
   }
 }
 </style>
+
+<template>
+  <header>
+    <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
+    <button class="contactKnop">Neem Contact Op</button>
+    <div class="logo">
+      <img src="src/img/dubbelop-logo.png" alt="Dubbelop Logo" />
+    </div>
+  </header>
+  <h1>Stuur een email</h1>
+  <a
+    href="https://mail.google.com/mail/?view=cm&fs=1&to=info@voorbeeld.nl&su=Onderwerp&body=Bericht"
+    >Stuur een e-mail</a
+  >
+  <p>Wij reageren zo snel mogelijk</p>
+  <h1>Of bel ons</h1>
+  <p>+31 6 12345678</p>
+  <p>Beschikbaar tussen [tijd1] en [tijd2]</p>
+</template>
