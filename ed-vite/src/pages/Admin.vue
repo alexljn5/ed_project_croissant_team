@@ -226,10 +226,6 @@ async function savePOIsWrapper() {
   await saveMarkers();
   isLoading.value = false;
 }
-<<<<<<< Updated upstream
-</script>
-=======
 
 import '@/assets/css/admin.css'
 </script>
->>>>>>> Stashed changes

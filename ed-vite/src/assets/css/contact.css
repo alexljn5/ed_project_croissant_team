@@ -67,24 +67,24 @@
 }
 
 .email-button {
-    background-color: #2563eb;
+    background-color: var(--site-paars);
     color: white;
 }
 
 .email-button:hover {
-    background-color: #1d4ed8;
-    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+    background-color: var(--site-paars-light);
+    box-shadow: 0 6px 16px rgba(107, 63, 123, 0.3);
     transform: scale(1.05);
 }
 
 .phone-button {
-    background-color: #16a34a;
+    background-color: var(--site-paars);
     color: white;
 }
 
 .phone-button:hover {
-    background-color: #15803d;
-    box-shadow: 0 6px 16px rgba(22, 163, 74, 0.3);
+    background-color: var(--site-paars-light);
+    box-shadow: 0 6px 16px rgba(107, 63, 123, 0.3);
     transform: scale(1.05);
 }
 

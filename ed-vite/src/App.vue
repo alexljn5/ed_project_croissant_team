@@ -1,34 +1,5 @@
-<!-- 
-# Rohit - heeft dit gedaan
-Navigatiebalk aangepast: 
-- Logo en knoppen verplaatst naar rechts
-- Alleen logo is klikbaar naar homepage
-- Dubbeloproute titel is niet meer klikbaar
--->
-
-<!--
-# Jordy - heeft dit gedaan
-App.vue aangepast:
-- globale headers toegevoegd
-- footer aangemaakt en toegevoegd
-- pagina selectie toegevoegd met tekst knoppen
-- pagina selectie = navigate
-- social media links toegevoegd
-- responsive gemaakt
-- footer contactgegevens toegevoegd
-Header aangepast:
-- nieuwe styling
-- nettere layout
-Slider.vue aangepast:
-- verwijdert uit App.vue
-- omgezet naar component
-- nieuwe css styling
-- achtergrond zelfgemaakt en toegevoegd
--->
-
 <template>
   <div class="app-wrapper">
-    <!-- Navigation Header (Fixed) -->
     <header class="header-top">
       <div class="header-container">
         <h1 class="dubbeloproute-titel">Dubbelop-route</h1>
@@ -56,7 +27,6 @@ Slider.vue aangepast:
       </div>
     </header>
     
-    <!-- Main Content Area (Scrollable) -->
     <div class="app-layout">
       <router-view />
       <Footer />
@@ -67,7 +37,6 @@ Slider.vue aangepast:
 <script setup lang="ts">
 import Footer from './components/Footer.vue'
 import EditButton from './components/editToolKnop.vue'
-import '@/assets/css/app.css'
 </script>
 
 <style scoped>
@@ -83,7 +52,7 @@ import '@/assets/css/app.css'
     top: 0;
     left: 0;
     width: 100%;
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
     z-index: 1000;
     background-image: linear-gradient(to right,
             var(--site-paars-xtra-light) 0%,
@@ -136,11 +105,14 @@ import '@/assets/css/app.css'
 }
 
 .logo {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: var(--site-paars);
+    border-radius: 100%;
+    border-color: var(--interactief);
 }
 
 .logo img {
@@ -217,7 +189,6 @@ import '@/assets/css/app.css'
 }
 </style>
 
-<!-- Global styles (not scoped - apply to html/body/root) -->
 <style>
 *,
 *::before,
@@ -242,12 +213,11 @@ body::-webkit-scrollbar {
     display: none;
 }
 
-/* Ensure page content doesn't hide behind fixed header */
 .home-page,
 .reviews-page,
 .contact-page,
 .admin-page {
-    padding-top: 120px;
+    padding-top: 95px;
 }
 
 .content-slider {
