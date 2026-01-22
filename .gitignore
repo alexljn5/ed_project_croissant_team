@@ -55,7 +55,7 @@ bootstrap/cache/.gitignore
 
 # SQLite databases
 /database/*.sqlite
-/database/database.sqlite
+/database/database.sqlite*****  
 
 # TypeScript / declaration files
 *.d.ts
