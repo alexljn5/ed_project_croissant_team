@@ -1,3 +1,4 @@
+// src/composables/useGeolocation.ts
 import { ref, Ref, computed } from 'vue'
 
 interface GeolocationCoords {
@@ -22,6 +23,7 @@ export const useGeolocation = (): GeoLocationState & {
     stopTracking: () => void
     requestPermission: () => Promise<boolean>
     calculateDistance: (lat1: number, lon1: number, lat2: number, lon2: number) => number
+    shareCurrentLocation: () => Promise<GeolocationCoords | null> // NEW: one-time share
 } => {
     const coords = ref<GeolocationCoords | null>(null)
     const isTracking = ref(false)
@@ -30,7 +32,7 @@ export const useGeolocation = (): GeoLocationState & {
     let watchId: number | null = null
 
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-        const R = 6371 // Aardstraal in km
+        const R = 6371 // km
         const dLat = (lat2 - lat1) * Math.PI / 180
         const dLon = (lon2 - lon1) * Math.PI / 180
         const a =
@@ -38,13 +40,13 @@ export const useGeolocation = (): GeoLocationState & {
             Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
             Math.sin(dLon / 2) * Math.sin(dLon / 2)
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-        return R * c // Afstand in km
+        return R * c
     }
 
     const requestPermission = (): Promise<boolean> => {
         return new Promise((resolve) => {
             if (!navigator.geolocation) {
-                error.value = 'Geolocation is niet ondersteund op dit apparaat'
+                error.value = 'Geolocation not supported'
                 resolve(false)
                 return
             }
@@ -60,7 +62,7 @@ export const useGeolocation = (): GeoLocationState & {
                     resolve(true)
                 },
                 (err) => {
-                    error.value = `Fout: ${err.message}`
+                    error.value = `Error: ${err.message}`
                     resolve(false)
                 },
                 { enableHighAccuracy: true, timeout: 10000 }
@@ -70,7 +72,7 @@ export const useGeolocation = (): GeoLocationState & {
 
     const startTracking = (): void => {
         if (!navigator.geolocation) {
-            error.value = 'Geolocation is niet ondersteund'
+            error.value = 'Geolocation not supported'
             return
         }
 
@@ -87,7 +89,7 @@ export const useGeolocation = (): GeoLocationState & {
                 error.value = null
             },
             (err) => {
-                error.value = `Fout: ${err.message}`
+                error.value = `Error: ${err.message}`
                 isTracking.value = false
             },
             { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
@@ -102,6 +104,34 @@ export const useGeolocation = (): GeoLocationState & {
         isTracking.value = false
     }
 
+    // NEW: One-time share current location (for debug button)
+    const shareCurrentLocation = (): Promise<GeolocationCoords | null> => {
+        return new Promise((resolve) => {
+            if (!navigator.geolocation) {
+                error.value = 'Geolocation not supported'
+                resolve(null)
+                return
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const currentCoords = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    }
+                    console.log('Shared current location:', currentCoords)
+                    resolve(currentCoords)
+                },
+                (err) => {
+                    error.value = `Error sharing location: ${err.message}`
+                    resolve(null)
+                },
+                { enableHighAccuracy: true, timeout: 5000 }
+            )
+        })
+    }
+
     return {
         coords,
         isTracking,
@@ -110,6 +140,7 @@ export const useGeolocation = (): GeoLocationState & {
         startTracking,
         stopTracking,
         requestPermission,
-        calculateDistance
+        calculateDistance,
+        shareCurrentLocation // NEW export
     }
 }
