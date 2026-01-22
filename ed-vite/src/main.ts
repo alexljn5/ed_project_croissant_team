@@ -1,11 +1,7 @@
-import { createApp } from 'vue'
+ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 
-// ────────────────────────────────
-//  Cream's smart lazy Leaflet loader ♡
-//  → Only loads when you really need a map!
-// ────────────────────────────────
 let leafletPromise: Promise<any> | null = null
 
 export async function useLeaflet() {

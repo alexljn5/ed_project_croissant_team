@@ -36,3 +36,29 @@ main.js
 App.vue.js
 .vite/
 
+# Vite cache and HMR files
+.vite/
+
+# TypeScript build info (generated during build)
+*.tsbuildinfo
+
+# Vite/Vue generated JS files (if any)
+*.vue.js
+
+# Optional: if you don’t want to commit lockfile (but usually you do keep it)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Local environment files
+.env.local
+.env.development.local
+.env.production.local
+
+# OS generated files (already have some, but safe to add)
+Thumbs.db
+Desktop.ini
+
+# Build output (already have dist, but make sure)
+dist/
+dist-ssr/

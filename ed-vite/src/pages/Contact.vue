@@ -1,227 +1,181 @@
 <template>
-  <div class="caller-div">
+  <div class="contact-page">
+    <div class="contact-header">
+      <div class="header-content">
+        <h1>Neem Contact Met Ons Op</h1>
+        <p class="header-subtitle">
+          We helpen je graag! Stuur ons een bericht of bel ons direct.
+        </p>
+      </div>
+    </div>
+
     <div class="contact-container">
-      <section class="contact-section">
-        <h1>Stuur een e-mail</h1>
-        <p class="section-description">Zoek graag direct contact op via de mail:</p>
-        <a
-          href="https://mail.google.com/mail/?view=cm&fs=1&to=info@voorbeeld.nl&su=Onderwerp&body=Bericht"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="contact-button email-button"
-        >
-          Verstuur een e-mail
-        </a>
-        <p class="response-time">Reactie zo snel mogelijk</p>
-      </section>
+      <div class="contact-content">
+        <!-- Contact Info Cards -->
 
-      <section class="contact-section">
-        <h2>Of bel ons</h2>
-        <div class="phone-block">
-          <p class="phone-number">+31 (0)6 12345678</p>
-          <a 
-            href="tel:+31612345678"
-            class="contact-button phone-button"
-          >
-            Bel nu
-          </a>
-        </div>
-        <p class="availability">Van <span class="bold">12:00</span> tot <span class="bold">18:00</span> beschikbaar</p>
-        <p class="availability-days">Maandag tot Vrijdag</p>
-      </section>
+        <div class="form-section">
+          <h2>Stuur ons een bericht</h2>
+          <p class="form-description">
+            We nemen contact met je op binnen 24 uur
+          </p>
 
-      <!-- Additional Info -->
-      <section class="contact-section faq-section">
-        <h3>Veelgestelde vragen</h3>
-        <div class="faq-content">
-          <p>Nog vragen? Neem dan gerust contact op via telefoon of email.</p>
-          <p>We streven ernaar om alle vragen binnen 24 uur te beantwoorden.</p>
-          <p>Voor spoedeisende zaken kunt u ons direct bellen.</p>
+          <form @submit.prevent="handleSubmit" class="contact-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Naam</label>
+                <input
+                  v-model="form.name"
+                  id="name"
+                  type="text"
+                  placeholder="Uw volledige naam"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input
+                  v-model="form.email"
+                  id="email"
+                  type="email"
+                  placeholder="uw@email.com"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="subject">Onderwerp</label>
+              <input
+                v-model="form.subject"
+                id="subject"
+                type="text"
+                placeholder="Waar gaat uw bericht over?"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="message">Bericht</label>
+              <textarea
+                v-model="form.message"
+                id="message"
+                placeholder="Schrijf hier uw bericht..."
+                rows="6"
+                required
+              ></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">
+              <span>Verstuur Bericht</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </form>
+
+          <transition name="slide-fade">
+            <div v-if="successMessage" class="success-message">
+              <span class="success-icon">✓</span>
+              {{ successMessage }}
+            </div>
+          </transition>
+
+          <!-- Phone Section Below Form -->
+          <div class="phone-section">
+            <h3>Of bel ons direct</h3>
+            <p class="phone-number">+31 (0)6 12345678</p>
+            <p class="phone-hours">
+              Maandag - Vrijdag<br /><span class="bold">12:00 - 18:00</span> uur
+            </p>
+          </div>
         </div>
-      </section>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+import { useEmail } from "@/composables/useEmail";
+import "@/assets/css/contact.css";
+
+const { sendEmail } = useEmail();
+
+const form = ref({
+  name: "",
+  email: "",
+  subject: "",
+  message: "",
+});
+
+const successMessage = ref("");
+
+const handleSubmit = () => {
+  try {
+    sendEmail(
+      form.value.name,
+      form.value.email,
+      form.value.subject,
+      form.value.message,
+    );
+
+    successMessage.value = "Bericht succesvol verzonden! ✓";
+
+    // Reset form
+    form.value = {
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    };
+
+    // Clear success message after 3 seconds
+    setTimeout(() => {
+      successMessage.value = "";
+    }, 3000);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
 </script>
 
 <style scoped>
-:root {
-  --body: hsla(304, 36%, 42%, 1);
-  --title-text: hsl(0, 0%, 90%);
-  --achtergrond-primair: hsl(0, 0%, 96%);
-  --site-paars-xtra-light: hsla(304, 36%, 82%, 1);
-  --site-paars-light: hsla(304, 36%, 52%, 1);
-  --site-paars: hsla(304, 36%, 42%, 1);
-  --interactief: hsl(41, 100%, 69%);
-  --header-bg: rgba(255, 255, 255, 0.65);
-  --header-shadow: rgba(0, 0%, 0.1);
-  --font-primair: 'Inter', Roboto, 'Open Sans', Arial, Helvetica, sans-serif;
-  --font-heading: 'Montserrat', 'Poppins', 'Nunito', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: 'Courier New', Courier, monospace;
-  --font-smal: 9px;
-  --font-grootte: 16px;
-  --font-grootte2: 32px;
-  --font-grootte3: 42px;
-  --titel-font: sans-serif;
-  --header-text: hsla(0, 0%, 11%, 1);
-  --det-1: hsla(41, 100%, 49%, 0.8);
-  --det-2: hsla(41, 100%, 59%, 0.8);
-  --det-3: hsla(41, 100%, 69%, 0.8);
-}
-
-.caller-div {
-  font-family: var(--font-primair);
-  background-color: var(--achtergrond-primair);
+/* Header Section */
+.contact-page {
   min-height: 100vh;
-  padding: 2rem 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 0;
 }
 
-.contact-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.contact-section {
-  background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  animation: fadeIn 0.5s ease-in;
-  border: 2px solid var(--site-paars);
-}
-
-.contact-section:hover {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-.contact-section h1,
-.contact-section h2,
-.contact-section h3 {
-  font-family: var(--font-heading);
-  color: var(--site-paars);
-  font-weight: bold;
-  margin: 0 0 1rem 0;
-}
-
-.contact-section h1 {
-  font-size: 1.75rem;
-}
-
-.contact-section h2 {
-  font-size: 1.75rem;
-  margin-bottom: 1.5rem;
-}
-
-.contact-section h3 {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-}
-
-.section-description {
-  color: #666;
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-}
-
-.contact-button {
-  display: inline-block;
-  padding: 0.75rem 2rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
-.email-button {
-  background-color: #2563eb;
+.contact-header {
+  background: linear-gradient(
+    135deg,
+    var(--site-paars, #6b4e99) 0%,
+    #8b5fcf 100%
+  );
   color: white;
+  padding: 4rem 1rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.email-button:hover {
-  background-color: #1d4ed8;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
-  transform: scale(1.05);
-}
-
-.phone-button {
-  background-color: #16a34a;
-  color: white;
-}
-
-.phone-button:hover {
-  background-color: #15803d;
-  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.3);
-  transform: scale(1.05);
-}
-
-.response-time {
-  color: #999;
-  margin-top: 1.5rem;
-  font-style: italic;
-  font-size: 0.95rem;
-}
-
-.phone-block {
-  margin-bottom: 1.5rem;
-}
-
-.phone-number {
-  font-size: 1.75rem;
-  font-weight: bold;
-  color: var(--site-paars);
+.header-content h1 {
+  font-size: 2.8rem;
   margin: 0 0 1rem 0;
+  font-weight: 700;
+  animation: slideDown 0.6s ease-out;
 }
 
-.availability {
-  color: #666;
+.header-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.95;
   margin: 0;
-  font-size: 0.95rem;
+  animation: slideDown 0.8s ease-out;
 }
 
-.availability-days {
-  color: #999;
-  margin: 0.5rem 0 0 0;
-  font-size: 0.85rem;
-}
-
-.bold {
-  font-weight: bold;
-}
-
-.faq-section {
-  background-color: var(--site-paars);
-  border: 2px solid var(--site-paars);
-}
-
-.faq-section h3 {
-  color: #ffffff;
-}
-
-.faq-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  color: #ffffff;
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.faq-content p {
-  margin: 0;
-  color: #ffffff;
-}
-
-@keyframes fadeIn {
+@keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
@@ -229,23 +183,368 @@
   }
 }
 
+/* Container & Content */
+.contact-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+
+.contact-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* Info Cards */
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 1rem;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.info-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-top: 4px solid transparent;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+.phone-card {
+  border-top-color: #ff6b6b;
+}
+
+.email-card {
+  border-top-color: #4ecdc4;
+}
+
+.location-card {
+  border-top-color: #ffd93d;
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.info-card h3 {
+  font-size: 1.3rem;
+  color: #333;
+  margin: 1rem 0;
+  font-weight: 600;
+}
+
+.contact-detail {
+  font-size: 1.1rem;
+  color: #666;
+  font-weight: 500;
+  margin: 0.5rem 0;
+}
+
+.contact-hours {
+  font-size: 0.95rem;
+  color: #999;
+  margin: 1rem 0 0 0;
+  line-height: 1.6;
+}
+
+.bold {
+  font-weight: 600;
+  color: #333;
+}
+
+.view-emails-link {
+  text-decoration: none;
+  display: block;
+}
+
+.view-emails-btn {
+  width: 100%;
+  padding: 0.7rem 1.5rem;
+  background: #4ecdc4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.view-emails-btn:hover {
+  background: #45b8ae;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(78, 205, 196, 0.3);
+}
+
+.view-emails-btn:active {
+  transform: translateY(0);
+}
+
+/* Form Section */
+.form-section {
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  animation: fadeInUp 1s ease-out;
+}
+
+.form-section h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.form-description {
+  color: #999;
+  margin: 0 0 2rem 0;
+  font-size: 0.95rem;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 0.7rem;
+  color: #333;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+input,
+textarea {
+  padding: 0.9rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--site-paars, #6b4e99);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(107, 78, 153, 0.1);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.submit-btn {
+  padding: 1rem 2rem;
+  background: linear-gradient(
+    135deg,
+    var(--site-paars, #6b4e99) 0%,
+    #8b5fcf 100%
+  );
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 15px rgba(107, 78, 153, 0.3);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(107, 78, 153, 0.4);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.btn-arrow {
+  transition: transform 0.3s ease;
+}
+
+.submit-btn:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+.success-message {
+  margin-top: 1.5rem;
+  padding: 1.2rem 1.5rem;
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+  border: 2px solid #c3e6cb;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  animation: slideDown 0.4s ease-out;
+}
+
+.success-icon {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Phone Section Below Form */
+.phone-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-left: 4px solid #ff6b6b;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.phone-section h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.phone-number {
+  font-size: 1.3rem;
+  color: #ff6b6b;
+  font-weight: 700;
+  margin: 0.5rem 0;
+}
+
+.phone-hours {
+  font-size: 0.95rem;
+  color: #999;
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+/* Animations */
+.slide-fade-enter-active {
+  transition: all 0.3s ease;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s ease;
+}
+
+.slide-fade-enter-from {
+  transform: translateX(-10px);
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .contact-container {
-    padding: 0 1rem;
+  .contact-header {
+    padding: 2.5rem 1rem;
   }
 
-  .contact-section {
+  .header-content h1 {
+    font-size: 2rem;
+  }
+
+  .header-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .contact-container {
+    padding: 2rem 1rem;
+  }
+
+  .info-cards {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .form-section {
+    padding: 2rem 1.5rem;
+  }
+
+  .form-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  input,
+  textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .submit-btn {
+    font-size: 1rem;
+    padding: 0.9rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content h1 {
+    font-size: 1.6rem;
+  }
+
+  .info-card {
     padding: 1.5rem;
   }
 
-  .contact-section h1,
-  .contact-section h2,
-  .contact-section h3 {
-    font-size: 1.5rem;
+  .form-section {
+    padding: 1.5rem 1rem;
   }
 
-  .phone-number {
-    font-size: 1.5rem;
+  .contact-detail {
+    font-size: 1rem;
   }
 }
 </style>

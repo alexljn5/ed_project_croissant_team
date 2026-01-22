@@ -81,4 +81,47 @@ start_docker.sh
 /package-lock.json
 .docker_built
 ed-vite/package-lock.json
+
+# Docker-specific (root level)
+.docker_built
+docker-compose.override.yml
+
+# Volume-related artifacts (if any leak to root)
+dbdata/
+
+# Root-level node_modules (in case someone runs npm at root)
+node_modules/
+
+# Build/cache from subprojects leaking to root (rare but safe)
+dist/
+dist-ssr/
+.vite/
+
+# Misc generated files
+*.tsbuildinfo
+
+# OS/Editor duplicates (safe to add again)
+Thumbs.db
+Desktop.ini
+
+# Temporary/test files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Security
+auth.json
+start_frontend_and_backend.sh
 backend/croissant
+start_docker.sh
+backend.log
+frontend.log
+start_frontend_and_backend.sh
+backend/croissant
+.frontend_done
+.laravel_done
+backend/croissant
+backend/database/migrations/2026_01_15_082937_testtodeletelater.php
+ed_project_croissant_team
+.setup_done

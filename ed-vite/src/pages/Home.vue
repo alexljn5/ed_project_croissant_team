@@ -1,5 +1,3 @@
-
-
 <template>
   <div class="home-page">
      <div class="content-slider" 
@@ -8,30 +6,47 @@
      <div class="slider-container"> 
         <button class="slider-arrow prev" @click="prevSlide">❮</button>
         <div class="slider-track" ref="sliderTrack">
-          <div v-for="(card, index) in sliderCards" :key="index" 
-               :class="['slider-card', { active: index === currentIndex, selected: index === currentIndex }]"
-               @click="handleCardClick(index)">
-            <div class="card-image" :style="{ backgroundImage: `url('${card.image}')` }">
+          <div
+            v-for="(card, index) in sliderCards"
+            :key="index"
+            :class="[
+              'slider-card',
+              {
+                active: index === currentIndex,
+                selected: index === currentIndex,
+              },
+            ]"
+            @click="handleCardClick(index)"
+          >
+            <div
+              class="card-image"
+              :style="{ backgroundImage: `url('${card.image}')` }"
+            >
               <div class="date-badge">{{ card.date }}</div>
             </div>
+
             <div class="card-content">
               <h1>{{ card.title }}</h1>
               <p>{{ card.description }}</p>
             </div>
           </div>
         </div>
+
         <button class="slider-arrow next" @click="nextSlide">❯</button>
         <div class="slider-nav">
-          <div v-for="(_, index) in sliderCards" :key="index"
-               :class="['slider-dot', { active: index === currentIndex }]"
-               @click="goToSlide(index)"></div>
+          <div
+            v-for="(_, index) in sliderCards"
+            :key="index"
+            :class="['slider-dot', { active: index === currentIndex }]"
+            @click="goToSlide(index)"
+          ></div>
         </div>
       </div>
     </div>
 
     <section class="text-segment-section">
       <h2 class="segment-title">segment titel</h2>
-      
+
       <div class="segment-content">
         <div class="text-block text-block-1">
           <div class="text-block-shape shape-1"></div>
@@ -39,7 +54,12 @@
             <h3>titel1</h3>
             <p>descriptie</p>
           </div>
-          <div class="block-image1" :style="{ backgroundImage: 'url(src/assets/img/18c-glas-in-lood.webp)' }"></div>
+          <div
+            class="block-image1"
+            :style="{
+              backgroundImage: 'url(src/assets/img/18c-glas-in-lood.webp)',
+            }"
+          ></div>
         </div>
 
         <div class="text-block text-block-2">
@@ -48,7 +68,13 @@
             <h3>titel2</h3>
             <p>descriptie</p>
           </div>
-          <div class="block-image" :style="{ backgroundImage: 'url(src/assets/img/17a-gevelschilderingen.webp)' }"></div>
+          <div
+            class="block-image"
+            :style="{
+              backgroundImage:
+                'url(src/assets/img/17a-gevelschilderingen.webp)',
+            }"
+          ></div>
         </div>
 
         <div class="text-block text-block-3">
@@ -57,7 +83,10 @@
             <h3>titel3</h3>
             <p>descriptie</p>
           </div>
-          <div class="block-image2" :style="{ backgroundImage: 'url(src/assets/img/agorahof.webp)' }"></div>
+          <div
+            class="block-image2"
+            :style="{ backgroundImage: 'url(src/assets/img/agorahof.webp)' }"
+          ></div>
         </div>
       </div>
     </section>
@@ -71,15 +100,19 @@
       <BackendGlue />
     </div>
     
-  <div class="publicmap">
-  <publicMap />
+<div class="publicmap">
+  <PublicMap />
   <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
 </div>
+
 
     <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
       <div class="modal-content" @click.stop>
         <button class="modal-close" @click="closeModal">✕</button>
-        <div class="modal-image" :style="{ backgroundImage: `url('${selectedCard.image}')` }">
+        <div
+          class="modal-image"
+          :style="{ backgroundImage: `url('${selectedCard.image}')` }"
+        >
           <div class="modal-date-badge">{{ selectedCard.date }}</div>
         </div>
         <div class="modal-text">
@@ -89,43 +122,52 @@
       </div>
     </div>
   </div>
-
-
-
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import BackendGlue from '../components/BackendGlue.vue'
-import PublicMap from '../components/PublicMap.vue'
-import POIModal from '../components/POIModal.vue'
-import { useMap } from '../composables/useMap'
-import type { POI } from '../composables/useMap'
+import { ref, onMounted, onUnmounted } from "vue";
+import BackendGlue from "../components/BackendGlue.vue";
+import PublicMap from "../components/PublicMap.vue";
+import POIModal from "../components/POIModal.vue";
+import { useMap } from "../composables/useMap";
+import type { POI } from "../composables/useMap";
+import "@/assets/css/home.css";
+import "@/assets/css/styles.css";
 
 // ────────────────────── GET THE SHARED POIS (REQUIRED) ──────────────────────
-const { initMap, loadRoute, saveRoute: saveRouteToAPI, updateRoute, pois, addPOI, removePOI, saveMarkers, loadMarkers } = useMap()
+const {
+  initMap,
+  loadRoute,
+  saveRoute: saveRouteToAPI,
+  updateRoute,
+  pois,
+  addPOI,
+  removePOI,
+  saveMarkers,
+  loadMarkers,
+} = useMap();
 
 // ────────────────────── POI MODAL ──────────────────────
-const showPOIModal = ref(false)
-const selectedPOI = ref<POI | null>(null)
+const showPOIModal = ref(false);
+const selectedPOI = ref<POI | null>(null);
 
 // ────────────────────── EXACT SAME LISTENER FROM ADMIN.VUE ──────────────────────
 const setupPoiClickListener = () => {
-  document.addEventListener('click', (e: Event) => {
-    const target = e.target as HTMLElement
-    if (target.classList.contains('poi-more-btn')) {
-      const poiId = target.getAttribute('data-id')
-      if (!poiId) return
-      const poi = pois.value.find(p => p.id === poiId)
+  document.addEventListener("click", (e: Event) => {
+    const target = e.target as HTMLElement;
+    if (target.classList.contains("poi-more-btn")) {
+      const poiId = target.getAttribute("data-id");
+      if (!poiId) return;
+      const poi = pois.value.find((p) => p.id === poiId);
       if (poi) {
-        selectedPOI.value = poi
-        showPOIModal.value = true
+        selectedPOI.value = poi;
+        showPOIModal.value = true;
       }
     }
-  })
-}
+  });
+};
 
-// ────────────────────── SLIDER (your original code) ──────────────────────
+// ────────────────────── SLIDER ──────────────────────
 const currentIndex = ref(0)
 const sliderTrack = ref<HTMLElement | null>(null)
 const showModal = ref(false)
@@ -135,111 +177,154 @@ const isCardSelected = ref(false)
 let autoSlideInterval: ReturnType<typeof setTimeout>
 
 const sliderCards = [
-  { title: 'Titel1', description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore', date: '18-11-25, 8:00', image: 'src/assets/img/18c-glas-in-lood.webp' },
-  { title: 'Titel2', description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore', date: '19-11-25, 14:30', image: 'src/assets/img/17a-gevelschilderingen.webp' },
-  { title: 'Titel3', description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore', date: '20-11-25, 10:00', image: 'src/assets/img/buitenkant-bib-en-stadhuis.webp' },
-  { title: 'Titel4', description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore', date: '21-11-25, 19:00', image: 'src/assets/img/agorahof.webp' },
-  { title: 'Titel5', description: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore', date: '22-11-25, 11:00', image: 'src/assets/img/20ab.webp' }
-]
+  {
+    title: "Titel1",
+    description:
+      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
+    date: "18-11-25, 8:00",
+    image: "src/assets/img/18c-glas-in-lood.webp",
+  },
+  {
+    title: "Titel2",
+    description:
+      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
+    date: "19-11-25, 14:30",
+    image: "src/assets/img/17a-gevelschilderingen.webp",
+  },
+  {
+    title: "Titel3",
+    description:
+      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
+    date: "20-11-25, 10:00",
+    image: "src/assets/img/buitenkant-bib-en-stadhuis.webp",
+  },
+  {
+    title: "Titel4",
+    description:
+      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
+    date: "21-11-25, 19:00",
+    image: "src/assets/img/agorahof.webp",
+  },
+  {
+    title: "Titel5",
+    description:
+      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
+    date: "22-11-25, 11:00",
+    image: "src/assets/img/20ab.webp",
+  },
+];
 
 const updateSlider = () => {
-  if (!sliderTrack.value) return
-  const cards = sliderTrack.value.querySelectorAll<HTMLElement>('.slider-card')
-  const cardWidth = cards[0].offsetWidth + 30
-  const centerOffset = sliderTrack.value.offsetWidth / 2 - cardWidth / 2
-  const offset = centerOffset - currentIndex.value * cardWidth
-  sliderTrack.value.style.transform = `translateX(${offset}px)`
-}
+  if (!sliderTrack.value) return;
+  const cards = sliderTrack.value.querySelectorAll<HTMLElement>(".slider-card");
+  const cardWidth = cards[0].offsetWidth + 30;
+  const centerOffset = sliderTrack.value.offsetWidth / 2 - cardWidth / 2;
+  const offset = centerOffset - currentIndex.value * cardWidth;
+  sliderTrack.value.style.transform = `translateX(${offset}px)`;
+};
 
 const goToSlide = (index: number) => {
-  currentIndex.value = index
-  if (currentIndex.value >= sliderCards.length) currentIndex.value = 0
-  if (currentIndex.value < 0) currentIndex.value = sliderCards.length - 1
-  updateSlider()
-  resetAutoSlide()
-}
+  currentIndex.value = index;
+  if (currentIndex.value >= sliderCards.length) currentIndex.value = 0;
+  if (currentIndex.value < 0) currentIndex.value = sliderCards.length - 1;
+  updateSlider();
+  resetAutoSlide();
+};
 
-const nextSlide = () => goToSlide(currentIndex.value + 1)
-const prevSlide = () => goToSlide((currentIndex.value - 1 + sliderCards.length) % sliderCards.length)
+const nextSlide = () => goToSlide(currentIndex.value + 1);
+const prevSlide = () =>
+  goToSlide((currentIndex.value - 1 + sliderCards.length) % sliderCards.length);
 
-const startAutoSlide = () => { autoSlideInterval = setInterval(nextSlide, 5000) }
-const resetAutoSlide = () => { clearInterval(autoSlideInterval); startAutoSlide() }
+const startAutoSlide = () => {
+  autoSlideInterval = setInterval(nextSlide, 5000);
+};
+const resetAutoSlide = () => {
+  clearInterval(autoSlideInterval);
+  startAutoSlide();
+};
 
 const handleCardClick = (index: number) => {
   if (index === currentIndex.value) {
-    selectedCard.value = sliderCards[index]
-    showModal.value = true
-    isCardSelected.value = true
-    clearInterval(autoSlideInterval)
-  } else goToSlide(index)
-}
+    selectedCard.value = sliderCards[index];
+    showModal.value = true;
+    isCardSelected.value = true;
+    clearInterval(autoSlideInterval);
+  } else goToSlide(index);
+};
 
 const closeModal = () => {
-  isClosing.value = true
+  isClosing.value = true;
   setTimeout(() => {
-    showModal.value = false
-    selectedCard.value = null
-    isClosing.value = false
-    isCardSelected.value = false
-    startAutoSlide()
-  }, 400)
-}
+    showModal.value = false;
+    selectedCard.value = null;
+    isClosing.value = false;
+    isCardSelected.value = false;
+    startAutoSlide();
+  }, 400);
+};
 
-let canNav = true
-const cd = 300
+let canNav = true;
+const cd = 300;
 const handleKeydown = (e: KeyboardEvent) => {
-  if (!canNav) return
-  if (e.key === 'ArrowLeft') prevSlide()
-  if (e.key === 'ArrowRight') nextSlide()
-  canNav = false
-  setTimeout(() => canNav = true, cd)
-}
+  if (!canNav) return;
+  if (e.key === "ArrowLeft") prevSlide();
+  if (e.key === "ArrowRight") nextSlide();
+  canNav = false;
+  setTimeout(() => (canNav = true), cd);
+};
 
 // ────────────────────── LIFECYCLE ──────────────────────
 onMounted(async () => {
-  updateSlider()
-  startAutoSlide()
-  window.addEventListener('resize', updateSlider)
-  window.addEventListener('keydown', handleKeydown)
+  updateSlider();
+  startAutoSlide();
+  window.addEventListener("resize", updateSlider);
+  window.addEventListener("keydown", handleKeydown);
 
   if (sliderTrack.value) {
-    sliderTrack.value.addEventListener('mouseenter', () => {
-      if (!isCardSelected.value) clearInterval(autoSlideInterval)
-    })
-    sliderTrack.value.addEventListener('mouseleave', () => {
-      if (!isCardSelected.value) resetAutoSlide()
-    })
+    sliderTrack.value.addEventListener("mouseenter", () => {
+      if (!isCardSelected.value) clearInterval(autoSlideInterval);
+    });
+    sliderTrack.value.addEventListener("mouseleave", () => {
+      if (!isCardSelected.value) resetAutoSlide();
+    });
   }
 
   // THIS WAS THE MISSING PIECE
-  await loadMarkers()  // ← WITHOUT THIS, pois.value = [] → nothing works
+  await loadMarkers(); // ← WITHOUT THIS, pois.value = [] → nothing works
 
-  setupPoiClickListener()
-})
-
+  setupPoiClickListener();
+});
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeydown)
-  window.removeEventListener('resize', updateSlider)
+  window.removeEventListener("keydown", handleKeydown);
+  window.removeEventListener("resize", updateSlider);
   // Clean up the POI listener (optional but clean)
-  document.removeEventListener('click', setupPoiClickListener as EventListener)
-})
+  document.removeEventListener("click", setupPoiClickListener as EventListener);
+});
 </script>
-
 
 <style scoped>
 .content-slider {
   width: 100%;
   padding: 2rem 0;
   font-family: var(--font-primair);
-  position: relative;
 }
 
 .content-slider::before {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(to top, var(--site-paars), rgba(0,0,0,0.2),rgba(0,0,0,0.2),rgba(0,0,0,0.2),rgba(0,0,0,0.2));
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--site-paars),
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2)
+  );
   z-index: -10000;
 }
 
@@ -260,13 +345,12 @@ onUnmounted(() => {
 .slider-card {
   flex: 0 0 auto;
   width: 300px;
-  background: rgba(255, 255, 255, 1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgb(255, 255, 255);
+  backdrop-filter: blur(100px);
+  -webkit-backdrop-filter: blur(100px);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 9px 8px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(0.95);
   opacity: 0.7;
@@ -286,6 +370,7 @@ onUnmounted(() => {
 
 .slider-card.active:hover {
   transform: scale(1.08) translateY(-8px);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
 }
 
 .slider-card.active .card-content h1 {
@@ -406,13 +491,9 @@ onUnmounted(() => {
 
 .backend-section {
   background: white;
+  min-height: 100vh;
   width: 100%;
-  padding: 0;
-}
-
-.publicmap {
-  margin: 0;
-  padding: 0;
+  padding: 2rem 0;
 }
 
 .modal-overlay {
@@ -581,251 +662,15 @@ onUnmounted(() => {
   font-family: var(--font-heading);
 
   background-image: linear-gradient(
-    to right, 
+    to right,
     var(--det-1) 0%,
-    var(--det-1) 29.99%,
+    var(--det-1) 29.8%,
     var(--det-2) 30%,
-    var(--det-2) 69.99%,
+    var(--det-2) 69.8%,
     var(--det-3) 70%,
     var(--det-3) 100%
   );
 }
-
-.text-segment-section {
-  width: 100%;
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, #f5f0f8 0%, #faf8fc 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.segment-title {
-  text-align: center;
-  font-size: 2.2rem;
-  font-weight: bold;
-  font-family: var(--font-heading);
-  color: var(--site-paars);
-  margin: 0 0 3rem 0;
-  position: relative;
-  display: inline-block;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-}
-
-.segment-title::before {
-  content: "";
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  background: var(--site-paars);
-  border-radius: 50%;
-  opacity: 0.1;
-  left: -40px;
-  z-index: 0;
-}
-
-.segment-title::after {
-  content: "";
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  background: var(--interactief);
-  border-radius: 50%;
-  opacity: 0.15;
-  right: -30px;
-  z-index: 0;
-}
-
-.segment-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 4rem;
-}
-
-.text-block {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: center;
-  position: relative;
-}
-
-.text-block-1,
-.text-block-3 {
-  grid-template-columns: 1fr 1fr;
-}
-
-.text-block-2 {
-  grid-template-columns: 1fr 1fr;
-}
-
-.text-block-2 .block-image {
-  order: -1;
-}
-
-.text-block-shape {
-  position: absolute;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.shape-1 {
-  width: 200px;
-  height: 200px;
-  background: var(--site-paars);
-  border-radius: 45% 55% 52% 48% / 48% 45% 55% 52%;
-  opacity: 0.08;
-  top: -50px;
-  left: -100px;
-}
-
-.shape-2 {
-  width: 180px;
-  height: 180px;
-  background: var(--interactief);
-  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-  opacity: 0.1;
-  bottom: -60px;
-  right: -90px;
-}
-
-.shape-3 {
-  width: 220px;
-  height: 220px;
-  background: var(--site-paars);
-  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-  opacity: 0.08;
-  bottom: -80px;
-  left: -110px;
-}
-
-.block-text {
-  position: relative;
-  z-index: 1;
-  padding: 1.5rem 0;
-}
-
-.block-text h3 {
-  font-family: var(--font-heading);
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: var(--site-paars);
-  margin: 0 0 1rem 0;
-  line-height: 1.3;
-}
-
-.block-text p {
-  font-family: var(--font-primair);
-  font-size: 1.05rem;
-  color: #555;
-  line-height: 1.7;
-  margin: 0;
-}
-
-.block-image {
-  width: 100%;
-  height: 350px;
-  background-size: cover;
-  background-position: center;
-  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  position: relative;
-  z-index: 1;
-}
-
-.block-image1 {
-  width: 100%;
-  height: 350px;
-  background-size: cover;
-  background-position: center;
-  border-radius: 10% 80% 40% 70% / 40% 20% 80% 10%;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  position: relative;
-  z-index: 1;
-}
-
-.block-image2 {
-  width: 100%;
-  height: 350px;
-  background-size: cover;
-  background-position: center;
-  border-radius: 60% 20% 40% 50% / 50% 50% 20% 80%;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  position: relative;
-  z-index: 1;
-}
-
-
-
-/* Responsive Design */
-@media (max-width: 900px) {
-  .text-block {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .text-block-2 {
-    direction: ltr;
-  }
-
-  .block-image {
-    height: 300px;
-  }
-
-  .block-text h3 {
-    font-size: 1.5rem;
-  }
-
-  .block-text p {
-    font-size: 1rem;
-  }
-
-  .shape-1,
-  .shape-2,
-  .shape-3 {
-    opacity: 0.05;
-  }
-}
-
-@media (max-width: 600px) {
-  .text-segment-section {
-    padding: 2rem 1rem;
-  }
-
-  .segment-title {
-    font-size: 1.6rem;
-    padding: 0.8rem 1.5rem;
-  }
-
-  .segment-content {
-    gap: 3rem;
-  }
-
-  .block-text h3 {
-    font-size: 1.3rem;
-  }
-
-  .block-text p {
-    font-size: 0.95rem;
-    line-height: 1.6;
-  }
-
-  .block-image {
-    height: 250px;
-  }
-}
-
 </style>
 
 <style scoped>
@@ -833,13 +678,13 @@ onUnmounted(() => {
 .home-map-section {
   width: 100%;
   padding: 2rem;
-  background: #ffffff;
+  background: white;
 }
 
 .home-map-section #leaflet-map {
   height: 500px !important;
   width: 100%;
-  max-width: 3440vw;
+  max-width: 1200px;
   margin: 0 auto;
   border-radius: 8px;
   overflow: hidden;
@@ -847,7 +692,7 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .home-map-section {
-    padding: 10rem;
+    padding: 1rem;
   }
 
   .home-map-section #leaflet-map {
