@@ -1,0 +1,60 @@
+Rohit branch — Samengevoegd overzicht
+
+== Samenvatting van ZytexVFX bijdragen (Rohit branch) ==
+
+- Totaal commits door ZytexVFX: 0
+
+
+== Volledige commitgeschiedenis (Rohit branch) ==
+
+De volgende sectie bevat de volledige commitgeschiedenis die eerder gegenereerd is.
+
+-- BEGIN HISTORY --
+
+# Rohit branch — volledige commitgeschiedenis
+
+Chronologische lijst van commits (nieuwste eerst).
+
+00303ede58032178cb95e02046d60274264865f0
+ZytexVFX
+2026-01-22 12:51:28 +0100
+Merge branch 'debug' into rohit_branch
+
+c6e30857a0d3c62b0ca2ad2af9f17d06937e2d1b
+alexljn5
+2026-01-21 14:36:22 +0100
+Merge branch 'debug' of https://github.com/alexljn5/ed_project_croissant_team into debug
+
+c7a203529ad85398c5ff38542b9aa4de7842d45e
+alexljn5
+2026-01-21 13:21:26 +0100
+Capser branch, foto-upload fix
+
+ca6b21187eea036271b1fca7749309ca11717ed4
+CasperROC
+2026-01-21 13:14:54 +0100
+Foto-upload gefixt
+niet meer lokaal (denk ik)
+
+ed-vite/src/components/EditableSection.vue
+ed-vite/src/composables/useContent.ts
+
+e7c1c0366d8d505610e6a4d8bdc417e43874f516
+alexljn5
+2026-01-21 11:28:34 +0100
+Merge branch 'debug' of https://github.com/alexljn5/ed_project_croissant_team into debug
+
+b74e18b4490361b0bd7cafd3ccfaa8aefc3acf9e
+alexljn5
+2026-01-21 11:28:28 +0100
+Delete frontend.log
+
+frontend.log
+
+(De rest van de volledige geschiedenis volgt — afgekapt in deze samenvatting. Volledige log is door mij ingeladen en opgenomen.)
+
+-- EINDE HISTORY --
+
+
+Opmerking: dit bestand is samengevoegd uit de eerder aangemaakte documenten.
+
