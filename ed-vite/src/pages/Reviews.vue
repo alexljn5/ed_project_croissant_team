@@ -91,7 +91,7 @@
 
           <button type="submit" class="submit-btn">Verzend Review</button>
         </form>
-      </section>
+      </div>
 
       <!-- Right side: Reviews list -->
       <section class="reviews-list-section">
@@ -118,7 +118,6 @@
           </div>
         </div>
 
-      <div class="reviews-list-section">
         <div v-if="reviews.length" class="reviews-list">
           <ul class="reviews-ul">
             <li

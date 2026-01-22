@@ -192,6 +192,7 @@ import Button from './components/Button.vue'
   position: relative !important;
   margin-top: auto;
 }
+
 </style>
 
 <style>
