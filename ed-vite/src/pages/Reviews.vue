@@ -3,7 +3,6 @@
     <h1>Reviews</h1>
     <div class="reviews-container">
 
-      <!-- Left side: Form -->
       <div class="reviews-form-section">
         <h2>Schrijf een review</h2>
         <form @submit.prevent="addReview" class="review-form">
@@ -40,7 +39,6 @@
         </form>
       </div>
 
-      <!-- Right side: Reviews list -->
       <div class="reviews-list-section">
         <div v-if="reviews.length" class="reviews-list">
           <h2>Reviews:</h2>

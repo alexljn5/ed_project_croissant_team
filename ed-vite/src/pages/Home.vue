@@ -305,7 +305,7 @@ onUnmounted(() => {
 <style scoped>
 .content-slider {
   width: 100%;
-  padding: 2rem 0;
+  padding: 2rem 5rem;
   background-color: var(--site-paars);
   font-family: var(--font-primair);
 }
