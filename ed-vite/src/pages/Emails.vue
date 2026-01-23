@@ -44,8 +44,12 @@
                   </div>
                 </div>
               </div>
-              <button class="delete-btn" title="Verwijder dit bericht">
-                <img src="./components/editToolKnop.vue" alt="" />
+              <button
+                @click="deleteEmail(email.id)"
+                class="delete-btn"
+                title="Verwijder dit bericht"
+              >
+                <DeleteCross />
               </button>
             </div>
             <div class="email-body">
@@ -61,6 +65,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useEmail } from "@/composables/useEmail";
+import DeleteCross from "@/components/DeleteCross.vue";
 
 const { emails, deleteEmail, getAllEmails } = useEmail();
 

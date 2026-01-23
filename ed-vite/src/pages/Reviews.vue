@@ -5,6 +5,15 @@
       <p class="reviews-subtitle">Deel je ervaringen en meningen</p>
     </div>
 
+    <!-- Featured Image -->
+    <div class="featured-image-wrapper">
+      <img
+        :src="randomImageUrl"
+        alt="Featured image for reviews"
+        class="featured-image"
+      />
+    </div>
+
     <div class="reviews-container">
       <!-- Left side: Form -->
       <section class="reviews-form-section">
@@ -195,6 +204,10 @@ interface Review {
   email?: string;
   stars?: number;
 }
+
+// Random image URL
+const randomImageUrl = ref<string>("");
+
 const newReview = ref<Review>({
   text: "",
   anonymous: false,
@@ -205,6 +218,11 @@ const newReview = ref<Review>({
 const reviews = ref<Review[]>([]);
 const visibleReviews = ref<Review[]>([]);
 const hoverRating = ref(0);
+
+const getRandomImageUrl = () => {
+  const randomId = Math.floor(Math.random() * 1000) + 1;
+  return `https://picsum.photos/1200/400?random=${randomId}`;
+};
 
 const averageRating = computed(() => {
   const reviewsWithStars = reviews.value.filter((r) => r.stars && r.stars > 0);
@@ -218,6 +236,9 @@ const ratingsCount = computed(() => {
 });
 
 onMounted(() => {
+  // Load random image
+  randomImageUrl.value = getRandomImageUrl();
+
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
     try {
