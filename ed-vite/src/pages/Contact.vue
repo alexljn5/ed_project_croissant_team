@@ -8,15 +8,13 @@
         </p>
       </div>
     </div>
-
+    <!-- Email Form -->
     <div class="contact-container">
       <div class="contact-content">
-        <!-- Contact Info Cards -->
-
         <div class="form-section">
           <h2>Stuur ons een bericht</h2>
           <p class="form-description">
-            We nemen contact met je op binnen 24 uur
+            We nemen contact met je op binnen 24 uur.
           </p>
 
           <form @submit.prevent="handleSubmit" class="contact-form">
@@ -60,7 +58,7 @@
               <textarea
                 v-model="form.message"
                 id="message"
-                placeholder="Schrijf hier uw bericht..."
+                placeholder="Bericht..."
                 rows="6"
                 required
               ></textarea>
@@ -78,13 +76,17 @@
               {{ successMessage }}
             </div>
           </transition>
+        </div>
 
-          <!-- Phone Section Below Form -->
+        <!-- Telefoon form (moet nog correcte info hebben) -->
+        <div class="form-section phone-form-section">
+          <h2>Of bel ons direct</h2>
+          <p class="form-description">Bel ons op onze telefoonnummer</p>
+
           <div class="phone-section">
-            <h3>Of bel ons direct</h3>
             <p class="phone-number">+31 (0)6 12345678</p>
             <p class="phone-hours">
-              Maandag - Vrijdag<br /><span class="bold">12:00 - 18:00</span> uur
+              Maandag - Vrijdag<br /><span class="bold">4:14 - 15:69</span> uur
             </p>
           </div>
         </div>
@@ -120,7 +122,6 @@ const handleSubmit = () => {
 
     successMessage.value = "Bericht succesvol verzonden! ✓";
 
-    // Reset form
     form.value = {
       name: "",
       email: "",
@@ -128,7 +129,6 @@ const handleSubmit = () => {
       message: "",
     };
 
-    // Clear success message after 3 seconds
     setTimeout(() => {
       successMessage.value = "";
     }, 3000);
@@ -139,7 +139,6 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
-/* Header Section */
 .contact-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -183,7 +182,6 @@ const handleSubmit = () => {
   }
 }
 
-/* Container & Content */
 .contact-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -196,7 +194,6 @@ const handleSubmit = () => {
   gap: 3rem;
 }
 
-/* Info Cards */
 .info-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -303,13 +300,18 @@ const handleSubmit = () => {
   transform: translateY(0);
 }
 
-/* Form Section */
+/* Email form */
 .form-section {
   background: white;
   padding: 3rem;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   animation: fadeInUp 1s ease-out;
+}
+
+.form-section.phone-form-section {
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+  border-left: 4px solid #ff6b6b;
 }
 
 .form-section h2 {
@@ -433,7 +435,6 @@ textarea {
   font-weight: bold;
 }
 
-/* Phone Section Below Form */
 .phone-section {
   margin-top: 2rem;
   padding: 1.5rem;
@@ -464,7 +465,7 @@ textarea {
   line-height: 1.6;
 }
 
-/* Animations */
+/* Animaties :O */
 .slide-fade-enter-active {
   transition: all 0.3s ease;
 }
@@ -483,7 +484,6 @@ textarea {
   opacity: 0;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .contact-header {
     padding: 2.5rem 1rem;
@@ -521,7 +521,7 @@ textarea {
 
   input,
   textarea {
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 16px;
   }
 
   .submit-btn {
