@@ -193,6 +193,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from "vue";
+import pigImage from "@/assets/img/pig-1.jpg";
 
 const STORAGE_KEY = "site-reviews-v2";
 const REVIEWS_TO_SHOW = 5;
@@ -205,8 +206,8 @@ interface Review {
   stars?: number;
 }
 
-// Random image URL
-const randomImageUrl = ref<string>("");
+// Featured image
+const randomImageUrl = ref<string>(pigImage);
 
 const newReview = ref<Review>({
   text: "",
@@ -218,11 +219,6 @@ const newReview = ref<Review>({
 const reviews = ref<Review[]>([]);
 const visibleReviews = ref<Review[]>([]);
 const hoverRating = ref(0);
-
-const getRandomImageUrl = () => {
-  const randomId = Math.floor(Math.random() * 1000) + 1;
-  return `https://picsum.photos/1200/400?random=${randomId}`;
-};
 
 const averageRating = computed(() => {
   const reviewsWithStars = reviews.value.filter((r) => r.stars && r.stars > 0);
@@ -236,9 +232,6 @@ const ratingsCount = computed(() => {
 });
 
 onMounted(() => {
-  // Load random image
-  randomImageUrl.value = getRandomImageUrl();
-
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
     try {

@@ -42,12 +42,15 @@
 
 /* Featured Image Wrapper */
 .featured-image-wrapper {
-  max-width: 1200px;
-  margin: 0 auto 3rem;
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto 2.5rem;
+  padding: 0 2rem;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  max-height: 400px;
+  height: 400px;
+  box-sizing: border-box;
 }
 
 .featured-image-wrapper .featured-image {
