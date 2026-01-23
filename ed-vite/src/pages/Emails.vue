@@ -44,12 +44,8 @@
                   </div>
                 </div>
               </div>
-              <button
-                @click="deleteEmail(email.id)"
-                class="delete-btn"
-                title="Verwijder dit bericht"
-              >
-                X
+              <button class="delete-btn" title="Verwijder dit bericht">
+                <img src="./components/editToolKnop.vue" alt="" />
               </button>
             </div>
             <div class="email-body">
