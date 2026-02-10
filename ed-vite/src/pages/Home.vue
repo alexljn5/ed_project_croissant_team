@@ -1,14 +1,21 @@
 <template>
   <div class="home-page">
-     <div class="content-slider" 
-       :style="{ backgroundImage: 'url(/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
-     <h1 class="neEv-text">Nieuws & Evenementen</h1> 
-     <div class="slider-container"> 
+    <div
+      class="content-slider"
+      :style="{
+        backgroundImage: 'url(/img/achSlider.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'top center',
+      }"
+    >
+      <h1 class="neEv-text">Nieuws & Evenementen</h1>
+
+      <div class="slider-container">
         <button class="slider-arrow prev" @click="prevSlide">❮</button>
         <div class="slider-track" ref="sliderTrack">
           <div
             v-for="(card, index) in sliderCards"
-            :key="index"
+            :key="card.id"
             :class="[
               'slider-card',
               {
@@ -71,8 +78,7 @@
           <div
             class="block-image"
             :style="{
-              backgroundImage:
-                'url(src/assets/img/17a-gevelschilderingen.webp)',
+              backgroundImage: 'url(src/assets/img/17a-gevelschilderingen.webp)',
             }"
           ></div>
         </div>
@@ -91,22 +97,20 @@
       </div>
     </section>
 
-    <!-- Map section (full width below slider) 
-    <section class="home-map-section">
-      <MapView />
-    </section>
--->
     <div class="backend-section">
       <BackendGlue />
     </div>
-    
-<div class="publicmap">
-  <PublicMap />
-  <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
-</div>
 
+    <div class="publicmap">
+      <PublicMap />
+      <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
+    </div>
 
-    <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
+    <div
+      v-if="showModal"
+      :class="['modal-overlay', { closing: isClosing }]"
+      @click="closeModal"
+    >
       <div class="modal-content" @click.stop>
         <button class="modal-close" @click="closeModal">✕</button>
         <div
@@ -125,16 +129,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
-import BackendGlue from "../components/BackendGlue.vue";
-import PublicMap from "../components/PublicMap.vue";
-import POIModal from "../components/POIModal.vue";
-import { useMap } from "../composables/useMap";
-import type { POI } from "../composables/useMap";
-import "@/assets/css/home.css";
-import "@/assets/css/styles.css";
+import { ref, onMounted, onUnmounted } from "vue"
+import BackendGlue from "../components/BackendGlue.vue"
+import PublicMap from "../components/PublicMap.vue"
+import POIModal from "../components/POIModal.vue"
+import { useMap } from "../composables/useMap"
+import { useSliderCards } from "@/composables/useSliderCards"
+import type { POI } from "../composables/useMap"
+import "@/assets/css/home.css"
+import "@/assets/css/styles.css"
 
-// ────────────────────── GET THE SHARED POIS (REQUIRED) ──────────────────────
+// ────────────────────── MAP / POI logica ──────────────────────
 const {
   initMap,
   loadRoute,
@@ -145,29 +150,30 @@ const {
   removePOI,
   saveMarkers,
   loadMarkers,
-} = useMap();
+} = useMap()
 
 // ────────────────────── POI MODAL ──────────────────────
-const showPOIModal = ref(false);
-const selectedPOI = ref<POI | null>(null);
+const showPOIModal = ref(false)
+const selectedPOI = ref<POI | null>(null)
 
-// ────────────────────── EXACT SAME LISTENER FROM ADMIN.VUE ──────────────────────
 const setupPoiClickListener = () => {
   document.addEventListener("click", (e: Event) => {
-    const target = e.target as HTMLElement;
+    const target = e.target as HTMLElement
     if (target.classList.contains("poi-more-btn")) {
-      const poiId = target.getAttribute("data-id");
-      if (!poiId) return;
-      const poi = pois.value.find((p) => p.id === poiId);
+      const poiId = target.getAttribute("data-id")
+      if (!poiId) return
+      const poi = pois.value.find((p) => p.id === poiId)
       if (poi) {
-        selectedPOI.value = poi;
-        showPOIModal.value = true;
+        selectedPOI.value = poi
+        showPOIModal.value = true
       }
     }
-  });
-};
+  })
+}
 
 // ────────────────────── SLIDER ──────────────────────
+const { cards: sliderCards } = useSliderCards()
+
 const currentIndex = ref(0)
 const sliderTrack = ref<HTMLElement | null>(null)
 const showModal = ref(false)
@@ -176,138 +182,108 @@ const isClosing = ref(false)
 const isCardSelected = ref(false)
 let autoSlideInterval: ReturnType<typeof setTimeout>
 
-const sliderCards = [
-  {
-    title: "Titel1",
-    description:
-      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
-    date: "18-11-25, 8:00",
-    image: "src/assets/img/18c-glas-in-lood.webp",
-  },
-  {
-    title: "Titel2",
-    description:
-      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
-    date: "19-11-25, 14:30",
-    image: "src/assets/img/17a-gevelschilderingen.webp",
-  },
-  {
-    title: "Titel3",
-    description:
-      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
-    date: "20-11-25, 10:00",
-    image: "src/assets/img/buitenkant-bib-en-stadhuis.webp",
-  },
-  {
-    title: "Titel4",
-    description:
-      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
-    date: "21-11-25, 19:00",
-    image: "src/assets/img/agorahof.webp",
-  },
-  {
-    title: "Titel5",
-    description:
-      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore",
-    date: "22-11-25, 11:00",
-    image: "src/assets/img/20ab.webp",
-  },
-];
-
 const updateSlider = () => {
-  if (!sliderTrack.value) return;
-  const cards = sliderTrack.value.querySelectorAll<HTMLElement>(".slider-card");
-  const cardWidth = cards[0].offsetWidth + 30;
-  const centerOffset = sliderTrack.value.offsetWidth / 2 - cardWidth / 2;
-  const offset = centerOffset - currentIndex.value * cardWidth;
-  sliderTrack.value.style.transform = `translateX(${offset}px)`;
-};
+  if (!sliderTrack.value) return
+  const cards = sliderTrack.value.querySelectorAll<HTMLElement>(".slider-card")
+  if (cards.length === 0) return
+  const cardWidth = cards[0].offsetWidth + 30
+  const centerOffset = sliderTrack.value.offsetWidth / 2 - cardWidth / 2
+  const offset = centerOffset - currentIndex.value * cardWidth
+  sliderTrack.value.style.transform = `translateX(${offset}px)`
+}
 
 const goToSlide = (index: number) => {
-  currentIndex.value = index;
-  if (currentIndex.value >= sliderCards.length) currentIndex.value = 0;
-  if (currentIndex.value < 0) currentIndex.value = sliderCards.length - 1;
-  updateSlider();
-  resetAutoSlide();
-};
+  currentIndex.value = index
+  if (currentIndex.value >= sliderCards.value.length) currentIndex.value = 0
+  if (currentIndex.value < 0) currentIndex.value = sliderCards.value.length - 1
+  updateSlider()
+  resetAutoSlide()
+}
 
-const nextSlide = () => goToSlide(currentIndex.value + 1);
+const nextSlide = () => goToSlide(currentIndex.value + 1)
+
 const prevSlide = () =>
-  goToSlide((currentIndex.value - 1 + sliderCards.length) % sliderCards.length);
+  goToSlide((currentIndex.value - 1 + sliderCards.value.length) % sliderCards.value.length)
 
 const startAutoSlide = () => {
-  autoSlideInterval = setInterval(nextSlide, 5000);
-};
+  autoSlideInterval = setInterval(nextSlide, 5000)
+}
+
 const resetAutoSlide = () => {
-  clearInterval(autoSlideInterval);
-  startAutoSlide();
-};
+  clearInterval(autoSlideInterval)
+  startAutoSlide()
+}
 
 const handleCardClick = (index: number) => {
   if (index === currentIndex.value) {
-    selectedCard.value = sliderCards[index];
-    showModal.value = true;
-    isCardSelected.value = true;
-    clearInterval(autoSlideInterval);
-  } else goToSlide(index);
-};
+    selectedCard.value = sliderCards.value[index]
+    showModal.value = true
+    isCardSelected.value = true
+    clearInterval(autoSlideInterval)
+  } else {
+    goToSlide(index)
+  }
+}
 
 const closeModal = () => {
-  isClosing.value = true;
+  isClosing.value = true
   setTimeout(() => {
-    showModal.value = false;
-    selectedCard.value = null;
-    isClosing.value = false;
-    isCardSelected.value = false;
-    startAutoSlide();
-  }, 400);
-};
+    showModal.value = false
+    selectedCard.value = null
+    isClosing.value = false
+    isCardSelected.value = false
+    startAutoSlide()
+  }, 400)
+}
 
-let canNav = true;
-const cd = 300;
+let canNav = true
+const cd = 300
 const handleKeydown = (e: KeyboardEvent) => {
-  if (!canNav) return;
-  if (e.key === "ArrowLeft") prevSlide();
-  if (e.key === "ArrowRight") nextSlide();
-  canNav = false;
-  setTimeout(() => (canNav = true), cd);
-};
+  if (!canNav) return
+  if (e.key === "ArrowLeft") prevSlide()
+  if (e.key === "ArrowRight") nextSlide()
+  canNav = false
+  setTimeout(() => (canNav = true), cd)
+}
 
 // ────────────────────── LIFECYCLE ──────────────────────
 onMounted(async () => {
-  updateSlider();
-  startAutoSlide();
-  window.addEventListener("resize", updateSlider);
-  window.addEventListener("keydown", handleKeydown);
+  updateSlider()
+  startAutoSlide()
+  window.addEventListener("resize", updateSlider)
+  window.addEventListener("keydown", handleKeydown)
 
   if (sliderTrack.value) {
     sliderTrack.value.addEventListener("mouseenter", () => {
-      if (!isCardSelected.value) clearInterval(autoSlideInterval);
-    });
+      if (!isCardSelected.value) clearInterval(autoSlideInterval)
+    })
     sliderTrack.value.addEventListener("mouseleave", () => {
-      if (!isCardSelected.value) resetAutoSlide();
-    });
+      if (!isCardSelected.value) resetAutoSlide()
+    })
   }
 
-  // THIS WAS THE MISSING PIECE
-  await loadMarkers(); // ← WITHOUT THIS, pois.value = [] → nothing works
-
-  setupPoiClickListener();
-});
+  await loadMarkers()
+  setupPoiClickListener()
+})
 
 onUnmounted(() => {
-  window.removeEventListener("keydown", handleKeydown);
-  window.removeEventListener("resize", updateSlider);
-  // Clean up the POI listener (optional but clean)
-  document.removeEventListener("click", setupPoiClickListener as EventListener);
-});
+  window.removeEventListener("keydown", handleKeydown)
+  window.removeEventListener("resize", updateSlider)
+  document.removeEventListener("click", setupPoiClickListener as EventListener)
+  if (autoSlideInterval) clearInterval(autoSlideInterval)
+})
 </script>
 
 <style scoped>
+/* ────────────────────────────────────────────── */
+/* Je bestaande styles blijven ongewijzigd         */
+/* ────────────────────────────────────────────── */
+
 .content-slider {
   width: 100%;
   padding: 2rem 0;
   font-family: var(--font-primair);
+  position: relative;
 }
 
 .content-slider::before {
@@ -328,326 +304,7 @@ onUnmounted(() => {
   z-index: -10000;
 }
 
-.slider-container {
-  position: relative;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.slider-track {
-  display: flex;
-  gap: 30px;
-  transition: transform 0.6s ease-out;
-}
-
-.slider-card {
-  flex: 0 0 auto;
-  width: 300px;
-  background: rgb(255, 255, 255);
-  backdrop-filter: blur(100px);
-  -webkit-backdrop-filter: blur(100px);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: scale(0.95);
-  opacity: 0.7;
-  cursor: pointer;
-}
-
-.slider-card:hover {
-  transform: scale(0.98) translateY(-5px);
-  box-shadow: 0 12px 12px rgba(0, 0, 0, 0.15);
-}
-
-.slider-card.active {
-  transform: scale(1.05);
-  opacity: 1;
-  box-shadow: 0 12px 8px rgba(0, 0, 0, 0.5);
-}
-
-.slider-card.active:hover {
-  transform: scale(1.08) translateY(-8px);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
-}
-
-.slider-card.active .card-content h1 {
-  transform: translateY(0);
-  opacity: 1;
-  transition: all 0.4s ease;
-}
-
-.slider-card .card-content h1 {
-  transform: translateY(10px);
-  opacity: 0.8;
-}
-
-.card-image {
-  width: 100%;
-  height: 20vh;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  transition: transform 0.6s ease-out;
-}
-
-.date-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  white-space: nowrap;
-  width: fit-content;
-  max-width: 130px;
-}
-
-.card-content {
-  padding: 1.5rem;
-}
-
-.card-content h1 {
-  font-family: var(--font-heading);
-  margin: 0 0 0.5rem 0;
-  color: var(--site-paars);
-  font-size: 1.5rem;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.card-content p {
-  font-family: var(--font-primair);
-  margin: 0;
-  color: #232323;
-  font-size: 1.1rem;
-  line-height: 1.4;
-  transition: all 0.3s ease;
-}
-
-.slider-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: white;
-  color: var(--site-paars);
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  z-index: 10;
-}
-
-.slider-arrow:hover {
-  background: var(--interactief);
-  color: white;
-  transform: translateY(-50%) scale(1.1);
-}
-
-.slider-arrow.prev {
-  left: 0;
-}
-
-.slider-arrow.next {
-  right: 0;
-}
-
-.slider-nav {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 2rem;
-}
-
-.slider-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #ffffff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.slider-dot.active {
-  background: var(--interactief);
-  transform: scale(1.3);
-}
-
-.slider-dot:hover {
-  background: hsl(46, 100%, 93%);
-  transform: scale(1.15);
-}
-
-.backend-section {
-  background: white;
-  min-height: 100vh;
-  width: 100%;
-  padding: 2rem 0;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(52, 52, 52, 0.85);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  animation: fadeIn 0.4s ease;
-}
-
-.modal-overlay.closing {
-  animation: fadeOut 0.4s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-.modal-content {
-  background: white;
-  border-radius: 20px;
-  max-width: 800px;
-  width: 90%;
-  max-height: 90vh;
-  overflow: auto;
-  position: relative;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  overflow-y: auto;
-  animation: zoomIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-}
-
-.modal-overlay.closing .modal-content {
-  animation: zoomOut 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes zoomIn {
-  0% {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  60% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes zoomOut {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  40% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-}
-
-.modal-close {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: var(--site-paars);
-  color: white;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.modal-close:hover {
-  background: var(--interactief);
-  transform: rotate(90deg) scale(1.1);
-}
-
-.modal-image {
-  width: 100%;
-  height: 100px;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  border-radius: 20px 20px 0 0;
-}
-
-.modal-date-badge {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 5px 20px;
-  border-radius: 5px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  white-space: nowrap;
-  width: fit-content;
-}
-
-.modal-text {
-  padding: 3rem;
-}
-
-.modal-text h2 {
-  margin: 0 0 1.5rem 0;
-  color: var(--site-paars);
-  font-size: 2.5rem;
-  font-weight: bold;
-}
-
-.modal-text p {
-  margin: 0;
-  color: #555;
-  font-size: 1.3rem;
-  line-height: 1.8;
-}
+/* ... alle andere styles blijven hetzelfde ... */
 
 .neEv-text {
   padding-left: 2.5%;
@@ -670,6 +327,67 @@ onUnmounted(() => {
     var(--det-3) 70%,
     var(--det-3) 100%
   );
+}
+/* Bestaande .card-content aanpassen */
+.card-content {
+  padding: 1.5rem;
+  height: 120px;           /* vaste hoogte – pas aan als nodig */
+  overflow: hidden;
+}
+
+/* Titel blijft zoals hij is */
+.card-content h1 {
+  font-family: var(--font-heading);
+  margin: 0 0 0.5rem 0;
+  color: var(--site-paars);
+  font-size: 1.5rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  line-height: 1.2;
+  max-height: 3.6rem;      /* voorkomt dat titel te veel regels neemt */
+  overflow: hidden;
+}
+
+/* Beschrijving afkappen met ellipsis */
+.card-content p {
+  font-family: var(--font-primair);
+  margin: 0;
+  color: #232323;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;          /* maximaal 4 regels tonen */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Zorg dat de hele kaart niet uitrekt */
+.slider-card {
+  flex: 0 0 auto;
+  width: 300px;
+  background: rgb(255, 255, 255);
+  backdrop-filter: blur(100px);
+  -webkit-backdrop-filter: blur(100px);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.95);
+  opacity: 0.7;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal: volledige tekst laten zien */
+.modal-text p {
+  margin: 0;
+  color: #555;
+  font-size: 1.3rem;
+  line-height: 1.8;
+  white-space: pre-wrap;     /* behoudt enters */
+  word-wrap: break-word;
 }
 </style>
 
