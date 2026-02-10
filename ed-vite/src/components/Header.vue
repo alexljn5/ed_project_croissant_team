@@ -21,7 +21,7 @@ header {
   left: 0;
   width: 100%;
   padding: 1rem 2rem;
-  z-index: 1000;
+  z-index: 100000000;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -38,7 +38,6 @@ header {
   color: var(--header-text);
 }
 
-/* right group: button + logo */
 .header-right {
   display: flex;
   align-items: center;

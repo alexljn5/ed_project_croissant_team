@@ -54,6 +54,7 @@
 <style scoped>
 
 .footer-container {
+  position: relative;
   background-image: linear-gradient(
     to top, 
     var(--site-paars) 0%,
