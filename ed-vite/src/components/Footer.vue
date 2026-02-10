@@ -13,7 +13,7 @@
         <h4>Paginas</h4>
         <ul class="footer-links">
           <li><router-link to="/">Home</router-link></li>
-          <li><router-link to="/admin">Admin</router-link></li>
+          <li><router-link to="/admin-login">Admin</router-link></li>
           <li><router-link to="/contact">Contact</router-link></li>
         </ul>
       </div>

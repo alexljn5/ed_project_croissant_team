@@ -22,9 +22,10 @@ Route::post('/admin/login', function (Request $request) {
 
     $providedPassword = $request->password;
     $hashedPassword = config('admin.password_hash');
+    $isValidHash = $hashedPassword && Hash::check($providedPassword, $hashedPassword);
 
-    if (!$hashedPassword || !Hash::check($providedPassword, $hashedPassword)) {
-        return response()->json(['error' => 'Invalid password'], 401);
+    if (!$isValidHash) {
+        return response()->json(['error' => 'Wachtwoord niet goed'], 401);
     }
 
     // Generate a random token and store in cache

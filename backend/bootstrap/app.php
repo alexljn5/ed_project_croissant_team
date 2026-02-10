@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
         $middleware->alias([
             'admin.token' => \App\Http\Middleware\AdminTokenMiddleware::class,
         ]);
@@ -23,4 +24,3 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->create();
-

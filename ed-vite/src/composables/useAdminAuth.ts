@@ -24,7 +24,7 @@ export function useAdminAuth() {
       const data = await response.json()
       
       if (!response.ok) {
-        error.value = data.error || 'Login failed'
+        error.value = data.error ? 'Wachtwoord niet goed' : 'Login failed'
         return false
       }
       

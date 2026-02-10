@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "./pages/Home.vue";
 import Contact from "./pages/Contact.vue";
 import Admin from "./pages/Admin.vue";
+import AdminLogin from "./pages/AdminLogin.vue";
 import Reviews from "./pages/Reviews.vue";
 import LocationDetector from "./pages/LocationDetector.vue";
 import Emails from "./pages/Emails.vue";
@@ -21,8 +22,13 @@ const routes = [
     {
         path: "/admin",
         name: "Admin",
-
         component: Admin,
+        meta: { requiresAdmin: true },
+    },
+    {
+        path: "/admin-login",
+        name: "AdminLogin",
+        component: AdminLogin,
     },
     {
         path: "/reviews",
@@ -60,6 +66,19 @@ console.log(
 const router = createRouter({
     history: createWebHistory((import.meta as any).env.BASE_URL),
     routes,
+});
+
+router.beforeEach((to) => {
+    const requiresAdmin = to.matched.some((route) => route.meta?.requiresAdmin);
+    const token = localStorage.getItem("admin_token");
+
+    if (requiresAdmin && !token) {
+        return { path: "/admin-login", query: { redirect: to.fullPath } };
+    }
+
+    if (to.path === "/admin-login" && token) {
+        return { path: "/admin" };
+    }
 });
 
 export default router;
