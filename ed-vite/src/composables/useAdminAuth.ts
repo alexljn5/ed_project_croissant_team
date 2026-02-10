@@ -3,12 +3,13 @@ import { useRouter } from 'vue-router'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
+const token = ref<string | null>(localStorage.getItem('admin_token'))
+const isAuthenticated = ref(!!token.value)
+const error = ref('')
+const isLoading = ref(false)
+
 export function useAdminAuth() {
   const router = useRouter()
-  const token = ref<string | null>(localStorage.getItem('admin_token'))
-  const isAuthenticated = ref(!!token.value)
-  const error = ref('')
-  const isLoading = ref(false)
 
   async function login(password: string) {
     isLoading.value = true
