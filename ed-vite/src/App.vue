@@ -2,19 +2,13 @@
   <div class="app-wrapper">
     <header class="header-top">
       <div class="header-container">
-        <h1 class="dubbeloproute-titel">Dubbelop-route</h1>
+        <img src ="/src/assets/img/dbtitel.png" alt="Dubbelop Logo" class="dubbeloproute-titel" />
         <div class="header-right">
           <router-link to="/reviews" class="reviews-button">
             <button class="reviewsKnop">Reviews</button>
           </router-link>
           <Button />
           <router-link to="/" class="logo-link">
-            <div class="logo">
-              <img
-                src="/src/assets/img/dubbelop-logo.png"
-                alt="Dubbelop Logo"
-              />
-            </div>
           </router-link>
         </div>
       </div>
@@ -47,12 +41,12 @@ import Button from './components/Button.vue'
   top: 0;
   left: 0;
   width: 100%;
-  padding: 1rem 1.5rem;
+  padding: 1rem 1rem;
   z-index: 1000;
   background-image: linear-gradient(to right,
-          var(--site-paars-xtra-light) 0%,
-          var(--site-paars-xtra-light) 20%,
-          var(--site-paars-xtra-light) 29.9999%,
+          var(--site-paars) 0%,
+          var(--site-paars) 20%,
+          var(--site-paars) 29.9999%,
           var(--header-bg) 30%,
           var(--header-bg) 70%,
           var(--header-bg) 100%);
@@ -69,14 +63,14 @@ import Button from './components/Button.vue'
 }
 
 .dubbeloproute-titel {
-  font-family: var(--titel-font);
-  font-size: var(--font-grootte2);
   font-weight: bold;
   text-transform: uppercase;
   margin: 0;
-  color: rgb(54, 54, 54);
   cursor: default;
   flex-shrink: 0;
+  height: 66px;
+  width: auto;
+  object-fit: contain;
 }
 
 .header-right {
@@ -151,26 +145,23 @@ import Button from './components/Button.vue'
 }
 
 .reviewsKnop {
-  background: plum;
-  border-color: var(--body);
-  color: hsl(240, 1%, 14%);;
+  background: var(--site-paars);
+  color: hsl(0, 0%, 100%);
+  transition: transform 0.3s ease;
 }
 
 .reviewsKnop:hover {
-  background: var(--body);
-  border-color: var(--body);
-  color: white;
+  transform: scale(1.1, 1);
 }
 
 .contactKnop {
-  background: var(--achtergrond-primair);
-  border-color: var(--site-paars);
-  color: var(--site-paars);
+  background: var(--site-paars);
+  color: hsl(0, 0%, 100%);
+  transition: transform 0.3s ease;
 }
 
 .contactKnop:hover {
-  background: var(--site-paars);
-  color: white;
+  transform: scale(1.002);
 }
 
 .app-layout {

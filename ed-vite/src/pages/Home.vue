@@ -306,8 +306,8 @@ onUnmounted(() => {
 .content-slider {
   width: 100%;
   padding: 2rem 5rem;
-  background-color: var(--site-paars);
   font-family: var(--font-primair);
+  background-color: var(--site-paars);
 }
 
 .content-slider::before {
@@ -643,7 +643,7 @@ onUnmounted(() => {
 }
 
 .neEv-text {
-  padding-left: 2.5%;
+  padding-left: 1rem;
   padding-right: 1%;
   width: fit-content;
   font-size: 1.55rem;
@@ -653,6 +653,8 @@ onUnmounted(() => {
   border-bottom-right-radius: 5px;
   color: var(--title-text);
   font-family: var(--font-heading);
+  margin-left: -5rem;
+  margin-right: 0;
 
   background-image: linear-gradient(
     to right,
@@ -667,7 +669,6 @@ onUnmounted(() => {
 </style>
 
 <style scoped>
-/* Homepage map section - full width below slider */
 .home-map-section {
   width: 100%;
   padding: 2rem;
