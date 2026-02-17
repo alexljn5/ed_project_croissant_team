@@ -1,5 +1,5 @@
 <template>
-  <div class="emails-page">
+  <div class="you_got_mail-page">
     <div class="emails-header">
       <div class="header-content">
         <h1>Ontvangen Berichten</h1>
@@ -47,7 +47,7 @@
               <button
                 @click="deleteEmail(email.id)"
                 class="delete-btn"
-                title="Verwijder dit bericht"
+                title="DELETE FR*NCE"
               >
                 <DeleteCross />
               </button>
@@ -76,7 +76,7 @@ onMounted(() => {
 
 <style scoped>
 /* Header */
-.emails-page {
+.you_got_mail-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 0;

@@ -228,6 +228,8 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from "vue";
 import pigImage from "@/assets/img/pig-1.jpg";
+import fishImage from "@/assets/img/fish.png";
+import alecImage from "@/assets/img/alec.png";
 
 const STORAGE_KEY = "site-reviews-by-image";
 const REVIEWS_TO_SHOW = 5;
@@ -242,11 +244,11 @@ interface Review {
 
 // Images array
 const images = ref<string[]>([
-  "https://picsum.photos/500/400?random=1",
+  pigImage,
   "https://picsum.photos/500/400?random=2",
   "https://picsum.photos/500/400?random=3",
-  "https://picsum.photos/500/400?random=4",
-  "https://picsum.photos/500/400?random=5",
+  fishImage,
+  alecImage,
 ]);
 
 const currentImageIndex = ref(0);

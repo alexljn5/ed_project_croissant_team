@@ -14,7 +14,14 @@
             <button class="reviewsKnop">Reviews</button>
           </router-link>
           <router-link to="/contact" class="contact-button">
-            <button class="contactKnop">Neem Contact Op</button>
+            <button class="contactKnop">
+              <img
+                src="/src/assets/img/Mail.png"
+                alt="Mail"
+                class="mail-icon"
+              />
+              Neem Contact Op
+            </button>
           </router-link>
           <router-link to="/" class="logo-link">
             <div class="logo">
@@ -34,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import Footer from './components/Footer.vue'
-import EditButton from './components/editToolKnop.vue'
-import '@/assets/css/app.css'
+import Footer from "./components/Footer.vue";
+import EditButton from "./components/editToolKnop.vue";
+import "@/assets/css/app.css";
 </script>

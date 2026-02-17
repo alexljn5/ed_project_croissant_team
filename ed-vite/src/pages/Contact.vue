@@ -64,7 +64,11 @@
               ></textarea>
             </div>
 
-            <button type="submit" class="submit-btn">
+            <button
+              type="submit"
+              class="submit-btn"
+              title="Lookie, i can send stuff"
+            >
               <span>Verstuur Bericht</span>
               <span class="btn-arrow">→</span>
             </button>
