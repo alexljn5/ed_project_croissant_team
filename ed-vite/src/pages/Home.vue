@@ -24,14 +24,12 @@
             >
               <div class="date-badge">{{ card.date }}</div>
             </div>
-
             <div class="card-content">
               <h1>{{ card.title }}</h1>
               <p>{{ card.description }}</p>
             </div>
           </div>
         </div>
-
         <button class="slider-arrow next" @click="nextSlide">❯</button>
         <div class="slider-nav">
           <div
@@ -76,7 +74,6 @@
             }"
           ></div>
         </div>
-
         <div class="text-block text-block-3">
           <div class="text-block-shape shape-3"></div>
           <div class="block-text">
@@ -90,7 +87,6 @@
         </div>
       </div>
     </section>
-
     <!-- Map section (full width below slider) 
     <section class="home-map-section">
       <MapView />
@@ -99,20 +95,16 @@
     <div class="backend-section">
       <BackendGlue />
     </div>
-    
 <div class="publicmap">
   <PublicMap />
   <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
 </div>
-
-
     <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
       <div class="modal-content" @click.stop>
         <button class="modal-close" @click="closeModal">✕</button>
         <div
           class="modal-image"
-          :style="{ backgroundImage: `url('${selectedCard.image}')` }"
-        >
+          :style="{ backgroundImage: `url('${selectedCard.image}')` }">
           <div class="modal-date-badge">{{ selectedCard.date }}</div>
         </div>
         <div class="modal-text">
@@ -123,7 +115,6 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import Slider from '../components/Slider.vue'
@@ -134,7 +125,6 @@ import { useMap } from '../composables/useMap'
 import type { POI } from '../composables/useMap'
 import '@/assets/css/home.css'
 
-// ────────────────────── GET THE SHARED POIS (REQUIRED) ──────────────────────
 const {
   initMap,
   loadRoute,

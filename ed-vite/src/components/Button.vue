@@ -19,11 +19,10 @@
   border: none;
   cursor: pointer;
   color: hsl(0, 0%, 100%);
-  transition: transform 0.3s ease;
   font-family: var(--font-primair);
+  transition: all 0.45s ease;
 }
 
 .contactKnop:hover {
-  transform: scale(1.02);
-}
+  background-color: var(--interactief);}
 </style>
