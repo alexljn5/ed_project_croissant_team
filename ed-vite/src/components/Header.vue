@@ -26,12 +26,13 @@ header {
   justify-content: space-between;
   align-items: center;
   background-color: var(--header-bg);
+  font-family: var(--font-primair);
   box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5);
   gap: 1rem;
 }
 
 .dubbeloproute-titel {
-  font-family: 'Lucida Sans', sans-serif;
+  font-family: var(--font-heading);
   font-size: var(--font-grootte2);
   margin: 0;
   color: var(--header-text);

@@ -1,64 +1,47 @@
 <template>
-  <div>
-    <Header />
-    <BackendGlue />
-    <main>
-      <Slider />
-      <EditableSection /> <!-- New: Simple text edit -->
-      <DynamicList /> <!-- New: Add/remove items -->
-      <MapView />
-    </main>
+  <div class="app-layout">
+    <!-- Navigation Header -->
+    <header class="header-top">
+      <div class="header-container">
+        <h1 class="dubbeloproute-titel">Dubbelop-route</h1>
+        <div class="header-right">
+          <!--
+          <router-link to="/admin" class="admin-button">
+            <button class="adminKnop">Admin</button>
+          </router-link>
+          -->
+          <router-link to="/reviews" class="reviews-button">
+            <button class="reviewsKnop">Reviews</button>
+          </router-link>
+          <router-link to="/contact" class="contact-button">
+            <button class="contactKnop">
+              <img
+                src="/src/assets/img/Mail.png"
+                alt="Mail"
+                class="mail-icon"
+              />
+              Neem Contact Op
+            </button>
+          </router-link>
+          <router-link to="/" class="logo-link">
+            <div class="logo">
+              <img
+                src="/src/assets/img/dubbelop-logo.png"
+                alt="Dubbelop Logo"
+              />
+            </div>
+          </router-link>
+        </div>
+      </div>
+    </header>
+    <router-view />
     <Footer />
   </div>
+  <EditButton />
 </template>
 
 <script setup lang="ts">
-import Header from './components/Header.vue';
-import Slider from './components/Slider.vue';
-import MapView from './components/MapView.vue';
-import BackendGlue from './components/BackendGlue.vue';
-import EditableSection from './components/EditableSection.vue'; // Placeholder 1
-import DynamicList from './components/DynamicList.vue'; // Placeholder 2
+import Footer from "./components/Footer.vue";
+import EditButton from "./components/editToolKnop.vue";
+import "@/assets/css/app.css";
 </script>
-
-<style>
-:root {
-  --body: hsla(304, 36%, 42%, 1);
-  --achtergrond-primair: hsl(0, 0%, 96%);
-  --site-paars: hsla(304, 36%, 42%, 1);
-  --interactief: hsl(41, 100%, 69%);
-  --header-bg: rgba(255, 255, 255, 0.8);
-  --header-shadow: rgba(0, 0%, 0.1);
-  --font-primair: Arial, Verdana;
-  --font-grootte: 16px;
-  --font-grootte2: 32px;
-  --header-text: hsla(0, 0%, 11%, 1);
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background-color: var(--body);
-  font-family: var(--font-primair);
-  overflow-x: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  overflow-y: auto;
-}
-
-body::-webkit-scrollbar {
-  display: none;
-}
-
-main {
-  padding-top: 10px;
-}
-</style>

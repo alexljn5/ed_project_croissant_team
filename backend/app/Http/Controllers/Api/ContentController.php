@@ -5,43 +5,58 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PageContent;
+use Illuminate\Support\Facades\Storage;
 
 class ContentController extends Controller
 {
-    // GET /api/content/{key}
     public function show($key)
     {
         $content = PageContent::firstWhere('key', $key);
 
-        // fallback to empty array
-        $items = $content->value ?? [];
-
-        // Ensure array of plain strings
-        if (!is_array($items)) {
-            $items = [$items];
+        if (!$content) {
+            return response()->json(['value' => null]);
         }
 
-        $items = array_map(fn($item) => trim(strip_tags((string) $item)), $items);
+        $value = $content->value;
 
-        return response()->json(['value' => $items]);
+        // SUPER IMPORTANT: Auto-decode JSON strings!
+        $decoded = json_decode($value, true);
+        return response()->json([
+            'value' => (json_last_error() === JSON_ERROR_NONE) ? $decoded : $value
+        ]);
     }
 
-    // POST /api/content/{key}
     public function update(Request $request, $key)
     {
-        $data = $request->input('value', []);
-        if (!is_array($data)) {
-            $data = [$data];
-        }
+        $input = $request->input('value');
 
-        // sanitize strings
-        $clean = array_map(fn($item) => trim(strip_tags((string) $item)), $data);
+        // If it's array/object → save as JSON string in DB
+        $toStore = is_array($input) || is_object($input)
+            ? json_encode($input, JSON_UNESCAPED_UNICODE)
+            : $input;
 
         PageContent::updateOrCreate(
             ['key' => $key],
-            ['value' => $clean]
+            ['value' => $toStore]
         );
 
-        return response()->json(['success' => true, 'value' => $clean]);
+        return response()->json(['success' => true, 'value' => $input]);
+    }
+
+    public function uploadPhoto(Request $request)
+    {
+        $request->validate([
+            'photo' => 'required|image|mimes:jpeg,png,gif,webp|max:10240'
+        ]);
+
+        $path = $request->file('photo')->store('photos', 'public');
+
+        $url = asset('storage/' . $path);
+
+        return response()->json([
+            'success' => true,
+            'url'     => $url . '?t=' . time(), // cache bust
+            'path'    => $path
+        ]);
     }
 }
