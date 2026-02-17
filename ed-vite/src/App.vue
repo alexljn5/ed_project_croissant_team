@@ -14,6 +14,16 @@
           <router-link to="/reviews" class="reviews-button">
             <button class="reviewsKnop">Reviews</button>
           </router-link>
+          <router-link to="/contact" class="contact-button">
+            <button class="contactKnop">
+              <img
+                src="/src/assets/img/Mail.png"
+                alt="Mail"
+                class="mail-icon"
+              />
+              Neem Contact Op
+            </button>
+          </router-link>
           <Button />
           <router-link to="/" class="logo-link">
           </router-link>
@@ -31,9 +41,10 @@
 </template>
 
 <script setup lang="ts">
+import Footer from "./components/Footer.vue";
+import EditButton from "./components/editToolKnop.vue";
+import "@/assets/css/app.css";
 import { ref, onMounted, onUnmounted } from 'vue'
-import Footer from './components/Footer.vue'
-import EditButton from './components/editToolKnop.vue'
 import Button from './components/Button.vue'
 
 const arrowPointingUp = ref(false)
