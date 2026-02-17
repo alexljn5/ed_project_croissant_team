@@ -1,0 +1,64 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+js/
+.env
+.DS_Store
+*.log
+
+# Vue/Vite auto-generated files (should never be committed)
+*.vue.js
+*.vue.d.ts
+*.d.ts
+main.js
+App.vue.js
+.vite/
+
+# Vite cache and HMR files
+.vite/
+
+# TypeScript build info (generated during build)
+*.tsbuildinfo
+
+# Vite/Vue generated JS files (if any)
+*.vue.js
+
+# Optional: if you don’t want to commit lockfile (but usually you do keep it)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Local environment files
+.env.local
+.env.development.local
+.env.production.local
+
+# OS generated files (already have some, but safe to add)
+Thumbs.db
+Desktop.ini
+
+# Build output (already have dist, but make sure)
+dist/
+dist-ssr/
