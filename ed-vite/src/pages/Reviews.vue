@@ -1,66 +1,166 @@
 <template>
   <div class="reviews-page">
-    <h1>Reviews</h1>
+    <div class="reviews-header">
+      <h1>Reviews</h1>
+      <p class="reviews-subtitle">Deel je ervaringen en meningen</p>
+    </div>
+
     <div class="reviews-container">
 
-      <!-- Left side: Form -->
       <div class="reviews-form-section">
         <h2>Schrijf een review</h2>
         <form @submit.prevent="addReview" class="review-form">
-          <input v-model="newReview.name" placeholder="Naam" />
-          <textarea
-            v-model="newReview.text"
-            placeholder="Review tekst"
-            required
-            rows="4"
-          ></textarea>
+          <!-- Rating section -->
+          <div class="form-group">
+            <label for="rating" class="form-label">Beoordeling</label>
+            <div class="star-rating">
+              <button
+                v-for="star in 5"
+                :key="star"
+                type="button"
+                @click="newReview.stars = star"
+                @mouseenter="hoverRating = star"
+                @mouseleave="hoverRating = 0"
+                :class="[
+                  'star-btn',
+                  {
+                    active: newReview.stars >= star,
+                    hover: hoverRating >= star,
+                  },
+                ]"
+                :aria-label="`${star} sterren`"
+                tabindex="0"
+              >
+                ★
+              </button>
+            </div>
+            <span v-if="newReview.stars" class="rating-text"
+              >{{ newReview.stars }} van 5 sterren</span
+            >
+          </div>
 
-          <div class="form-additional">
-            <label>
-              <input type="checkbox" v-model="newReview.anonymous" /> Plaats als anoniem
+          <!-- Review text -->
+          <div class="form-group">
+            <label for="review-text" class="form-label">Je review</label>
+            <textarea
+              id="review-text"
+              v-model="newReview.text"
+              placeholder="Vertel wat je ervan vindt..."
+              required
+              rows="5"
+              class="form-input"
+            ></textarea>
+          </div>
+
+          <!-- User info section -->
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                v-model="newReview.anonymous"
+                class="form-checkbox"
+              />
+              <span>Plaats als anoniem</span>
             </label>
-            <input
-              v-if="!newReview.anonymous"
-              v-model="newReview.email"
-              placeholder="Email (optioneel)"
-              type="email"
-            />
           </div>
 
-          <div class="star-rating">
-            <span
-              v-for="star in 5"
-              :key="star"
-              @click="newReview.stars = star"
-              :class="['star', { active: newReview.stars >= star }]"
-            >★</span>
+          <div v-if="!newReview.anonymous" class="form-group form-row">
+            <div class="form-field">
+              <label for="name" class="form-label">Naam</label>
+              <input
+                id="name"
+                v-model="newReview.name"
+                type="text"
+                placeholder="Je naam"
+                class="form-input"
+              />
+            </div>
+            <div class="form-field">
+              <label for="email" class="form-label"
+                >Email <span class="optional">(optioneel)</span></label
+              >
+              <input
+                id="email"
+                v-model="newReview.email"
+                type="email"
+                placeholder="je@email.com"
+                class="form-input"
+              />
+            </div>
           </div>
 
-          <button type="submit" class="submit-btn">Submit</button>
+          <button type="submit" class="submit-btn">Verzend Review</button>
         </form>
       </div>
 
       <!-- Right side: Reviews list -->
-      <div class="reviews-list-section">
+      <section class="reviews-list-section">
+        <div class="reviews-header-info">
+          <h2>Alle Reviews ({{ reviews.length }})</h2>
+          <div v-if="averageRating > 0" class="average-rating">
+            <div class="average-score">
+              <span class="score-number">{{ averageRating.toFixed(1) }}</span>
+              <span class="score-max">/5</span>
+            </div>
+            <div class="average-stars">
+              <span
+                v-for="star in 5"
+                :key="star"
+                :class="['avg-star', { active: averageRating >= star }]"
+                >★</span
+              >
+            </div>
+            <span class="rating-count"
+              >{{ ratingsCount }} beoordeling{{
+                ratingsCount !== 1 ? "en" : ""
+              }}</span
+            >
+          </div>
+        </div>
+
         <div v-if="reviews.length" class="reviews-list">
-          <h2>Reviews:</h2>
-          <ul>
-            <li v-for="(review, idx) in visibleReviews" :key="idx" class="review-item">
-              <span class="review-text">{{ review.text }}</span>
-              <div class="review-meta">
-                <span v-if="review.anonymous">(anoniem)</span>
-                <span v-else-if="review.name">- {{ review.name }}</span>
-                <span v-if="review.email" class="review-email">({{ review.email }})</span>
-                <span v-if="review.stars" class="review-stars">
-                  <span
-                    v-for="star in 5"
-                    :key="star"
-                    :class="['star', { active: review.stars >= star }]"
-                  >★</span>
-                </span>
+          <ul class="reviews-ul">
+            <li
+              v-for="(review, idx) in visibleReviews"
+              :key="idx"
+              class="review-item"
+            >
+              <!-- Stars -->
+              <div v-if="review.stars" class="review-rating">
+                <span
+                  v-for="star in 5"
+                  :key="star"
+                  :class="['review-star', { active: review.stars >= star }]"
+                  aria-hidden="true"
+                  >★</span
+                >
               </div>
-              <button @click="removeReview(idx)" class="remove-btn">
-                Verwijder <p id="liltekst">"(temporary ofc)"</p>
+
+              <!-- Review text -->
+              <p class="review-text">{{ review.text }}</p>
+
+              <!-- Meta information -->
+              <div class="review-meta">
+                <span v-if="review.anonymous" class="review-author"
+                  >Anoniem</span
+                >
+                <span v-else-if="review.name" class="review-author">{{
+                  review.name
+                }}</span>
+                <span
+                  v-if="review.email && !review.anonymous"
+                  class="review-email"
+                  >{{ review.email }}</span
+                >
+              </div>
+
+              <!-- Delete button -->
+              <button
+                @click="removeReview(idx)"
+                class="remove-btn"
+                aria-label="Verwijder review"
+              >
+                Verwijder
               </button>
             </li>
           </ul>
@@ -70,24 +170,24 @@
             @click="showMoreReviews"
             class="show-more-btn"
           >
-            Bekijk meer
+            Bekijk meer ({{ reviews.length - visibleReviews.length }} meer)
           </button>
         </div>
 
         <div v-else class="no-reviews">
-          Er zijn nog geen reviews...
+          <p>Er zijn nog geen reviews...</p>
         </div>
-      </div>
-
+      </section>
     </div>
   </div>
 </template>
 
-
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 
 const STORAGE_KEY = "site-reviews-v2";
+const REVIEWS_TO_SHOW = 5;
+
 interface Review {
   text: string;
   anonymous: boolean;
@@ -104,14 +204,27 @@ const newReview = ref<Review>({
 });
 const reviews = ref<Review[]>([]);
 const visibleReviews = ref<Review[]>([]);
-const REVIEWS_TO_SHOW = 3;
+const hoverRating = ref(0);
+
+const averageRating = computed(() => {
+  const reviewsWithStars = reviews.value.filter((r) => r.stars && r.stars > 0);
+  if (reviewsWithStars.length === 0) return 0;
+  const sum = reviewsWithStars.reduce((total, r) => total + (r.stars || 0), 0);
+  return sum / reviewsWithStars.length;
+});
+
+const ratingsCount = computed(() => {
+  return reviews.value.filter((r) => r.stars && r.stars > 0).length;
+});
 
 onMounted(() => {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
     try {
       reviews.value = JSON.parse(saved);
-    } catch {}
+    } catch (error) {
+      console.error("Error loading reviews:", error);
+    }
   }
   visibleReviews.value = reviews.value.slice(0, REVIEWS_TO_SHOW);
 });
@@ -122,7 +235,7 @@ watch(
     localStorage.setItem(STORAGE_KEY, JSON.stringify(val));
     visibleReviews.value = val.slice(0, REVIEWS_TO_SHOW);
   },
-  { deep: true }
+  { deep: true },
 );
 
 function addReview() {
@@ -134,6 +247,7 @@ function addReview() {
       email: newReview.value.email?.trim() || "",
       stars: newReview.value.stars || 0,
     });
+    // Reset form
     newReview.value = {
       text: "",
       anonymous: false,
@@ -153,6 +267,5 @@ function removeReview(idx: number) {
   reviews.value.splice(idx, 1);
 }
 
-import '@/assets/css/reviews.css'
-
+import "@/assets/css/reviews.css";
 </script>

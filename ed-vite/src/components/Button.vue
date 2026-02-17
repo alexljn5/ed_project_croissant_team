@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-// Router link to contact page
 </script>
 
 <style scoped>
@@ -15,18 +14,15 @@
 
 .contactKnop {
   padding: 10px 20px;
-  background: var(--achtergrond-primair);
+  background-color: var(--site-paars);
   border-radius: 20px;
-  border: 2px solid var(--site-paars);
+  border: none;
   cursor: pointer;
-  transition: background-color 0.45s;
-  font-weight: bold;
-  transition: background 0.1s;
+  color: hsl(0, 0%, 100%);
   font-family: var(--font-primair);
+  transition: all 0.45s ease;
 }
 
 .contactKnop:hover {
-  background: var(--site-paars);
-  color: white;
-}
+  background-color: var(--interactief);}
 </style>

@@ -21,7 +21,6 @@
 
         <!-- EMAILS CARD -->
         <div class="map-card">
-          <h2 style="margin-top: 2rem">Emails bekijken</h2>
           <router-link to="/emails" class="emails-link">
             <button class="view-emails-btn">Bekijk alle emails →</button>
           </router-link>
@@ -130,7 +129,6 @@ import POIModal from '../components/POIModal.vue'
 import { useMap } from '../composables/useMap'
 import { useAdminAuth } from '../composables/useAdminAuth'
 import type { POI } from '../composables/useMap'
-import '@/assets/css/admin.css'
 
 const testCounter = ref(0)
 const isLoading = ref(false)
@@ -182,8 +180,8 @@ onMounted(async () => {
         updateRoute(newWaypoints)
       }
     },
-    { deep: true }
-  )
+    { deep: true },
+  );
 
   // "Meer info" buttons
   document.addEventListener('click', (e) => {
@@ -237,4 +235,6 @@ async function savePOIsWrapper() {
   await saveMarkers()
   isLoading.value = false
 }
+
+import '@/assets/css/admin.css'
 </script>

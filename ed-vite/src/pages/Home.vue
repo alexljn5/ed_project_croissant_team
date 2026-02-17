@@ -1,16 +1,15 @@
 <template>
   <div class="home-page">
-    <div
-      class="content-slider"
-      :style="{
-        backgroundImage: 'url(/img/achSlider.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'top center',
-      }"
-    >
-      <h1 class="neEv-text">Nieuws & Evenementen</h1>
-
-      <div class="slider-container">
+    <Hero />
+    <div class="scroll-indicator-wrapper">
+      <div class="scroll-indicator">
+        <span class="arrow" :class="{ 'arrow-up': arrowPointingUp }"></span>
+      </div>
+    </div>
+     <div class="content-slider" 
+       :style="{ backgroundImage: 'url(/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
+     <h1 class="neEv-text">Nieuws & Evenementen</h1> 
+     <div class="slider-container"> 
         <button class="slider-arrow prev" @click="prevSlide">❮</button>
         <div class="slider-track" ref="sliderTrack">
           <div
@@ -31,14 +30,12 @@
             >
               <div class="date-badge">{{ card.date }}</div>
             </div>
-
             <div class="card-content">
               <h1>{{ card.title }}</h1>
               <p>{{ card.description }}</p>
             </div>
           </div>
         </div>
-
         <button class="slider-arrow next" @click="nextSlide">❯</button>
         <div class="slider-nav">
           <div
@@ -82,7 +79,6 @@
             }"
           ></div>
         </div>
-
         <div class="text-block text-block-3">
           <div class="text-block-shape shape-3"></div>
           <div class="block-text">
@@ -96,27 +92,24 @@
         </div>
       </div>
     </section>
-
+    <!-- Map section (full width below slider) 
+    <section class="home-map-section">
+      <MapView />
+    </section>
+-->
     <div class="backend-section">
       <BackendGlue />
     </div>
-
-    <div class="publicmap">
-      <PublicMap />
-      <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
-    </div>
-
-    <div
-      v-if="showModal"
-      :class="['modal-overlay', { closing: isClosing }]"
-      @click="closeModal"
-    >
+<div class="publicmap">
+  <PublicMap />
+  <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
+</div>
+    <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
       <div class="modal-content" @click.stop>
         <button class="modal-close" @click="closeModal">✕</button>
         <div
           class="modal-image"
-          :style="{ backgroundImage: `url('${selectedCard.image}')` }"
-        >
+          :style="{ backgroundImage: `url('${selectedCard.image}')` }">
           <div class="modal-date-badge">{{ selectedCard.date }}</div>
         </div>
         <div class="modal-text">
@@ -127,19 +120,35 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue"
-import BackendGlue from "../components/BackendGlue.vue"
-import PublicMap from "../components/PublicMap.vue"
-import POIModal from "../components/POIModal.vue"
-import { useMap } from "../composables/useMap"
-import { useSliderCards } from "@/composables/useSliderCards"
-import type { POI } from "../composables/useMap"
-import "@/assets/css/home.css"
-import "@/assets/css/styles.css"
+import { ref, onMounted, onUnmounted } from 'vue'
+import Hero from '../components/hero.vue'
+import Slider from '../components/Slider.vue'
+import BackendGlue from '../components/BackendGlue.vue'
+import PublicMap from '../components/PublicMap.vue'
+import POIModal from '../components/POIModal.vue'
+import { useMap } from '../composables/useMap'
+import type { POI } from '../composables/useMap'
+import '@/assets/css/home.css'
 
-// ────────────────────── MAP / POI logica ──────────────────────
+const arrowPointingUp = ref(false)
+
+const handleScroll = () => {
+  const scrollPosition = window.scrollY
+  const windowHeight = window.innerHeight
+  const documentHeight = document.documentElement.scrollHeight
+  
+  const mapSection = document.querySelector('.map-section') || document.querySelector('[class*="map"]')
+  
+  if (mapSection) {
+    const mapPosition = mapSection.getBoundingClientRect().top + window.scrollY
+    arrowPointingUp.value = scrollPosition > mapPosition - windowHeight
+  } else {
+    const midPoint = (documentHeight - windowHeight) / 2
+    arrowPointingUp.value = scrollPosition > midPoint
+  }
+}
+
 const {
   initMap,
   loadRoute,
@@ -248,10 +257,11 @@ const handleKeydown = (e: KeyboardEvent) => {
 
 // ────────────────────── LIFECYCLE ──────────────────────
 onMounted(async () => {
-  updateSlider()
-  startAutoSlide()
-  window.addEventListener("resize", updateSlider)
-  window.addEventListener("keydown", handleKeydown)
+  window.addEventListener('scroll', handleScroll)
+  updateSlider();
+  startAutoSlide();
+  window.addEventListener("resize", updateSlider);
+  window.addEventListener("keydown", handleKeydown);
 
   if (sliderTrack.value) {
     sliderTrack.value.addEventListener("mouseenter", () => {
@@ -267,23 +277,73 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  window.removeEventListener("keydown", handleKeydown)
-  window.removeEventListener("resize", updateSlider)
-  document.removeEventListener("click", setupPoiClickListener as EventListener)
-  if (autoSlideInterval) clearInterval(autoSlideInterval)
+  window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('keydown', handleKeydown)
+  window.removeEventListener('resize', updateSlider)
+  document.removeEventListener('click', setupPoiClickListener as EventListener)
 })
 </script>
 
 <style scoped>
-/* ────────────────────────────────────────────── */
-/* Je bestaande styles blijven ongewijzigd         */
-/* ────────────────────────────────────────────── */
+.home-page {
+  width: 100%;
+}
+
+.scroll-indicator-wrapper {
+  position: fixed;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  pointer-events: auto;
+}
+
+.scroll-indicator {
+  width: 210px;
+  height: 350px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8px;
+  transition: all 0.3s ease;
+}
+
+.scroll-indicator:hover {
+  scale: 1.1;
+}
+
+.arrow {
+  width: 0px;
+  height: 0px;
+  background-color: var(--interactief);
+  border-radius: 50%;
+  animation: bounce 2s infinite;
+  transition: transform 0.6s ease;
+  position: relative;
+}
+
+.arrow.arrow-up {
+  transform: rotate(180deg);
+}
+
+.arrow::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 21px solid hsl(0, 0%, 9%);
+}
 
 .content-slider {
   width: 100%;
-  padding: 2rem 0;
+  padding: 2rem 5rem;
   font-family: var(--font-primair);
-  position: relative;
+  background-color: var(--site-paars);
 }
 
 .content-slider::before {
@@ -293,14 +353,7 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    to top,
-    var(--site-paars),
-    rgba(0, 0, 0, 0.2),
-    rgba(0, 0, 0, 0.2),
-    rgba(0, 0, 0, 0.2),
-    rgba(0, 0, 0, 0.2)
-  );
+  background-color: var(--site-paars);
   z-index: -10000;
 }
 
@@ -355,11 +408,160 @@ onUnmounted(() => {
   color: #232323;
   font-size: 1.1rem;
   line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;          /* maximaal 4 regels tonen */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  transition: all 0.3s ease;
+}
+
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  color: var(--site-paars);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.slider-arrow:hover {
+  background: var(--interactief);
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.slider-arrow.prev {
+  left: 0;
+}
+
+.slider-arrow.next {
+  right: 0;
+}
+
+.slider-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 2rem;
+}
+
+.slider-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slider-dot.active {
+  background: var(--interactief);
+  transform: scale(1.3);
+}
+
+.slider-dot:hover {
+  background: hsl(46, 100%, 93%);
+  transform: scale(1.15);
+}
+
+.backend-section {
+  background:transparent;
+  min-height: 0;
+  width: 0%;
+  padding: 0rem 0;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(52, 52, 52, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.4s ease;
+}
+
+.modal-overlay.closing {
+  animation: fadeOut 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow-y: auto;
+  animation: zoomIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.modal-overlay.closing .modal-content {
+  animation: zoomOut 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes zoomIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes zoomOut {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
 }
 
 /* Zorg dat de hele kaart niet uitrekt */
@@ -386,13 +588,35 @@ onUnmounted(() => {
   color: #555;
   font-size: 1.3rem;
   line-height: 1.8;
-  white-space: pre-wrap;     /* behoudt enters */
-  word-wrap: break-word;
+}
+
+.neEv-text {
+  padding-left: 1rem;
+  padding-right: 1%;
+  width: fit-content;
+  font-size: 1.55rem;
+  font-weight: lighter;
+  text-align: left;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  color: var(--title-text);
+  font-family: var(--font-heading);
+  margin-left: -5rem;
+  margin-right: 0;
+
+  background-image: linear-gradient(
+    to right,
+    var(--det-1) 0%,
+    var(--det-1) 29.8%,
+    var(--det-2) 30%,
+    var(--det-2) 69.8%,
+    var(--det-3) 70%,
+    var(--det-3) 100%
+  );
 }
 </style>
 
 <style scoped>
-/* Homepage map section - full width below slider */
 .home-map-section {
   width: 100%;
   padding: 2rem;
@@ -415,6 +639,37 @@ onUnmounted(() => {
 
   .home-map-section #leaflet-map {
     height: 400px !important;
+  }
+
+  .scroll-indicator {
+    width: 25px;
+    height: 40px;
+    border: 2px solid var(--site-paars);
+    padding-top: 6px;
+  }
+
+  .arrow::before {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--site-paars);
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
   }
 }
 </style>

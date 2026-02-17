@@ -12,35 +12,7 @@
     <div class="contact-container">
       <div class="contact-content">
         <!-- Contact Info Cards -->
-        <div class="info-cards">
-          <div class="info-card phone-card">
-            <div class="card-icon">📞</div>
-            <h3>Bel ons</h3>
-            <p class="contact-detail">+31 (0)6 12345678</p>
-            <p class="contact-hours">
-              Maandag - Vrijdag<br />
-              <span class="bold">12:00 - 18:00</span> uur
-            </p>
-          </div>
 
-          <div class="info-card email-card">
-            <div class="card-icon">✉️</div>
-            <h3>Email</h3>
-            <p class="contact-detail">Alle berichten</p>
-            <router-link to="/emails" class="view-emails-link">
-              <button class="view-emails-btn">Bekijk emails</button>
-            </router-link>
-          </div>
-
-          <div class="info-card location-card">
-            <div class="card-icon">📍</div>
-            <h3>Locatie</h3>
-            <p class="contact-detail">Netherlands</p>
-            <p class="contact-hours">Bezoek ons naar afspraak</p>
-          </div>
-        </div>
-
-        <!-- Form Section -->
         <div class="form-section">
           <h2>Stuur ons een bericht</h2>
           <p class="form-description">
@@ -106,6 +78,15 @@
               {{ successMessage }}
             </div>
           </transition>
+
+          <!-- Phone Section Below Form -->
+          <div class="phone-section">
+            <h3>Of bel ons direct</h3>
+            <p class="phone-number">+31 (0)6 12345678</p>
+            <p class="phone-hours">
+              Maandag - Vrijdag<br /><span class="bold">12:00 - 18:00</span> uur
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -134,7 +115,7 @@ const handleSubmit = () => {
       form.value.name,
       form.value.email,
       form.value.subject,
-      form.value.message
+      form.value.message,
     );
 
     successMessage.value = "Bericht succesvol verzonden! ✓";
@@ -166,11 +147,7 @@ const handleSubmit = () => {
 }
 
 .contact-header {
-  background: linear-gradient(
-    135deg,
-    var(--site-paars, #6b4e99) 0%,
-    #8b5fcf 100%
-  );
+  background-color: var(--site-paars);
   color: white;
   padding: 4rem 1rem;
   text-align: center;
@@ -382,7 +359,7 @@ textarea {
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: var(--site-paars, #6b4e99);
+  border-color: var(--site-paars);
   background: white;
   box-shadow: 0 0 0 4px rgba(107, 78, 153, 0.1);
 }
@@ -394,11 +371,7 @@ textarea {
 
 .submit-btn {
   padding: 1rem 2rem;
-  background: linear-gradient(
-    135deg,
-    var(--site-paars, #6b4e99) 0%,
-    #8b5fcf 100%
-  );
+  background-color: var(--site-paars);
   color: white;
   border: none;
   border-radius: 8px;
@@ -434,7 +407,7 @@ textarea {
 .success-message {
   margin-top: 1.5rem;
   padding: 1.2rem 1.5rem;
-  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  background: linear-gradient(#c3e6cb);
   color: #155724;
   border: 2px solid #c3e6cb;
   border-radius: 8px;
@@ -450,6 +423,37 @@ textarea {
 .success-icon {
   font-size: 1.2rem;
   font-weight: bold;
+}
+
+/* Phone Section Below Form */
+.phone-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-left: 4px solid #ff6b6b;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.phone-section h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.phone-number {
+  font-size: 1.3rem;
+  color: #ff6b6b;
+  font-weight: 700;
+  margin: 0.5rem 0;
+}
+
+.phone-hours {
+  font-size: 0.95rem;
+  color: #999;
+  margin: 0.5rem 0;
+  line-height: 1.6;
 }
 
 /* Animations */
