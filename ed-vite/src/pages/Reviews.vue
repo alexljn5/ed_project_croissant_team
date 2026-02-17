@@ -5,6 +5,36 @@
       <p class="reviews-subtitle">Deel je ervaringen en meningen</p>
     </div>
 
+    <!-- Image Carousel -->
+    <div class="image-carousel-section">
+      <div class="image-carousel">
+        <button
+          @click="previousImage"
+          class="carousel-btn carousel-prev"
+          aria-label="Vorige afbeelding"
+        >
+          ◀
+        </button>
+        <div class="featured-image-wrapper">
+          <img
+            :src="images[currentImageIndex]"
+            :alt="`Afbeelding ${currentImageIndex + 1}`"
+            class="featured-image"
+          />
+          <div class="image-counter">
+            {{ currentImageIndex + 1 }} / {{ images.length }}
+          </div>
+        </div>
+        <button
+          @click="nextImage"
+          class="carousel-btn carousel-next"
+          aria-label="Volgende afbeelding"
+        >
+          ▶
+        </button>
+      </div>
+    </div>
+
     <div class="reviews-container">
 
       <div class="reviews-form-section">
@@ -96,32 +126,40 @@
       <!-- Right side: Reviews list -->
       <section class="reviews-list-section">
         <div class="reviews-header-info">
-          <h2>Alle Reviews ({{ reviews.length }})</h2>
-          <div v-if="averageRating > 0" class="average-rating">
+          <h2>Reviews voor afbeelding {{ currentImageIndex + 1 }}</h2>
+          <div
+            v-if="currentImageRatings.averageRating > 0"
+            class="average-rating"
+          >
             <div class="average-score">
-              <span class="score-number">{{ averageRating.toFixed(1) }}</span>
+              <span class="score-number">{{
+                currentImageRatings.averageRating.toFixed(1)
+              }}</span>
               <span class="score-max">/5</span>
             </div>
             <div class="average-stars">
               <span
                 v-for="star in 5"
                 :key="star"
-                :class="['avg-star', { active: averageRating >= star }]"
+                :class="[
+                  'avg-star',
+                  { active: currentImageRatings.averageRating >= star },
+                ]"
                 >★</span
               >
             </div>
             <span class="rating-count"
-              >{{ ratingsCount }} beoordeling{{
-                ratingsCount !== 1 ? "en" : ""
+              >{{ currentImageRatings.ratingsCount }} beoordeling{{
+                currentImageRatings.ratingsCount !== 1 ? "en" : ""
               }}</span
             >
           </div>
         </div>
 
-        <div v-if="reviews.length" class="reviews-list">
+        <div v-if="currentImageReviews.length" class="reviews-list">
           <ul class="reviews-ul">
             <li
-              v-for="(review, idx) in visibleReviews"
+              v-for="(review, idx) in currentImageVisibleReviews"
               :key="idx"
               class="review-item"
             >
@@ -156,7 +194,7 @@
 
               <!-- Delete button -->
               <button
-                @click="removeReview(idx)"
+                @click="removeReview(currentImageIndex, idx)"
                 class="remove-btn"
                 aria-label="Verwijder review"
               >
@@ -166,16 +204,21 @@
           </ul>
 
           <button
-            v-if="visibleReviews.length < reviews.length"
+            v-if="
+              currentImageVisibleReviews.length < currentImageReviews.length
+            "
             @click="showMoreReviews"
             class="show-more-btn"
           >
-            Bekijk meer ({{ reviews.length - visibleReviews.length }} meer)
+            Bekijk meer ({{
+              currentImageReviews.length - currentImageVisibleReviews.length
+            }}
+            meer)
           </button>
         </div>
 
         <div v-else class="no-reviews">
-          <p>Er zijn nog geen reviews...</p>
+          <p>Er zijn nog geen reviews voor deze afbeelding...</p>
         </div>
       </section>
     </div>
@@ -184,8 +227,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from "vue";
+import pigImage from "@/assets/img/pig-1.jpg";
+import fishImage from "@/assets/img/fish.png";
+import alecImage from "@/assets/img/alec.png";
 
-const STORAGE_KEY = "site-reviews-v2";
+const STORAGE_KEY = "site-reviews-by-image";
 const REVIEWS_TO_SHOW = 5;
 
 interface Review {
@@ -195,6 +241,27 @@ interface Review {
   email?: string;
   stars?: number;
 }
+
+// Images array
+const images = ref<string[]>([
+  pigImage,
+  "https://picsum.photos/500/400?random=2",
+  "https://picsum.photos/500/400?random=3",
+  fishImage,
+  alecImage,
+]);
+
+const currentImageIndex = ref(0);
+
+// Reviews structure: array of review arrays, one per image
+const reviewsByImage = ref<Review[][]>([]);
+
+const currentImageReviews = computed(() => {
+  return reviewsByImage.value[currentImageIndex.value] || [];
+});
+
+const currentImageVisibleReviews = ref<Review[]>([]);
+
 const newReview = ref<Review>({
   text: "",
   anonymous: false,
@@ -202,51 +269,80 @@ const newReview = ref<Review>({
   email: "",
   stars: 0,
 });
-const reviews = ref<Review[]>([]);
-const visibleReviews = ref<Review[]>([]);
+
 const hoverRating = ref(0);
 
-const averageRating = computed(() => {
-  const reviewsWithStars = reviews.value.filter((r) => r.stars && r.stars > 0);
-  if (reviewsWithStars.length === 0) return 0;
-  const sum = reviewsWithStars.reduce((total, r) => total + (r.stars || 0), 0);
-  return sum / reviewsWithStars.length;
-});
-
-const ratingsCount = computed(() => {
-  return reviews.value.filter((r) => r.stars && r.stars > 0).length;
+const currentImageRatings = computed(() => {
+  const reviews = currentImageReviews.value;
+  const reviewsWithStars = reviews.filter((r) => r.stars && r.stars > 0);
+  const averageRating =
+    reviewsWithStars.length === 0
+      ? 0
+      : reviewsWithStars.reduce((total, r) => total + (r.stars || 0), 0) /
+        reviewsWithStars.length;
+  return {
+    averageRating,
+    ratingsCount: reviewsWithStars.length,
+  };
 });
 
 onMounted(() => {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
     try {
-      reviews.value = JSON.parse(saved);
+      reviewsByImage.value = JSON.parse(saved);
     } catch (error) {
       console.error("Error loading reviews:", error);
     }
   }
-  visibleReviews.value = reviews.value.slice(0, REVIEWS_TO_SHOW);
+  // Initialize empty arrays for each image
+  if (reviewsByImage.value.length === 0) {
+    reviewsByImage.value = images.value.map(() => []);
+  }
+  updateVisibleReviews();
 });
 
 watch(
-  reviews,
-  (val) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(val));
-    visibleReviews.value = val.slice(0, REVIEWS_TO_SHOW);
+  [currentImageIndex, currentImageReviews],
+  () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(reviewsByImage.value));
+    updateVisibleReviews();
   },
   { deep: true },
 );
 
+function updateVisibleReviews() {
+  currentImageVisibleReviews.value = currentImageReviews.value.slice(
+    0,
+    REVIEWS_TO_SHOW,
+  );
+}
+
+function nextImage() {
+  currentImageIndex.value = (currentImageIndex.value + 1) % images.value.length;
+}
+
+function previousImage() {
+  currentImageIndex.value =
+    (currentImageIndex.value - 1 + images.value.length) % images.value.length;
+}
+
 function addReview() {
   if (newReview.value.text.trim()) {
-    reviews.value.unshift({
+    const review: Review = {
       text: newReview.value.text.trim(),
       anonymous: newReview.value.anonymous,
       name: newReview.value.anonymous ? "" : newReview.value.name?.trim() || "",
       email: newReview.value.email?.trim() || "",
       stars: newReview.value.stars || 0,
-    });
+    };
+
+    if (!reviewsByImage.value[currentImageIndex.value]) {
+      reviewsByImage.value[currentImageIndex.value] = [];
+    }
+
+    reviewsByImage.value[currentImageIndex.value].unshift(review);
+
     // Reset form
     newReview.value = {
       text: "",
@@ -255,16 +351,22 @@ function addReview() {
       email: "",
       stars: 0,
     };
+    hoverRating.value = 0;
   }
 }
 
 function showMoreReviews() {
-  const current = visibleReviews.value.length;
-  visibleReviews.value = reviews.value.slice(0, current + REVIEWS_TO_SHOW);
+  const current = currentImageVisibleReviews.value.length;
+  currentImageVisibleReviews.value = currentImageReviews.value.slice(
+    0,
+    current + REVIEWS_TO_SHOW,
+  );
 }
 
-function removeReview(idx: number) {
-  reviews.value.splice(idx, 1);
+function removeReview(imageIndex: number, reviewIndex: number) {
+  if (reviewsByImage.value[imageIndex]) {
+    reviewsByImage.value[imageIndex].splice(reviewIndex, 1);
+  }
 }
 
 import "@/assets/css/reviews.css";
