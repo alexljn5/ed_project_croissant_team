@@ -26,6 +26,14 @@
           </router-link>
         </div>
 
+        <!-- NIEUWS & EVENEMENTEN BEHEER – toegevoegd -->
+        <div class="map-card">
+          <div class="map-header">
+            <h2>Nieuws & Evenementen beheren</h2>
+          </div>
+          <AdminSliderCardsEditor />
+        </div>
+
         <!-- MAP CARD -->
         <div class="map-card">
           <div class="map-header">
@@ -111,6 +119,7 @@
 </template>
 
 <script setup lang="ts">
+import AdminSliderCardsEditor from '../components/AdminSliderCardsEditor.vue'
 import 'leaflet/dist/leaflet.css'
 import { ref, onMounted, watch, nextTick } from 'vue'
 import EditableSection from '../components/EditableSection.vue'
@@ -121,8 +130,8 @@ import { useMap } from '../composables/useMap'
 import { useAdminAuth } from '../composables/useAdminAuth'
 import type { POI } from '../composables/useMap'
 
-const testCounter = ref(0);
-const isLoading = ref(false);
+const testCounter = ref(0)
+const isLoading = ref(false)
 
 const { logout } = useAdminAuth()
 
@@ -133,13 +142,13 @@ function handleLogout() {
 }
 
 interface Waypoint {
-  lat: number;
-  lng: number;
+  lat: number
+  lng: number
 }
-const waypoints = ref<Waypoint[]>([]);
+const waypoints = ref<Waypoint[]>([])
 
-const showPOIModal = ref(false);
-const selectedPOI = ref<POI | null>(null);
+const showPOIModal = ref(false)
+const selectedPOI = ref<POI | null>(null)
 
 const {
   initMap,
@@ -151,80 +160,80 @@ const {
   removePOI,
   saveMarkers,
   loadMarkers,
-} = useMap();
+} = useMap()
 
 // THIS IS THE ONLY CORRECT WAY — ONE MAP, ONE SOURCE OF TRUTH
 onMounted(async () => {
-  await nextTick();
+  await nextTick()
 
-  initMap("admin-map");
+  initMap('admin-map')
 
-  await loadMarkers();
-  const route = await loadRoute();
-  if (route) waypoints.value = route;
+  await loadMarkers()
+  const route = await loadRoute()
+  if (route) waypoints.value = route
 
   // Live preview while editing
   watch(
     waypoints,
     (newWaypoints) => {
       if (newWaypoints.length >= 2) {
-        updateRoute(newWaypoints);
+        updateRoute(newWaypoints)
       }
     },
     { deep: true },
   );
 
   // "Meer info" buttons
-  document.addEventListener("click", (e) => {
-    const target = e.target as HTMLElement;
-    if (target.classList.contains("poi-more-btn")) {
-      const poiId = target.getAttribute("data-id");
-      const poi = pois.value.find((p) => p.id === poiId);
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement
+    if (target.classList.contains('poi-more-btn')) {
+      const poiId = target.getAttribute('data-id')
+      const poi = pois.value.find((p) => p.id === poiId)
       if (poi) {
-        selectedPOI.value = poi;
-        showPOIModal.value = true;
+        selectedPOI.value = poi
+        showPOIModal.value = true
       }
     }
-  });
-});
+  })
+})
 
 async function refreshMap() {
-  isLoading.value = true;
-  const route = await loadRoute();
-  if (route) waypoints.value = route;
-  isLoading.value = false;
+  isLoading.value = true
+  const route = await loadRoute()
+  if (route) waypoints.value = route
+  isLoading.value = false
 }
 
 function addWaypoint() {
   const last = waypoints.value[waypoints.value.length - 1] || {
     lat: 52.5186,
     lng: 5.4713,
-  };
+  }
   waypoints.value.push({
     lat: last.lat + 0.001,
     lng: last.lng + 0.001,
-  });
+  })
 }
 
 async function deleteWaypoint(idx: number) {
   if (waypoints.value.length <= 2) {
-    alert("Minstens 2 punten nodig!");
-    return;
+    alert('Minstens 2 punten nodig!')
+    return
   }
-  waypoints.value.splice(idx, 1);
-  await saveRoute(waypoints.value);
+  waypoints.value.splice(idx, 1)
+  await saveRoute(waypoints.value)
 }
 
 async function updateAndSaveRoute() {
-  isLoading.value = true;
-  await saveRoute(waypoints.value);
-  isLoading.value = false;
+  isLoading.value = true
+  await saveRoute(waypoints.value)
+  isLoading.value = false
 }
 
 async function savePOIsWrapper() {
-  isLoading.value = true;
-  await saveMarkers();
-  isLoading.value = false;
+  isLoading.value = true
+  await saveMarkers()
+  isLoading.value = false
 }
 
 import '@/assets/css/admin.css'
