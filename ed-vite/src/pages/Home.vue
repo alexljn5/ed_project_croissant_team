@@ -1,5 +1,11 @@
 <template>
   <div class="home-page">
+    <Hero />
+    <div class="scroll-indicator-wrapper">
+      <div class="scroll-indicator">
+        <span class="arrow" :class="{ 'arrow-up': arrowPointingUp }"></span>
+      </div>
+    </div>
      <div class="content-slider" 
        :style="{ backgroundImage: 'url(/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
      <h1 class="neEv-text">Nieuws & Evenementen</h1> 
@@ -117,6 +123,7 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import Hero from '../components/hero.vue'
 import Slider from '../components/Slider.vue'
 import BackendGlue from '../components/BackendGlue.vue'
 import PublicMap from '../components/PublicMap.vue'
@@ -124,6 +131,24 @@ import POIModal from '../components/POIModal.vue'
 import { useMap } from '../composables/useMap'
 import type { POI } from '../composables/useMap'
 import '@/assets/css/home.css'
+
+const arrowPointingUp = ref(false)
+
+const handleScroll = () => {
+  const scrollPosition = window.scrollY
+  const windowHeight = window.innerHeight
+  const documentHeight = document.documentElement.scrollHeight
+  
+  const mapSection = document.querySelector('.map-section') || document.querySelector('[class*="map"]')
+  
+  if (mapSection) {
+    const mapPosition = mapSection.getBoundingClientRect().top + window.scrollY
+    arrowPointingUp.value = scrollPosition > mapPosition - windowHeight
+  } else {
+    const midPoint = (documentHeight - windowHeight) / 2
+    arrowPointingUp.value = scrollPosition > midPoint
+  }
+}
 
 const {
   initMap,
@@ -265,6 +290,7 @@ const handleKeydown = (e: KeyboardEvent) => {
 
 // ────────────────────── LIFECYCLE ──────────────────────
 onMounted(async () => {
+  window.addEventListener('scroll', handleScroll)
   updateSlider();
   startAutoSlide();
   window.addEventListener("resize", updateSlider);
@@ -286,6 +312,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('resize', updateSlider)
   document.removeEventListener('click', setupPoiClickListener as EventListener)
@@ -293,6 +320,60 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.home-page {
+  width: 100%;
+}
+
+.scroll-indicator-wrapper {
+  position: fixed;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  pointer-events: auto;
+}
+
+.scroll-indicator {
+  width: 210px;
+  height: 350px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8px;
+  transition: all 0.3s ease;
+}
+
+.scroll-indicator:hover {
+  scale: 1.1;
+}
+
+.arrow {
+  width: 0px;
+  height: 0px;
+  background-color: var(--interactief);
+  border-radius: 50%;
+  animation: bounce 2s infinite;
+  transition: transform 0.6s ease;
+  position: relative;
+}
+
+.arrow.arrow-up {
+  transform: rotate(180deg);
+}
+
+.arrow::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 21px solid hsl(0, 0%, 9%);
+}
+
 .content-slider {
   width: 100%;
   padding: 2rem 5rem;
@@ -681,6 +762,37 @@ onUnmounted(() => {
 
   .home-map-section #leaflet-map {
     height: 400px !important;
+  }
+
+  .scroll-indicator {
+    width: 25px;
+    height: 40px;
+    border: 2px solid var(--site-paars);
+    padding-top: 6px;
+  }
+
+  .arrow::before {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--site-paars);
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
   }
 }
 </style>
