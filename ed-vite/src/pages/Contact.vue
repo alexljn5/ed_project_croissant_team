@@ -150,11 +150,7 @@ const handleSubmit = () => {
 }
 
 .contact-header {
-  background: linear-gradient(
-    135deg,
-    var(--site-paars, #6b4e99) 0%,
-    #8b5fcf 100%
-  );
+  background-color: var(--site-paars);
   color: white;
   padding: 4rem 1rem;
   text-align: center;
@@ -369,7 +365,7 @@ textarea {
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: var(--site-paars, #6b4e99);
+  border-color: var(--site-paars);
   background: white;
   box-shadow: 0 0 0 4px rgba(107, 78, 153, 0.1);
 }
@@ -381,11 +377,7 @@ textarea {
 
 .submit-btn {
   padding: 1rem 2rem;
-  background: linear-gradient(
-    135deg,
-    var(--site-paars, #6b4e99) 0%,
-    #8b5fcf 100%
-  );
+  background-color: var(--site-paars);
   color: white;
   border: none;
   border-radius: 8px;
@@ -421,7 +413,7 @@ textarea {
 .success-message {
   margin-top: 1.5rem;
   padding: 1.2rem 1.5rem;
-  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  background: linear-gradient(#c3e6cb);
   color: #155724;
   border: 2px solid #c3e6cb;
   border-radius: 8px;

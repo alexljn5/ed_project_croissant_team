@@ -21,7 +21,7 @@
 .admin-title {
   font-size: 2.5rem;
   font-weight: bold;
-  color: #6b3f7b;
+  color: var(--site-paars);
   margin-bottom: 0.5rem;
   font-family: var(--font-heading);
 }
@@ -56,7 +56,7 @@
 .test-button {
   padding: 1rem;
   margin-bottom: 2rem;
-  background: lime;
+  background: var(--interactief);
   text-align: center;
   border-radius: 8px;
   font-weight: bold;
@@ -92,7 +92,7 @@
 
 .map-header {
   padding: 1rem 1.5rem;
-  background: #6b3f7b;
+  background: var(--site-paars);
   color: white;
   display: flex;
   justify-content: space-between;
@@ -107,7 +107,7 @@
 
 .refresh-btn {
   padding: 0.6rem 1.2rem;
-  background: #ff9800;
+  background: var(--interactief);
   color: white;
   border: none;
   border-radius: 6px;
@@ -184,7 +184,7 @@
 
 .waypoint-number {
   font-weight: bold;
-  color: #6b3f7b;
+  color: var(--site-paars);
   min-width: 50px;
   text-align: center;
   font-size: 0.9rem;
@@ -206,7 +206,7 @@
 
 .waypoint-inputs input:focus {
   outline: none;
-  border-color: #6b3f7b;
+  border-color: var(--site-paars);
   box-shadow: 0 0 4px rgba(107, 63, 123, 0.3);
 }
 
@@ -265,7 +265,7 @@
 
 .view-emails-btn {
   padding: 1rem 2rem;
-  background: #6b3f7b;
+  background: var(--site-paars);
   color: white;
   border: none;
   border-radius: 8px;
@@ -279,7 +279,7 @@
 }
 
 .view-emails-btn:hover {
-  background: #553369;
+  background: var(--site-paars);
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(107, 63, 123, 0.4);
 }

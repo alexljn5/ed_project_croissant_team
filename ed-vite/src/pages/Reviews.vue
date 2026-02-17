@@ -36,8 +36,8 @@
     </div>
 
     <div class="reviews-container">
-      <!-- Left side: Form -->
-      <section class="reviews-form-section">
+
+      <div class="reviews-form-section">
         <h2>Schrijf een review</h2>
         <form @submit.prevent="addReview" class="review-form">
           <!-- Rating section -->
@@ -121,7 +121,7 @@
 
           <button type="submit" class="submit-btn">Verzend Review</button>
         </form>
-      </section>
+      </div>
 
       <!-- Right side: Reviews list -->
       <section class="reviews-list-section">

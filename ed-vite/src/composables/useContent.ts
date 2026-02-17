@@ -1,6 +1,6 @@
 import { ref, onMounted } from 'vue';
 
-const API_BASE = 'http://127.0.0.1:8000/api/content';
+const API_BASE = 'http://localhost:8000/api/content';
 
 export function useContent<T>(key: string, defaultValue: T) {
     const data = ref<T>(defaultValue);

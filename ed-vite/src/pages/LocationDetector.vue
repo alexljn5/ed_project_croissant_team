@@ -11,7 +11,7 @@
         <p>Activeer locatiedetectie om automatisch meldingen te ontvangen wanneer je dicht bij een bezienswaardighed bent.</p>
         
         <button @click="handleStartTracking" class="start-button">
-          📍 Activeer locatiedetectie
+          Activeer locatiedetectie
         </button>
         
         <!-- Fallback: Test coördinaten invoeren (voor desktop) -->
@@ -32,7 +32,7 @@
               <input v-model.number="testProximityDistance" type="range" min="0.01" max="2" step="0.01">
             </label>
             
-            <button @click="useTestCoordinates" class="test-button">📍 Gebruik test coördinaten</button>
+            <button @click="useTestCoordinates" class="test-button">Gebruik test coördinaten</button>
           </div>
           
           <!-- Real-time distance calculator -->
@@ -57,9 +57,9 @@
       <div class="location-card active">
         <h2>Locatiedetectie actief</h2>
         <p v-if="coords" class="location-info">
-          📍 Breedtegraad: {{ coords.latitude.toFixed(4) }}<br>
-          📍 Lengtegraad: {{ coords.longitude.toFixed(4) }}<br>
-          🎯 Nauwkeurigheid: {{ Math.round(coords.accuracy) }}m
+          Breedtegraad: {{ coords.latitude.toFixed(4) }}<br>
+          Lengtegraad: {{ coords.longitude.toFixed(4) }}<br>
+          Nauwkeurigheid: {{ Math.round(coords.accuracy) }}m
         </p>
         <p v-else class="loading">Locatie bepalen...</p>
 
@@ -81,7 +81,7 @@
         </div>
 
         <button @click="handleStopTracking" class="stop-button">
-          ⏹ Stop locatiedetectie
+          Stop locatiedetectie
         </button>
       </div>
     </div>
@@ -94,7 +94,7 @@
             <div class="popup-header">
               <span class="close-popup" @click="dismissNotification">✕</span>
             </div>
-            <h3>📍 Je bent in de buurt!</h3>
+            <h3>Je bent in de buurt!</h3>
             <p class="poi-name">{{ proximityNotification.name }}</p>
             <p class="poi-distance">
               {{ proximityNotification.distance < 1 
@@ -148,165 +148,6 @@
     </Teleport>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useGeolocation } from '../composables/useGeolocation'
-
-interface POI {
-  id: string | number
-  name: string
-  description?: string
-  image?: string
-  location: {
-    latitude: number
-    longitude: number
-  }
-  distance?: number
-}
-
-const { coords, isTracking, error, isMobile, startTracking, stopTracking, requestPermission, calculateDistance } = useGeolocation()
-
-const allPOIs = ref<POI[]>([])
-const selectedPOI = ref<POI | null>(null)
-const proximityNotification = ref<POI | null>(null)
-const proximityDistance = 0.02 // 500 meters
-
-// Test coördinaten (voor desktop testing)
-const testLatitude = ref<number>(52.0907)
-const testLongitude = ref<number>(5.1214)
-const testProximityDistance = ref<number>(0.5) // km (standaard 500m)
-
-// Mock bezienswaardigheden - dit zou later van de API komen
-const mockPOIs: POI[] = [
-  {
-    id: 1,
-    name: 'Centraal Museum',
-    description: 'Een prachtig museum met moderne en historische kunstwerken.',
-    image: '/img/museum.jpg',
-    location: { latitude: 52.0907, longitude: 5.1214 }
-  },
-  {
-    id: 2,
-    name: 'Dom Toren',
-    description: 'Indrukwekkende middeleeuwse toren in het centrum.',
-    image: '/img/domtoren.jpg',
-    location: { latitude: 52.0906, longitude: 5.1191 }
-  },
-  {
-    id: 3,
-    name: 'Kasteel de Haar',
-    description: 'Schitterend romantisch kasteel met prachtige tuinen.',
-    image: '/img/kasteel.jpg',
-    location: { latitude: 52.0877, longitude: 5.1631 }
-  }
-]
-
-// Computed: POI's dicht bij gebruiker
-const nearbyPOIs = computed(() => {
-  if (!coords.value) return []
-
-  const distanceThreshold = isTracking.value && !isMobile.value ? testProximityDistance.value : proximityDistance * 2
-
-  return allPOIs.value
-    .map(poi => ({
-      ...poi,
-      distance: calculateDistance(
-        coords.value!.latitude,
-        coords.value!.longitude,
-        poi.location.latitude,
-        poi.location.longitude
-      )
-    }))
-    .filter(poi => poi.distance < distanceThreshold) // Show POIs within threshold
-    .sort((a, b) => a.distance - b.distance)
-})
-
-// Proximity detection
-watch(nearbyPOIs, (newPOIs) => {
-  // Check for proximity alerts (within threshold, not already shown)
-  const proximityThreshold = isTracking.value && !isMobile.value ? testProximityDistance.value / 2 : proximityDistance
-  const closeByPOI = newPOIs.find(poi => poi.distance < proximityThreshold)
-  
-  if (closeByPOI && (!proximityNotification.value || proximityNotification.value.id !== closeByPOI.id)) {
-    proximityNotification.value = closeByPOI
-  }
-})
-
-const handleStartTracking = async () => {
-  const hasPermission = await requestPermission()
-  if (hasPermission) {
-    startTracking()
-    // Load POIs from API
-    await loadPOIs()
-  }
-}
-
-const handleStopTracking = () => {
-  stopTracking()
-  proximityNotification.value = null
-}
-
-const loadPOIs = async () => {
-  try {
-    // TODO: Vervang dit met API call naar je backend
-    // const response = await fetch('/api/points-of-interest')
-    // allPOIs.value = await response.json()
-    
-    // Voor nu gebruiken we mock data
-    allPOIs.value = mockPOIs
-  } catch (err) {
-    console.error('Fout bij laden van bezienswaardigheden:', err)
-  }
-}
-
-const useTestCoordinates = () => {
-  // Simuleer geolocation met test coördinaten
-  coords.value = {
-    latitude: testLatitude.value,
-    longitude: testLongitude.value,
-    accuracy: 10 // 10 meter accuracy
-  }
-  isTracking.value = true
-  error.value = null
-  loadPOIs()
-}
-
-const dismissNotification = () => {
-  proximityNotification.value = null
-}
-
-const handleNotificationClick = (poi: POI) => {
-  selectedPOI.value = poi
-  dismissNotification()
-}
-
-const viewPOIDetails = (poi: POI) => {
-  selectedPOI.value = poi
-}
-
-const closePOIDetails = () => {
-  selectedPOI.value = null
-}
-
-onMounted(() => {
-  // Log mobile detection
-  console.log('🚀 LocationDetector component mounted')
-  console.log('isMobile:', isMobile.value)
-  console.log('mockPOIs loaded:', mockPOIs.length, 'items')
-  
-  // Debug: Check if composable is working
-  if (useGeolocation) {
-    console.log('✅ useGeolocation composable loaded successfully')
-  }
-})
-
-onUnmounted(() => {
-  if (isTracking.value) {
-    stopTracking()
-  }
-})
-</script>
 
 <style scoped>
 .location-detector-page {
@@ -786,3 +627,35 @@ onUnmounted(() => {
   opacity: 0.8;
 }
 </style>
+
+<script setup lang="ts">
+import { useLocationDetector } from '@/composables/locationDetector'
+
+const {
+  coords,
+  isTracking,
+  error,
+  isMobile,
+  startTracking,
+  stopTracking,
+  requestPermission,
+  calculateDistance,
+  allPOIs,
+  selectedPOI,
+  proximityNotification,
+  proximityDistance,
+  testLatitude,
+  testLongitude,
+  testProximityDistance,
+  nearbyPOIs,
+  handleStartTracking,
+  handleStopTracking,
+  loadPOIs,
+  useTestCoordinates,
+  dismissNotification,
+  handleNotificationClick,
+  viewPOIDetails,
+  closePOIDetails,
+  debugCheckLocation
+} = useLocationDetector()
+</script>
