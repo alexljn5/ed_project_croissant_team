@@ -1,6 +1,10 @@
 <template>
   <div class="home-page">
     <Hero />
+    <div class="scroll-indicator-wrapper">
+      <div class="scroll-indicator">
+      </div>
+    </div>
      <div class="content-slider" 
        :style="{ backgroundImage: 'url(/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
      <h1 class="neEv-text">Nieuws & Evenementen</h1> 
@@ -127,6 +131,24 @@ import type { POI } from '../composables/useMap'
 import { useSliderCards } from '../composables/useSliderCards'
 import '@/assets/css/home.css'
 
+const arrowPointingUp = ref(false)
+
+const handleScroll = () => {
+  const scrollPosition = window.scrollY
+  const windowHeight = window.innerHeight
+  const documentHeight = document.documentElement.scrollHeight
+  
+  const mapSection = document.querySelector('.map-section') || document.querySelector('[class*="map"]')
+  
+  if (mapSection) {
+    const mapPosition = mapSection.getBoundingClientRect().top + window.scrollY
+    arrowPointingUp.value = scrollPosition > mapPosition - windowHeight
+  } else {
+    const midPoint = (documentHeight - windowHeight) / 2
+    arrowPointingUp.value = scrollPosition > midPoint
+  }
+}
+
 const {
   initMap,
   loadRoute,
@@ -235,6 +257,7 @@ const handleKeydown = (e: KeyboardEvent) => {
 
 // ────────────────────── LIFECYCLE ──────────────────────
 onMounted(async () => {
+  window.addEventListener('scroll', handleScroll)
   updateSlider();
   startAutoSlide();
   window.addEventListener("resize", updateSlider);
@@ -254,6 +277,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('resize', updateSlider)
   document.removeEventListener('click', setupPoiClickListener as EventListener)
@@ -263,6 +287,29 @@ onUnmounted(() => {
 <style scoped>
 .home-page {
   width: 100%;
+}
+
+.scroll-indicator-wrapper {
+  position: fixed;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  pointer-events: auto;
+}
+
+.scroll-indicator {
+  width: 210px;
+  height: 350px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8px;
+  transition: all 0.3s ease;
+}
+
+.scroll-indicator:hover {
+  scale: 1.1;
 }
 
 .content-slider {
@@ -565,6 +612,13 @@ onUnmounted(() => {
 
   .home-map-section #leaflet-map {
     height: 400px !important;
+  }
+
+  .scroll-indicator {
+    width: 25px;
+    height: 40px;
+    border: 2px solid var(--site-paars);
+    padding-top: 6px;
   }
 }
 
