@@ -1,20 +1,31 @@
 <template>
   <div class="app-wrapper">
+    <div class="scroll-indicator-wrapper">
+      <div class="scroll-indicator">
+        <span class="arrow" :class="{ 'arrow-up': arrowPointingUp }"></span>
+      </div>
+    </div>
     <header class="header-top">
       <div class="header-container">
-        <h1 class="dubbeloproute-titel">Dubbelop-route</h1>
+        <router-link to="/" class="logo-link-title">
+          <img src ="/src/assets/img/dbtitel.png" alt="Dubbelop Logo" class="dubbeloproute-titel" />
+        </router-link>
         <div class="header-right">
           <router-link to="/reviews" class="reviews-button">
             <button class="reviewsKnop">Reviews</button>
           </router-link>
+          <router-link to="/contact" class="contact-button">
+            <button class="contactKnop">
+              <img
+                src="/src/assets/img/Mail.png"
+                alt="Mail"
+                class="mail-icon"
+              />
+              Neem Contact Op
+            </button>
+          </router-link>
           <Button />
           <router-link to="/" class="logo-link">
-            <div class="logo">
-              <img
-                src="/src/assets/img/dubbelop-logo.png"
-                alt="Dubbelop Logo"
-              />
-            </div>
           </router-link>
         </div>
       </div>
@@ -30,9 +41,37 @@
 </template>
 
 <script setup lang="ts">
-import Footer from './components/Footer.vue'
-import EditButton from './components/editToolKnop.vue'
+import Footer from "./components/Footer.vue";
+import EditButton from "./components/editToolKnop.vue";
+import "@/assets/css/app.css";
+import { ref, onMounted, onUnmounted } from 'vue'
 import Button from './components/Button.vue'
+
+const arrowPointingUp = ref(false)
+
+const handleScroll = () => {
+  const scrollPosition = window.scrollY
+  const windowHeight = window.innerHeight
+  const documentHeight = document.documentElement.scrollHeight
+  
+  const mapSection = document.querySelector('.map-section') || document.querySelector('[class*="map"]')
+  
+  if (mapSection) {
+    const mapPosition = mapSection.getBoundingClientRect().top + window.scrollY
+    arrowPointingUp.value = scrollPosition > mapPosition - windowHeight
+  } else {
+    const midPoint = (documentHeight - windowHeight) / 2
+    arrowPointingUp.value = scrollPosition > midPoint
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>
@@ -42,17 +81,67 @@ import Button from './components/Button.vue'
   flex-direction: column;
 }
 
+.scroll-indicator-wrapper {
+  position: fixed;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  pointer-events: auto;
+}
+
+.scroll-indicator {
+  width: 210px;
+  height: 350px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8px;
+  transition: all 0.3s ease;
+}
+
+.scroll-indicator:hover {
+  scale: 1.1;
+}
+
+.arrow {
+  width: 0px;
+  height: 0px;
+  background-color: #2a2a2a;
+  border-radius: 50%;
+  animation: bounce 2s infinite;
+  transition: transform 0.6s ease;
+  position: relative;
+}
+
+.arrow.arrow-up {
+  transform: rotate(180deg);
+}
+
+.arrow::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 21px solid #2a2a2a;
+}
+
 .header-top {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  padding: 1rem 1.5rem;
+  padding: 1rem 1rem;
   z-index: 1000;
   background-image: linear-gradient(to right,
-          var(--site-paars-xtra-light) 0%,
-          var(--site-paars-xtra-light) 20%,
-          var(--site-paars-xtra-light) 29.9999%,
+          var(--site-paars) 0%,
+          var(--site-paars) 20%,
+          var(--site-paars) 29.9999%,
           var(--header-bg) 30%,
           var(--header-bg) 70%,
           var(--header-bg) 100%);
@@ -69,14 +158,26 @@ import Button from './components/Button.vue'
 }
 
 .dubbeloproute-titel {
-  font-family: var(--titel-font);
-  font-size: var(--font-grootte2);
   font-weight: bold;
   text-transform: uppercase;
   margin: 0;
-  color: rgb(54, 54, 54);
-  cursor: default;
+  cursor: pointer;
   flex-shrink: 0;
+  height: 66px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.logo-link-title {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.logo-link-title:hover .dubbeloproute-titel {
+  transform: scale(1.05);
 }
 
 .header-right {
@@ -132,10 +233,9 @@ import Button from './components/Button.vue'
 .contactKnop {
   padding: 10px 20px;
   border-radius: 20px;
-  border: 2px solid;
+  border: transparent;
   cursor: pointer;
   transition: all 0.45s ease;
-  font-weight: bold;
   font-family: var(--font-primair);
 }
 
@@ -151,31 +251,25 @@ import Button from './components/Button.vue'
 }
 
 .reviewsKnop {
-  background: plum;
-  border-color: var(--body);
-  color: hsl(240, 1%, 14%);;
+  background: var(--site-paars);
+  color: hsl(0, 0%, 100%);
 }
 
 .reviewsKnop:hover {
-  background: var(--body);
-  border-color: var(--body);
-  color: white;
+  background-color: var(--interactief);
 }
 
 .contactKnop {
-  background: var(--achtergrond-primair);
-  border-color: var(--site-paars);
-  color: var(--site-paars);
+  background: var(--site-paars);
+  color: hsl(0, 0%, 100%);
 }
 
 .contactKnop:hover {
-  background: var(--site-paars);
-  color: white;
+  background-color: var(--interactief);
 }
 
 .app-layout {
   flex: 1; 
-  margin-top: 95px; 
   padding-bottom: 120px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -191,6 +285,53 @@ import Button from './components/Button.vue'
 :deep(.footer-container) {
   position: relative !important;
   margin-top: auto;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .scroll-indicator {
+    width: 25px;
+    height: 40px;
+    padding-top: 6px;
+  }
+
+  .arrow::before {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #2a2a2a;
+  }
+}
+
+@media (max-width: 768px) {
+  .scroll-indicator {
+    width: 25px;
+    height: 40px;
+    border: 2px solid #2a2a2a;
+    padding-top: 6px;
+  }
+
+  .arrow::before {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #2a2a2a;
+  }
 }
 
 </style>

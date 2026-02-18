@@ -207,7 +207,6 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(4px);
 }
 
-/* card styling */
 .slider-card {
   flex: 0 0 300px;
   height: 35%;

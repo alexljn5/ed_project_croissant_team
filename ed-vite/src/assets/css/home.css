@@ -373,7 +373,7 @@
 }
 
 .neEv-text {
-    padding-left: 2.5%;
+    padding-left: 0.5%;
     padding-right: 1%;
     width: fit-content;
     font-size: 1.55rem;
@@ -383,7 +383,6 @@
     border-bottom-right-radius: 5px;
     color: var(--title-text);
     font-family: var(--font-heading);
-
     background-image: linear-gradient(to right,
             var(--det-1) 0%,
             var(--det-1) 29.99%,

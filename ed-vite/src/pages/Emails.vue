@@ -1,5 +1,5 @@
 <template>
-  <div class="emails-page">
+  <div class="you_got_mail-page">
     <div class="emails-header">
       <div class="header-content">
         <h1>Ontvangen Berichten</h1>
@@ -47,9 +47,9 @@
               <button
                 @click="deleteEmail(email.id)"
                 class="delete-btn"
-                title="Verwijder dit bericht"
+                title="DELETE FR*NCE"
               >
-                X
+                <DeleteCross />
               </button>
             </div>
             <div class="email-body">
@@ -65,6 +65,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useEmail } from "@/composables/useEmail";
+import DeleteCross from "@/components/DeleteCross.vue";
 
 const { emails, deleteEmail, getAllEmails } = useEmail();
 
@@ -75,7 +76,7 @@ onMounted(() => {
 
 <style scoped>
 /* Header */
-.emails-page {
+.you_got_mail-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 0;

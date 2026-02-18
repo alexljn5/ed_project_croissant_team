@@ -1,7 +1,5 @@
 <template>
   <header>
-    <h1 class="dubbeloproute-titel">Dubbeloproute</h1>
-
     <div class="header-right">
       <ContactButton />
       <Logo />

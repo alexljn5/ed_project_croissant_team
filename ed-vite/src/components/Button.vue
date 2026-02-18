@@ -14,19 +14,15 @@
 
 .contactKnop {
   padding: 10px 20px;
-  background: plum;
+  background-color: var(--site-paars);
   border-radius: 20px;
-  border: 2px solid var(--site-paars);
+  border: none;
   cursor: pointer;
-  color: hsl(240, 1%, 14%);;
-  transition: background-color 0.45s;
-  font-weight: bold;
-  transition: background 0.1s;
+  color: hsl(0, 0%, 100%);
   font-family: var(--font-primair);
+  transition: all 0.45s ease;
 }
 
 .contactKnop:hover {
-  background: var(--site-paars);
-  color: white;
-}
+  background-color: var(--interactief);}
 </style>
