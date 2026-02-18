@@ -1,10 +1,5 @@
 <template>
   <div class="app-wrapper">
-    <div class="scroll-indicator-wrapper">
-      <div class="scroll-indicator">
-        <span class="arrow" :class="{ 'arrow-up': arrowPointingUp }"></span>
-      </div>
-    </div>
     <header class="header-top">
       <div class="header-container">
         <router-link to="/" class="logo-link-title">
@@ -24,7 +19,6 @@
               Neem Contact Op
             </button>
           </router-link>
-          <Button />
           <router-link to="/" class="logo-link">
           </router-link>
         </div>
@@ -44,34 +38,7 @@
 import Footer from "./components/Footer.vue";
 import EditButton from "./components/editToolKnop.vue";
 import "@/assets/css/app.css";
-import { ref, onMounted, onUnmounted } from 'vue'
-import Button from './components/Button.vue'
 
-const arrowPointingUp = ref(false)
-
-const handleScroll = () => {
-  const scrollPosition = window.scrollY
-  const windowHeight = window.innerHeight
-  const documentHeight = document.documentElement.scrollHeight
-  
-  const mapSection = document.querySelector('.map-section') || document.querySelector('[class*="map"]')
-  
-  if (mapSection) {
-    const mapPosition = mapSection.getBoundingClientRect().top + window.scrollY
-    arrowPointingUp.value = scrollPosition > mapPosition - windowHeight
-  } else {
-    const midPoint = (documentHeight - windowHeight) / 2
-    arrowPointingUp.value = scrollPosition > midPoint
-  }
-}
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
 </script>
 
 <style scoped>
@@ -79,56 +46,6 @@ onUnmounted(() => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-.scroll-indicator-wrapper {
-  position: fixed;
-  bottom: 50%;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 500;
-  pointer-events: auto;
-}
-
-.scroll-indicator {
-  width: 210px;
-  height: 350px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 8px;
-  transition: all 0.3s ease;
-}
-
-.scroll-indicator:hover {
-  scale: 1.1;
-}
-
-.arrow {
-  width: 0px;
-  height: 0px;
-  background-color: #2a2a2a;
-  border-radius: 50%;
-  animation: bounce 2s infinite;
-  transition: transform 0.6s ease;
-  position: relative;
-}
-
-.arrow.arrow-up {
-  transform: rotate(180deg);
-}
-
-.arrow::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-top: 21px solid #2a2a2a;
 }
 
 .header-top {
@@ -270,6 +187,7 @@ onUnmounted(() => {
 
 .app-layout {
   flex: 1; 
+  padding-top: 98px;
   padding-bottom: 120px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -302,35 +220,6 @@ onUnmounted(() => {
   100% {
     transform: translateY(0);
     opacity: 0;
-  }
-}
-
-@media (max-width: 1024px) {
-  .scroll-indicator {
-    width: 25px;
-    height: 40px;
-    padding-top: 6px;
-  }
-
-  .arrow::before {
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid #2a2a2a;
-  }
-}
-
-@media (max-width: 768px) {
-  .scroll-indicator {
-    width: 25px;
-    height: 40px;
-    border: 2px solid #2a2a2a;
-    padding-top: 6px;
-  }
-
-  .arrow::before {
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid #2a2a2a;
   }
 }
 

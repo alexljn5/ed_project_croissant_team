@@ -23,8 +23,8 @@
 
 <style scoped>
 .hero-container {
-  position: relative;
-  height: 120vh;
+  position:relative;
+  height: 100vh;
   width: 100%;
   overflow: hidden;
   background: 
@@ -53,7 +53,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 1400px;
+  max-width: 100%;
   margin: 0 auto;
   position: relative;
   z-index: 5;
@@ -127,7 +127,7 @@
 .hero-subtitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--site-paars);
+  color: #171717;
   margin: 0;
   line-height: 1.4;
 }
