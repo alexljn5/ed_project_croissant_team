@@ -24,7 +24,6 @@
               Neem Contact Op
             </button>
           </router-link>
-          <Button />
           <router-link to="/" class="logo-link">
           </router-link>
         </div>
@@ -45,7 +44,6 @@ import Footer from "./components/Footer.vue";
 import EditButton from "./components/editToolKnop.vue";
 import "@/assets/css/app.css";
 import { ref, onMounted, onUnmounted } from 'vue'
-import Button from './components/Button.vue'
 
 const arrowPointingUp = ref(false)
 
