@@ -150,8 +150,13 @@ const handleSubmit = () => {
 }
 
 .contact-header {
-  background-color: var(--site-paars);
-  color: white;
+background: 
+    linear-gradient(45deg, transparent 30%, rgba(var(--interactief-rgb, 255, 107, 53), 0.1) 30.5%, rgba(var(--achtergrond-primair-rgb, 255, 107, 53), 0.1) 70%, transparent 70.5%),
+    linear-gradient(-45deg, transparent 30%, rgba(var(--site-paars-rgb, 120, 81, 169), 0.1) 30.5%, rgba(var(--interactief-rgb, 120, 81, 169), 0.1) 70%, transparent 70.5%),
+    linear-gradient(to right, transparent 0%, rgba(var(--achtergrond-primair-rgb, 255, 107, 53), 0.05) 25%, rgba(var(--interactief-rgb, 120, 81, 169), 0.05) 50%, rgba(var(--achtergrond-primair-rgb-rgb, 255, 107, 53), 0.05) 75%, transparent 100%),
+    linear-gradient(135deg, var(--achtergrond-primair) 0%, var(--interactief) 50%, var(--achtergrond-primair) 100%);
+  background-size: 120px 120px, 120px 120px, 100% 100%, 100% 100%;
+  background-position: 0 0, 60px 60px, 0 0, 0 0;  color: white;
   padding: 4rem 1rem;
   text-align: center;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -161,6 +166,7 @@ const handleSubmit = () => {
   font-size: 2.8rem;
   margin: 0 0 1rem 0;
   font-weight: 700;
+  color: #171717;
   animation: slideDown 0.6s ease-out;
 }
 
@@ -168,6 +174,7 @@ const handleSubmit = () => {
   font-size: 1.1rem;
   opacity: 0.95;
   margin: 0;
+  color: #171717;
   animation: slideDown 0.8s ease-out;
 }
 

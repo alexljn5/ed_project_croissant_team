@@ -85,8 +85,13 @@
 }
 
 .contact-header {
-  background: var(--site-paars);
-  color: white;
+background: 
+    linear-gradient(45deg, transparent 30%, rgba(var(--interactief-rgb, 255, 107, 53), 0.1) 30.5%, rgba(var(--achtergrond-primair-rgb, 255, 107, 53), 0.1) 70%, transparent 70.5%),
+    linear-gradient(-45deg, transparent 30%, rgba(var(--site-paars-rgb, 120, 81, 169), 0.1) 30.5%, rgba(var(--interactief-rgb, 120, 81, 169), 0.1) 70%, transparent 70.5%),
+    linear-gradient(to right, transparent 0%, rgba(var(--achtergrond-primair-rgb, 255, 107, 53), 0.05) 25%, rgba(var(--interactief-rgb, 120, 81, 169), 0.05) 50%, rgba(var(--achtergrond-primair-rgb-rgb, 255, 107, 53), 0.05) 75%, transparent 100%),
+    linear-gradient(135deg, var(--achtergrond-primair) 0%, var(--interactief) 50%, var(--achtergrond-primair) 100%);
+  background-size: 120px 120px, 120px 120px, 100% 100%, 100% 100%;
+  background-position: 0 0, 60px 60px, 0 0, 0 0;  color: white;
   padding: 3rem 2rem;
   text-align: center;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -117,7 +122,7 @@
 
 .header-subtitle {
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--site-paars);
   margin: 0;
   font-weight: 300;
 }
