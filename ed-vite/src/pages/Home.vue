@@ -130,6 +130,7 @@ import POIModal from '../components/POIModal.vue'
 import { useMap } from '../composables/useMap'
 import type { POI } from '../composables/useMap'
 import '@/assets/css/home.css'
+import { useSliderCards } from '../composables/useSliderCards'
 
 const arrowPointingUp = ref(false)
 
