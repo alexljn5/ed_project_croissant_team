@@ -47,47 +47,55 @@
       </div>
     </div>
 
-<section class="text-segment-section">
-  <h2 class="segment-title">PLACEHOLDERSEGMENTTITEL</h2>
+    <section class="text-segment-section">
+      <h2 class="segment-title">segment titel</h2>
 
-  <div class="segment-content">
-    <div
-      v-for="(segment, idx) in textSegments"
-      :key="segment.id"
-      :class="['text-block', `text-block-${idx + 1}`]"
-    >
-      <div :class="['text-block-shape', `shape-${idx + 1}`]"></div>
-
-      <div class="block-text">
-        <h3>{{ segment.title || 'titel ontbreekt' }}</h3>
-        <p>{{ segment.description || 'beschrijving ontbreekt' }}</p>
-      </div>
-
-      <div
-        :class="[
-          idx === 0 ? 'block-image1' :
-          idx === 1 ? 'block-image'  :
-          idx === 2 ? 'block-image2' : 'block-image'
-        ]"
-        :style="segment.image ? { backgroundImage: `url(${segment.image})` } : {}"
-      ></div>
-    </div>
-
-    <!-- Fallback als er minder dan 3 segmenten zijn -->
-    <template v-if="textSegments.length === 0">
-      <div class="text-block text-block-1">
-        <div class="text-block-shape shape-1"></div>
-        <div class="block-text">
-          <h3>Laad fout of leeg</h3>
-          <p>Controleer database / api</p>
+      <div class="segment-content">
+        <div class="text-block text-block-1">
+          <div class="text-block-shape shape-1"></div>
+          <div class="block-text">
+            <h3>titel1</h3>
+            <p>descriptie</p>
+          </div>
+          <div
+            class="block-image1"
+            :style="{
+              backgroundImage: 'url(src/assets/img/18c-glas-in-lood.webp)',
+            }"
+          ></div>
         </div>
-        <div class="block-image1"></div>
-      </div>
-      <!-- Je kunt meer fallback blokken toevoegen als je wilt -->
-    </template>
-  </div>
-</section>
 
+        <div class="text-block text-block-2">
+          <div class="text-block-shape shape-2"></div>
+          <div class="block-text">
+            <h3>titel2</h3>
+            <p>descriptie</p>
+          </div>
+          <div
+            class="block-image"
+            :style="{
+              backgroundImage: 'url(src/assets/img/17a-gevelschilderingen.webp)',
+            }"
+          ></div>
+        </div>
+        <div class="text-block text-block-3">
+          <div class="text-block-shape shape-3"></div>
+          <div class="block-text">
+            <h3>titel3</h3>
+            <p>descriptie</p>
+          </div>
+          <div
+            class="block-image2"
+            :style="{ backgroundImage: 'url(src/assets/img/agorahof.webp)' }"
+          ></div>
+        </div>
+      </div>
+    </section>
+    <!-- Map section (full width below slider) 
+    <section class="home-map-section">
+      <MapView />
+    </section>
+-->
     <div class="backend-section">
       <BackendGlue />
     </div>
@@ -112,7 +120,6 @@
   </div>
 </template>
 <script setup lang="ts">
-
 import { ref, onMounted, onUnmounted } from 'vue'
 import Hero from '../components/hero.vue'
 import Slider from '../components/Slider.vue'
@@ -191,28 +198,6 @@ const selectedCard = ref<any>(null)
 const isClosing = ref(false)
 const isCardSelected = ref(false)
 let autoSlideInterval: ReturnType<typeof setTimeout>
-
-// ────────────────────── TEXT SEGMENTS ──────────────────────
-const textSegments = ref<any[]>([])
-
-const loadTextSegments = async () => {
-  try {
-    const backendUrl = window.location.origin === 'http://localhost:5173' || window.location.origin === 'http://127.0.0.1:5173'
-      ? 'http://localhost:8000'
-      : window.location.origin
-    const response = await fetch(`${backendUrl}/api/content/text-segments`)
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
-    const data = await response.json()
-    if (data && data.value) {
-      textSegments.value = Array.isArray(data.value) ? data.value : []
-    } else {
-      textSegments.value = []
-    }
-  } catch (error) {
-    console.error('Failed to load text segments:', error)
-    textSegments.value = []
-  }
-}
 
 const updateSlider = () => {
   if (!sliderTrack.value) return
@@ -296,7 +281,6 @@ onMounted(async () => {
   }
 
   await loadMarkers()
-  await loadTextSegments()
   setupPoiClickListener()
 })
 

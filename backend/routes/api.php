@@ -75,8 +75,3 @@ Route::post('/upload-photo', function (Request $request) {
         'message' => 'Foto succesvol geüpload!'
     ]);
 });
-
-use App\Http\Controllers\TextSegmentController;
-
-Route::get('/text-segments', [TextSegmentController::class, 'index']);
-Route::put('/text-segments', [TextSegmentController::class, 'update']);
