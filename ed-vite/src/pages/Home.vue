@@ -192,6 +192,28 @@ const isClosing = ref(false)
 const isCardSelected = ref(false)
 let autoSlideInterval: ReturnType<typeof setTimeout>
 
+// ────────────────────── TEXT SEGMENTS ──────────────────────
+const textSegments = ref<any[]>([])
+
+const loadTextSegments = async () => {
+  try {
+    const backendUrl = window.location.origin === 'http://localhost:5173' || window.location.origin === 'http://127.0.0.1:5173'
+      ? 'http://localhost:8000'
+      : window.location.origin
+    const response = await fetch(`${backendUrl}/api/content/text-segments`)
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
+    const data = await response.json()
+    if (data && data.value) {
+      textSegments.value = Array.isArray(data.value) ? data.value : []
+    } else {
+      textSegments.value = []
+    }
+  } catch (error) {
+    console.error('Failed to load text segments:', error)
+    textSegments.value = []
+  }
+}
+
 const updateSlider = () => {
   if (!sliderTrack.value) return
   const cards = sliderTrack.value.querySelectorAll<HTMLElement>('.slider-card')
@@ -274,6 +296,7 @@ onMounted(async () => {
   }
 
   await loadMarkers()
+  await loadTextSegments()
   setupPoiClickListener()
 })
 

@@ -32,5 +32,16 @@ class PageContentSeeder extends Seeder
                 ]
             ]
         );
+
+        PageContent::updateOrCreate(
+            ['key' => 'text-segments'],
+            [
+                'value' => [
+                    ['title' => 'Segment 1', 'description' => 'First segment description', 'image' => null],
+                    ['title' => 'Segment 2', 'description' => 'Second segment description', 'image' => null],
+                    ['title' => 'Segment 3', 'description' => 'Third segment description', 'image' => null]
+                ]
+            ]
+        );
     }
 }
