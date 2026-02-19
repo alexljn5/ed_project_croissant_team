@@ -130,6 +130,7 @@ import { useMap } from '../composables/useMap'
 import type { POI } from '../composables/useMap'
 import { useSliderCards } from '../composables/useSliderCards'
 import '@/assets/css/home.css'
+import { useSliderCards } from '../composables/useSliderCards'
 
 const arrowPointingUp = ref(false)
 
@@ -165,11 +166,17 @@ const {
 const showPOIModal = ref(false)
 const selectedPOI = ref<POI | null>(null)
 
+// store handler so it can be removed later
+let poiClickHandler: ((e: Event) => void) | null = null
+
 const setupPoiClickListener = () => {
-  document.addEventListener("click", (e: Event) => {
+  // remove previous if any
+  if (poiClickHandler) document.removeEventListener('click', poiClickHandler)
+
+  poiClickHandler = (e: Event) => {
     const target = e.target as HTMLElement
-    if (target.classList.contains("poi-more-btn")) {
-      const poiId = target.getAttribute("data-id")
+    if (target.classList.contains('poi-more-btn')) {
+      const poiId = target.getAttribute('data-id')
       if (!poiId) return
       const poi = pois.value.find((p) => p.id === poiId)
       if (poi) {
@@ -177,7 +184,9 @@ const setupPoiClickListener = () => {
         showPOIModal.value = true
       }
     }
-  })
+  }
+
+  document.addEventListener('click', poiClickHandler)
 }
 
 // ────────────────────── SLIDER ──────────────────────
@@ -193,7 +202,7 @@ let autoSlideInterval: ReturnType<typeof setTimeout>
 
 const updateSlider = () => {
   if (!sliderTrack.value) return
-  const cards = sliderTrack.value.querySelectorAll<HTMLElement>(".slider-card")
+  const cards = sliderTrack.value.querySelectorAll<HTMLElement>('.slider-card')
   if (cards.length === 0) return
   const cardWidth = cards[0].offsetWidth + 30
   const centerOffset = sliderTrack.value.offsetWidth / 2 - cardWidth / 2
@@ -249,8 +258,8 @@ let canNav = true
 const cd = 300
 const handleKeydown = (e: KeyboardEvent) => {
   if (!canNav) return
-  if (e.key === "ArrowLeft") prevSlide()
-  if (e.key === "ArrowRight") nextSlide()
+  if (e.key === 'ArrowLeft') prevSlide()
+  if (e.key === 'ArrowRight') nextSlide()
   canNav = false
   setTimeout(() => (canNav = true), cd)
 }
@@ -260,14 +269,14 @@ onMounted(async () => {
   window.addEventListener('scroll', handleScroll)
   updateSlider();
   startAutoSlide();
-  window.addEventListener("resize", updateSlider);
-  window.addEventListener("keydown", handleKeydown);
+  window.addEventListener('resize', updateSlider);
+  window.addEventListener('keydown', handleKeydown);
 
   if (sliderTrack.value) {
-    sliderTrack.value.addEventListener("mouseenter", () => {
+    sliderTrack.value.addEventListener('mouseenter', () => {
       if (!isCardSelected.value) clearInterval(autoSlideInterval)
     })
-    sliderTrack.value.addEventListener("mouseleave", () => {
+    sliderTrack.value.addEventListener('mouseleave', () => {
       if (!isCardSelected.value) resetAutoSlide()
     })
   }
@@ -280,7 +289,7 @@ onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('resize', updateSlider)
-  document.removeEventListener('click', setupPoiClickListener as EventListener)
+  if (poiClickHandler) document.removeEventListener('click', poiClickHandler)
 })
 </script>
 
