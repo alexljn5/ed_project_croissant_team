@@ -29,11 +29,9 @@
         </div>
       </div>
     </header>
-    
     <main class="app-layout">
       <router-view />
     </main>
-    
     <Footer />
     <EditButton />
   </div>
@@ -70,6 +68,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
+
 </script>
 
 <style scoped>
@@ -268,6 +267,7 @@ onUnmounted(() => {
 
 .app-layout {
   flex: 1; 
+  padding-top: 98px;
   padding-bottom: 120px;
   overflow-y: auto;
   overflow-x: hidden;

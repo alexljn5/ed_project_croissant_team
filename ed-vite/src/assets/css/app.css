@@ -2,7 +2,6 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-top: 80px;
   background-color: transparent;
 }
 
@@ -118,9 +117,9 @@
 }
 
 .mail-icon {
-  height: 30px;
-  width: 30px;
-  margin-right: 8px;
+  height: 18px;
+  width: 18px;
+  margin-right: 6px;
   vertical-align: middle;
   display: inline-block;
 }
