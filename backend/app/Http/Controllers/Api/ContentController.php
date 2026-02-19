@@ -51,12 +51,14 @@ class ContentController extends Controller
 
         $path = $request->file('photo')->store('photos', 'public');
 
-        $url = asset('storage/' . $path);
+        // Generate URL using the request's host (usually 127.0.0.1:8000 or localhost:8000)
+        $baseUrl = $request->getSchemeAndHttpHost();
+        $url = $baseUrl . '/storage/' . $path;
 
         return response()->json([
             'success' => true,
-            'url'     => $url . '?t=' . time(), // cache bust
-            'path'    => $path
+            'url' => $url . '?t=' . time(), // cache bust
+            'path' => $path
         ]);
     }
 }

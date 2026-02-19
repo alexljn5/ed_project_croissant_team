@@ -127,10 +127,15 @@ const handleFileChange = async (event: Event, index: number) => {
 
   // Echte upload naar server
   const formData = new FormData()
-  formData.append('file', file)  // key 'file' zoals in je slider-upload
+  formData.append('photo', file)  // ← key must be 'photo' to match backend
 
   try {
-    const res = await fetch('/api/upload-image', {    // ← gebruik dezelfde URL als slider!
+    // Dynamically detect backend URL (localhost:5173 -> localhost:8000)
+    const backendUrl = window.location.origin.includes('5173') 
+      ? 'http://localhost:8000' 
+      : window.location.origin
+    
+    const res = await fetch(`${backendUrl}/api/upload-photo`, {
       method: 'POST',
       body: formData,
       credentials: 'same-origin',
@@ -150,7 +155,8 @@ const handleFileChange = async (event: Event, index: number) => {
     // await saveSegments()
   } catch (err) {
     console.error(err)
-    alert('Upload mislukt: ' + err.message)
+    const errorMessage = err instanceof Error ? err.message : 'Upload mislukt'
+    alert('Upload mislukt: ' + errorMessage)
     segments.value[index].image = ''  // reset bij fout
   } finally {
     input.value = ''  // reset file input

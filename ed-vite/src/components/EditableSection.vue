@@ -40,7 +40,7 @@ async function handlePhotoChange(e: Event) {
 
   try {
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('photo', file) // ← key must be 'photo' to match backend validation
 
     const backendUrl = window.location.origin === 'http://localhost:5173' || window.location.origin === 'http://127.0.0.1:5173'
       ? 'http://localhost:8000'
@@ -48,7 +48,8 @@ async function handlePhotoChange(e: Event) {
 
     const response = await fetch(`${backendUrl}/api/upload-photo`, {
       method: 'POST',
-      body: formData
+      body: formData,
+      credentials: 'same-origin'
     })
 
     if (!response.ok) throw new Error(`Upload failed: ${response.status}`)
