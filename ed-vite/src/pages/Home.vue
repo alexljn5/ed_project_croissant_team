@@ -3,7 +3,6 @@
     <Hero />
     <div class="scroll-indicator-wrapper">
       <div class="scroll-indicator">
-        <span class="arrow" :class="{ 'arrow-up': arrowPointingUp }"></span>
       </div>
     </div>
      <div class="content-slider" 
@@ -129,6 +128,7 @@ import PublicMap from '../components/PublicMap.vue'
 import POIModal from '../components/POIModal.vue'
 import { useMap } from '../composables/useMap'
 import type { POI } from '../composables/useMap'
+import { useSliderCards } from '../composables/useSliderCards'
 import '@/assets/css/home.css'
 import { useSliderCards } from '../composables/useSliderCards'
 
@@ -319,33 +319,6 @@ onUnmounted(() => {
 
 .scroll-indicator:hover {
   scale: 1.1;
-}
-
-.arrow {
-  width: 0px;
-  height: 0px;
-  background-color: var(--interactief);
-  border-radius: 50%;
-  animation: bounce 2s infinite;
-  transition: transform 0.6s ease;
-  position: relative;
-}
-
-.arrow.arrow-up {
-  transform: rotate(180deg);
-}
-
-.arrow::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-top: 21px solid hsl(0, 0%, 9%);
 }
 
 .content-slider {
@@ -655,12 +628,6 @@ onUnmounted(() => {
     height: 40px;
     border: 2px solid var(--site-paars);
     padding-top: 6px;
-  }
-
-  .arrow::before {
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid var(--site-paars);
   }
 }
 
