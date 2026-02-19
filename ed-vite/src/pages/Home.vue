@@ -123,12 +123,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import Hero from '../components/hero.vue'
-import Slider from '../components/Slider.vue'
 import BackendGlue from '../components/BackendGlue.vue'
 import PublicMap from '../components/PublicMap.vue'
 import POIModal from '../components/POIModal.vue'
 import { useMap } from '../composables/useMap'
 import type { POI } from '../composables/useMap'
+import { useSliderCards } from '../composables/useSliderCards'
 import '@/assets/css/home.css'
 
 const arrowPointingUp = ref(false)
