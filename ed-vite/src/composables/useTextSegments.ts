@@ -1,6 +1,13 @@
 // src/composables/useTextSegments.ts
 import { ref } from 'vue'
 
+// Helper: detect backend URL (localhost:5173 -> localhost:8000)
+function getBackendUrl() {
+  return window.location.origin.includes('5173')
+    ? 'http://localhost:8000'
+    : window.location.origin
+}
+
 export function useTextSegments() {
   const segments = ref<any[]>([])
   const isLoading = ref(false)
@@ -11,12 +18,13 @@ export function useTextSegments() {
     error.value = null
 
     try {
-      const response = await fetch('/api/text-segments', {
+      const backendUrl = getBackendUrl()
+      const response = await fetch(`${backendUrl}/api/content/text-segments`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
         },
-        credentials: 'same-origin', // belangrijk voor Laravel session / Sanctum
+        credentials: 'same-origin',
       })
 
       if (!response.ok) {
@@ -27,20 +35,18 @@ export function useTextSegments() {
 
       console.log('Raw API data:', data); // Debug: zie wat de API echt retourneert
 
-      // Normaliseer altijd naar array
-      let loadedSegments = Array.isArray(data) 
-        ? data 
-        : (Array.isArray(data.content) ? data.content : (Array.isArray(data) ? data : []));
+      // API returns { value: [...] }, extract it
+      let loadedSegments = data.value || data || []
+
+      // Ensure it's an array
+      if (!Array.isArray(loadedSegments)) {
+        loadedSegments = []
+      }
 
       console.log('Parsed loadedSegments:', loadedSegments); // Debug: voor sort
 
-      // Sorteer alleen als het een array is
-      if (Array.isArray(loadedSegments)) {
-        loadedSegments.sort((a: any, b: any) => (a.order_index ?? 999) - (b.order_index ?? 999));
-      } else {
-        console.warn('Loaded segments is not an array, setting to empty');
-        loadedSegments = [];
-      }
+      // Sort by order_index
+      loadedSegments.sort((a: any, b: any) => (a.order_index ?? 999) - (b.order_index ?? 999))
 
       segments.value = loadedSegments
     } catch (err: any) {
@@ -52,25 +58,19 @@ export function useTextSegments() {
   }
 
   const saveSegments = async () => {
-    if (segments.value.length === 0) {
-      error.value = 'Geen segmenten om op te slaan'
-      return
-    }
-
     isLoading.value = true
     error.value = null
 
     try {
-      const response = await fetch('/api/text-segments', {
-        method: 'PUT',
+      const backendUrl = getBackendUrl()
+      const response = await fetch(`${backendUrl}/api/content/text-segments`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
         credentials: 'same-origin',
-        body: JSON.stringify({
-          segments: segments.value, // Laravel verwacht { segments: [...] }
-        }),
+        body: JSON.stringify(JSON.parse(JSON.stringify(segments.value))), // Strip Vue proxies
       })
 
       if (!response.ok) {
