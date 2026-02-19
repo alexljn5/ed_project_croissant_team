@@ -49,7 +49,7 @@
     </div>
 
 <section class="text-segment-section">
-  <h2 class="segment-title">segment titel</h2>
+  <h2 class="segment-title">PLACEHOLDERSEGMENTTITEL</h2>
 
   <div class="segment-content">
     <div

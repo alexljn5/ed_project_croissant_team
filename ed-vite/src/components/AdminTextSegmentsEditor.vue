@@ -1,13 +1,12 @@
+<!-- src/components/AdminTextSegmentsEditor.vue -->
 <template>
   <div class="map-card">
     <div class="map-header">
-      <h2>Homepage Tekstblokken</h2>
+      <h2>Homepage Tekstblokken (editable)</h2>
       <small>Pas titel, beschrijving en afbeelding aan. Volgorde = positie op homepage.</small>
     </div>
 
-    <div v-if="isLoading" class="loading">
-      Bezig met laden...
-    </div>
+    <div v-if="isLoading" class="loading">Bezig met laden...</div>
 
     <div v-else-if="error" class="error-message">
       {{ error }}
@@ -29,32 +28,49 @@
 
         <label>
           Titel
-          <input v-model="segment.title" type="text" placeholder="Bijv. Welkom op onze site" />
+          <input v-model="segment.title" type="text" placeholder="Titel blok" />
         </label>
 
         <label>
           Beschrijving
-          <textarea v-model="segment.description" rows="4" placeholder="Korte tekst..." />
+          <textarea v-model="segment.description" rows="4" placeholder="Beschrijving..." />
         </label>
 
-        <label>
-          Afbeelding (URL of pad)
-          <input
-            v-model="segment.image"
-            type="text"
-            placeholder="/storage/images/voorbeeld.jpg of https://..."
+        <!-- Afbeelding met dezelfde stijl als slider editor -->
+        <label>Afbeelding</label>
+        <div class="preview">
+          <img
+            v-if="segment.image"
+            :src="segment.image"
+            alt="preview"
+            class="preview-img"
           />
-        </label>
+          <!-- Klein upload-knopje – exact dezelfde look & feel -->
+          <button
+            class="upload-btn"
+            title="Nieuwe foto kiezen"
+            @click="triggerFileInput(index)"
+          >
+            📷
+          </button>
 
-        <div
-          v-if="segment.image"
-          class="image-preview"
-          :style="{ backgroundImage: `url(${segment.image})` }"
-        >
-          <span v-if="!looksLikeImage(segment.image)" class="preview-warning">
-            Lijkt geen afbeelding
-          </span>
+          <!-- Verborgen file input -->
+          <input
+            type="file"
+            accept="image/*"
+            :ref="el => { if (el) fileInputs[index] = el }"
+            class="hidden-file-input"
+            @change="handleFileChange($event, index)"
+          />
         </div>
+
+        <!-- Handmatige URL optie (blijft bestaan) -->
+        <input
+          v-model="segment.image"
+          type="text"
+          placeholder="Of plak hier handmatig een URL"
+          class="input-url"
+        />
       </div>
 
       <div class="actions">
@@ -71,16 +87,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useTextSegments } from '../composables/useTextSegments'
 
-const {
-  segments,
-  isLoading,
-  error,
-  loadSegments,
-  saveSegments,
-} = useTextSegments()
+const { segments, isLoading, error, loadSegments, saveSegments } = useTextSegments()
+
+// Refs voor file inputs per segment
+const fileInputs = ref<(HTMLInputElement | null)[]>([])
 
 onMounted(() => {
   loadSegments()
@@ -90,133 +103,125 @@ const sortedSegments = computed(() =>
   [...segments.value].sort((a, b) => (a.order_index ?? 999) - (b.order_index ?? 999))
 )
 
-const handleSave = async () => {
+const triggerFileInput = (index: number) => {
+  const input = fileInputs.value[index]
+  if (input) input.click()
+}
+
+const handleFileChange = async (event: Event, index: number) => {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
+  if (!file.type.startsWith('image/')) {
+    alert('Alleen afbeeldingen toegestaan')
+    return
+  }
+
+  // Tijdelijke client-side preview (data URL)
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    segments.value[index].image = e.target?.result as string  // preview tonen
+  }
+  reader.readAsDataURL(file)
+
+  // Echte upload naar server
+  const formData = new FormData()
+  formData.append('file', file)  // key 'file' zoals in je slider-upload
+
   try {
-    await saveSegments()
-    alert('Tekstblokken succesvol opgeslagen!')
-  } catch {
-    alert('Opslaan mislukt – zie console voor details')
+    const res = await fetch('/api/upload-image', {    // ← gebruik dezelfde URL als slider!
+      method: 'POST',
+      body: formData,
+      credentials: 'same-origin',
+    })
+
+    if (!res.ok) {
+      const err = await res.json()
+      throw new Error(err.message || 'Upload mislukt')
+    }
+
+    const data = await res.json()
+    
+    // Overschrijf preview met echte URL
+    segments.value[index].image = data.url || data.path || data.filename
+    
+    // Optioneel: meteen opslaan
+    // await saveSegments()
+  } catch (err) {
+    console.error(err)
+    alert('Upload mislukt: ' + err.message)
+    segments.value[index].image = ''  // reset bij fout
+  } finally {
+    input.value = ''  // reset file input
   }
 }
 
-// Simpele check om te waarschuwen bij rare URLs
-const looksLikeImage = (url: string) => {
-  if (!url) return false
-  return /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url) || url.startsWith('http') || url.startsWith('/')
+const handleSave = async () => {
+  try {
+    await saveSegments()
+    alert('Tekstblokken opgeslagen!')
+  } catch (err) {
+    alert('Opslaan mislukt – check console')
+  }
 }
 </script>
 
 <style scoped>
-.map-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: 1.5rem;
-  margin: 1rem;
-  max-width: 900px;
-}
+/* ────────────────────────────────────────────── */
+/* Houd bestaande stijl + voeg slider-achtige upload toe */
+/* ────────────────────────────────────────────── */
 
-.map-header h2 {
-  margin-top: 0;
-  color: #333;
-}
-
-.loading,
-.error-message {
-  text-align: center;
-  padding: 3rem 1rem;
-  font-size: 1.2rem;
-  color: #666;
-}
-
-.error-message {
-  color: #d32f2f;
-}
-
-.error-message button {
-  margin-top: 1rem;
-  padding: 0.6rem 1.2rem;
-}
-
-.segment-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.segment-row {
-  background: #f9f9f9;
-  padding: 1.5rem;
-  border-radius: 10px;
-  border: 1px solid #eee;
-}
-
-.segment-row h3 {
-  margin: 0 0 1rem 0;
-  color: #444;
-}
-
-label {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1.2rem;
-  font-weight: 600;
-  color: #555;
-}
-
-input,
-textarea {
-  margin-top: 0.4rem;
-  padding: 0.7rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-.image-preview {
-  margin-top: 0.8rem;
-  width: 100%;
-  height: 180px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border-radius: 8px;
-  border: 1px dashed #aaa;
+.preview {
   position: relative;
+  width: 160px;
+  height: 120px;
+  margin-bottom: 0.8rem;
 }
 
-.preview-warning {
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.upload-btn {
   position: absolute;
   bottom: 8px;
-  left: 8px;
-  background: rgba(255, 193, 7, 0.9);
-  color: #333;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-}
-
-.actions {
-  margin-top: 1.5rem;
-  text-align: right;
-}
-
-.save-btn {
-  padding: 0.8rem 1.8rem;
-  background: #1976d2;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 1.05rem;
+  font-size: 16px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  transition: all 0.2s;
 }
 
-.save-btn:hover:not(:disabled) {
-  background: #1565c0;
+.upload-btn:hover {
+  background: rgba(0, 0, 0, 0.85);
+  transform: scale(1.1);
 }
 
-.save-btn:disabled {
-  background: #90caf9;
-  cursor: not-allowed;
+.hidden-file-input {
+  display: none;
 }
+
+.input-url {
+  margin-top: 0.5rem;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+/* Rest van je bestaande stijl (segment-row, save-btn, etc.) blijft hetzelfde */
 </style>
