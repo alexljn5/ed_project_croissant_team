@@ -118,16 +118,9 @@ const handleFileChange = async (event: Event, index: number) => {
     return
   }
 
-  // Tijdelijke client-side preview (data URL)
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    segments.value[index].image = e.target?.result as string  // preview tonen
-  }
-  reader.readAsDataURL(file)
-
-  // Echte upload naar server
+  // Echte upload naar server (don't use data URL - it's too large)
   const formData = new FormData()
-  formData.append('photo', file)  // ← key must be 'photo' to match backend
+  formData.append('photo', file)
 
   try {
     // Dynamically detect backend URL (localhost:5173 -> localhost:8000)
@@ -148,16 +141,14 @@ const handleFileChange = async (event: Event, index: number) => {
 
     const data = await res.json()
     
-    // Overschrijf preview met echte URL
+    // Set the actual URL from server (not base64)
     segments.value[index].image = data.url || data.path || data.filename
     
-    // Optioneel: meteen opslaan
-    // await saveSegments()
+    console.log('Image uploaded successfully:', segments.value[index].image)
   } catch (err) {
-    console.error(err)
+    console.error('Upload error:', err)
     const errorMessage = err instanceof Error ? err.message : 'Upload mislukt'
     alert('Upload mislukt: ' + errorMessage)
-    segments.value[index].image = ''  // reset bij fout
   } finally {
     input.value = ''  // reset file input
   }
