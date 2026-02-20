@@ -3,6 +3,7 @@
     <Hero />
     <div class="scroll-indicator-wrapper">
       <div class="scroll-indicator">
+        <span class="arrow" :class="{ 'arrow-up': arrowPointingUp }"></span>
       </div>
     </div>
      <div class="content-slider" 
@@ -48,61 +49,58 @@
     </div>
 
     <section class="text-segment-section">
-      <h2 class="segment-title">segment titel</h2>
+      <h2 class="segment-title">PLACEHOLDERSEGMENTTITEL</h2>
 
       <div class="segment-content">
-        <div class="text-block text-block-1">
-          <div class="text-block-shape shape-1"></div>
+        <div
+          v-for="(segment, idx) in textSegments"
+          :key="segment.id"
+          :class="['text-block', `text-block-${idx + 1}`]"
+        >
+          <div :class="['text-block-shape', `shape-${idx + 1}`]"></div>
+
           <div class="block-text">
-            <h3>titel1</h3>
-            <p>descriptie</p>
+            <h3>{{ segment.title || 'titel ontbreekt' }}</h3>
+            <p>{{ segment.description || 'beschrijving ontbreekt' }}</p>
           </div>
+
           <div
-            class="block-image1"
-            :style="{
-              backgroundImage: 'url(src/assets/img/18c-glas-in-lood.webp)',
-            }"
+            :class="[
+              idx === 0 ? 'block-image1' :
+              idx === 1 ? 'block-image'  :
+              idx === 2 ? 'block-image2' : 'block-image'
+            ]"
+            :style="segment.image ? { backgroundImage: `url(${segment.image})` } : {}"
           ></div>
         </div>
 
-        <div class="text-block text-block-2">
-          <div class="text-block-shape shape-2"></div>
-          <div class="block-text">
-            <h3>titel2</h3>
-            <p>descriptie</p>
+        <!-- Fallback als er minder dan 3 segmenten zijn -->
+        <template v-if="textSegments.length === 0">
+          <div class="text-block text-block-1">
+            <div class="text-block-shape shape-1"></div>
+            <div class="block-text">
+              <h3>Laad fout of leeg</h3>
+              <p>Controleer database / api</p>
+            </div>
+            <div class="block-image1"></div>
           </div>
-          <div
-            class="block-image"
-            :style="{
-              backgroundImage: 'url(src/assets/img/17a-gevelschilderingen.webp)',
-            }"
-          ></div>
-        </div>
-        <div class="text-block text-block-3">
-          <div class="text-block-shape shape-3"></div>
-          <div class="block-text">
-            <h3>titel3</h3>
-            <p>descriptie</p>
-          </div>
-          <div
-            class="block-image2"
-            :style="{ backgroundImage: 'url(src/assets/img/agorahof.webp)' }"
-          ></div>
-        </div>
+        </template>
       </div>
     </section>
+
     <!-- Map section (full width below slider) 
     <section class="home-map-section">
       <MapView />
     </section>
--->
+    -->
+
     <div class="backend-section">
       <BackendGlue />
     </div>
-<div class="publicmap">
-  <PublicMap />
-  <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
-</div>
+    <div class="publicmap">
+      <PublicMap />
+      <POIModal :isOpen="showPOIModal" :poi="selectedPOI" @close="showPOIModal = false" />
+    </div>
     <div v-if="showModal" :class="['modal-overlay', { closing: isClosing }]" @click="closeModal">
       <div class="modal-content" @click.stop>
         <button class="modal-close" @click="closeModal">✕</button>
@@ -119,6 +117,7 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import Hero from '../components/hero.vue'
@@ -129,7 +128,10 @@ import POIModal from '../components/POIModal.vue'
 import { useMap } from '../composables/useMap'
 import type { POI } from '../composables/useMap'
 import { useSliderCards } from '../composables/useSliderCards'
+import { useTextSegments } from '../composables/useTextSegments'
 import '@/assets/css/home.css'
+
+const { segments: textSegments, loadSegments } = useTextSegments()
 
 const arrowPointingUp = ref(false)
 
@@ -165,11 +167,9 @@ const {
 const showPOIModal = ref(false)
 const selectedPOI = ref<POI | null>(null)
 
-// store handler so it can be removed later
 let poiClickHandler: ((e: Event) => void) | null = null
 
 const setupPoiClickListener = () => {
-  // remove previous if any
   if (poiClickHandler) document.removeEventListener('click', poiClickHandler)
 
   poiClickHandler = (e: Event) => {
@@ -265,11 +265,13 @@ const handleKeydown = (e: KeyboardEvent) => {
 
 // ────────────────────── LIFECYCLE ──────────────────────
 onMounted(async () => {
+  loadSegments()                    // ← Dit maakt de tekstvakken editable
+
   window.addEventListener('scroll', handleScroll)
-  updateSlider();
-  startAutoSlide();
-  window.addEventListener('resize', updateSlider);
-  window.addEventListener('keydown', handleKeydown);
+  updateSlider()
+  startAutoSlide()
+  window.addEventListener('resize', updateSlider)
+  window.addEventListener('keydown', handleKeydown)
 
   if (sliderTrack.value) {
     sliderTrack.value.addEventListener('mouseenter', () => {
@@ -320,6 +322,34 @@ onUnmounted(() => {
   scale: 1.1;
 }
 
+/* Arrow styles van branch C */
+.arrow {
+  width: 0px;
+  height: 0px;
+  background-color: var(--interactief);
+  border-radius: 50%;
+  animation: bounce 2s infinite;
+  transition: transform 0.6s ease;
+  position: relative;
+}
+
+.arrow.arrow-up {
+  transform: rotate(180deg);
+}
+
+.arrow::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 21px solid hsl(0, 0%, 9%);
+}
+
 .content-slider {
   width: 100%;
   padding: 2rem 5rem;
@@ -337,8 +367,6 @@ onUnmounted(() => {
   background-color: var(--site-paars);
   z-index: -10000;
 }
-
-/* ... alle andere styles blijven hetzelfde ... */
 
 .neEv-text {
   padding-left: 2.5%;
@@ -362,14 +390,13 @@ onUnmounted(() => {
     var(--det-3) 100%
   );
 }
-/* Bestaande .card-content aanpassen */
+
 .card-content {
   padding: 1.5rem;
-  height: 120px;           /* vaste hoogte – pas aan als nodig */
+  height: 120px;
   overflow: hidden;
 }
 
-/* Titel blijft zoals hij is */
 .card-content h1 {
   font-family: var(--font-heading);
   margin: 0 0 0.5rem 0;
@@ -378,11 +405,10 @@ onUnmounted(() => {
   font-weight: bold;
   transition: all 0.3s ease;
   line-height: 1.2;
-  max-height: 3.6rem;      /* voorkomt dat titel te veel regels neemt */
+  max-height: 3.6rem;
   overflow: hidden;
 }
 
-/* Beschrijving afkappen met ellipsis */
 .card-content p {
   font-family: var(--font-primair);
   margin: 0;
@@ -417,13 +443,8 @@ onUnmounted(() => {
   transform: translateY(-50%) scale(1.1);
 }
 
-.slider-arrow.prev {
-  left: 0;
-}
-
-.slider-arrow.next {
-  right: 0;
-}
+.slider-arrow.prev { left: 0; }
+.slider-arrow.next { right: 0; }
 
 .slider-nav {
   display: flex;
@@ -479,21 +500,13 @@ onUnmounted(() => {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 .modal-content {
@@ -516,36 +529,17 @@ onUnmounted(() => {
 }
 
 @keyframes zoomIn {
-  0% {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  60% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes zoomOut {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  40% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.8);
-    opacity: 0;
-  }
+  0% { transform: scale(1); opacity: 1; }
+  40% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0; }
 }
 
-/* Zorg dat de hele kaart niet uitrekt */
 .slider-card {
   flex: 0 0 auto;
   width: 300px;
@@ -563,7 +557,6 @@ onUnmounted(() => {
   flex-direction: column;
 }
 
-/* Modal: volledige tekst laten zien */
 .modal-text p {
   margin: 0;
   color: #555;
@@ -628,23 +621,19 @@ onUnmounted(() => {
     border: 2px solid var(--site-paars);
     padding-top: 6px;
   }
+
+  /* Arrow mobile styling van C */
+  .arrow::before {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--site-paars);
+  }
 }
 
 @keyframes bounce {
-  0% {
-    transform: translateY(0);
-  }
-  20% {
-    transform: translateY(8px);
-    opacity: 1;
-  }
-  50% {
-    transform: translateY(8px);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 0;
-  }
+  0% { transform: translateY(0); }
+  20% { transform: translateY(8px); opacity: 1; }
+  50% { transform: translateY(8px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0; }
 }
 </style>
