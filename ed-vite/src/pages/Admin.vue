@@ -26,7 +26,7 @@
           </router-link>
         </div>
 
-        <!-- NIEUWS & EVENEMENTEN BEHEER -->
+        <!-- NIEUWS & EVENEMENTEN BEHEER – één keer -->
         <div class="map-card">
           <div class="map-header">
             <h2>Nieuws & Evenementen beheren</h2>
@@ -128,7 +128,7 @@
 
 <script setup lang="ts">
 import AdminSliderCardsEditor from '../components/AdminSliderCardsEditor.vue'
-import AdminTextSegmentsEditor from '../components/AdminTextSegmentsEditor.vue'  // ← toegevoegd
+import AdminTextSegmentsEditor from '../components/AdminTextSegmentsEditor.vue'
 import 'leaflet/dist/leaflet.css'
 import { ref, onMounted, watch, nextTick } from 'vue'
 import EditableSection from '../components/EditableSection.vue'

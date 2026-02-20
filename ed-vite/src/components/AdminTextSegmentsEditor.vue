@@ -118,17 +118,19 @@ const handleFileChange = async (event: Event, index: number) => {
     return
   }
 
-  // Echte upload naar server (don't use data URL - it's too large)
+  // Tijdelijke client-side preview (data URL)
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    segments.value[index].image = e.target?.result as string  // preview tonen
+  }
+  reader.readAsDataURL(file)
+
+  // Echte upload naar server
   const formData = new FormData()
-  formData.append('photo', file)
+  formData.append('file', file)  // key 'file' zoals in je slider-upload
 
   try {
-    // Dynamically detect backend URL (localhost:5173 -> localhost:8000)
-    const backendUrl = window.location.origin.includes('5173') 
-      ? 'http://localhost:8000' 
-      : window.location.origin
-    
-    const res = await fetch(`${backendUrl}/api/upload-photo`, {
+    const res = await fetch('/api/upload-image', {    // ← gebruik dezelfde URL als slider!
       method: 'POST',
       body: formData,
       credentials: 'same-origin',
@@ -141,14 +143,15 @@ const handleFileChange = async (event: Event, index: number) => {
 
     const data = await res.json()
     
-    // Set the actual URL from server (not base64)
+    // Overschrijf preview met echte URL
     segments.value[index].image = data.url || data.path || data.filename
     
-    console.log('Image uploaded successfully:', segments.value[index].image)
+    // Optioneel: meteen opslaan
+    // await saveSegments()
   } catch (err) {
-    console.error('Upload error:', err)
-    const errorMessage = err instanceof Error ? err.message : 'Upload mislukt'
-    alert('Upload mislukt: ' + errorMessage)
+    console.error(err)
+    alert('Upload mislukt: ' + err.message)
+    segments.value[index].image = ''  // reset bij fout
   } finally {
     input.value = ''  // reset file input
   }
