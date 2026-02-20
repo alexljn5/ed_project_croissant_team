@@ -1,15 +1,25 @@
 import { ref, onMounted } from 'vue';
 
-const API_BASE = 'http://localhost:8000/api/content';
+function getBackendUrl(): string {
+    const origin = window.location.origin;
+    if (origin.includes('5173')) {
+        return 'http://127.0.0.1:8000';
+    }
+    return origin;
+}
 
 export function useContent<T>(key: string, defaultValue: T) {
     const data = ref<T>(defaultValue);
     const loading = ref(true);
 
     const load = async () => {
+        const backendUrl = getBackendUrl();
+        const API_BASE = `${backendUrl}/api/content`;
         try {
-            console.log(`[useContent] Attempting to fetch ${key} from ${API_BASE}/${key}`);
-            const res = await fetch(`${API_BASE}/${key}`);
+            console.log(`[useContent] Attempting to fetch ${key} from ${backendUrl}/api/content/${key}`);
+            const res = await fetch(`${API_BASE}/${key}`, {
+                credentials: 'same-origin'
+            });
             if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch`);
             const json = await res.json();
             console.log(`[useContent] Loaded ${key}:`, json);
@@ -27,6 +37,8 @@ export function useContent<T>(key: string, defaultValue: T) {
     };
 
     const save = async () => {
+        const backendUrl = getBackendUrl();
+        const API_BASE = `${backendUrl}/api/content`;
         try {
             // Convert reactive proxy to plain object/array before sending
             const plainData = JSON.parse(JSON.stringify(data.value));
@@ -34,7 +46,8 @@ export function useContent<T>(key: string, defaultValue: T) {
             const res = await fetch(`${API_BASE}/${key}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ value: plainData })
+                body: JSON.stringify({ value: plainData }),
+                credentials: 'same-origin'
             });
             if (!res.ok) {
                 throw new Error(`Save failed with status ${res.status}`);

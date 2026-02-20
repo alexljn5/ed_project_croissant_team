@@ -55,8 +55,8 @@ class ContentController extends Controller
 
         return response()->json([
             'success' => true,
-            'url'     => $url . '?t=' . time(), // cache bust
-            'path'    => $path
+            'url' => $url . '?t=' . time(), // cache bust
+            'path' => $path
         ]);
     }
 }
