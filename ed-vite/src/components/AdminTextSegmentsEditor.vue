@@ -1,10 +1,7 @@
 <!-- src/components/AdminTextSegmentsEditor.vue -->
 <template>
-  <div class="map-card">
-    <div class="map-header">
-      <h2>Homepage Tekstblokken (editable)</h2>
-      <small>Pas titel, beschrijving en afbeelding aan. Volgorde = positie op homepage.</small>
-    </div>
+  <div>
+    <!-- Header is provided by the parent page (Admin.vue) to avoid duplication -->
 
     <div v-if="isLoading" class="loading">Bezig met laden...</div>
 
@@ -14,11 +11,21 @@
     </div>
 
     <div v-else class="segment-editor">
+      <!-- If there are no segments, show an add button and helpful message -->
+      <div v-if="segments.length === 0" class="empty-segments">
+        <p class="text-muted">Er zijn nog geen tekstblokken. Voeg er één toe om te beginnen.</p>
+        <button class="add-btn" @click="addSegment">+ Voeg tekstblok toe</button>
+      </div>
+
+      <!-- Segment list -->
       <div
         v-for="(segment, index) in sortedSegments"
         :key="segment.id || index"
         class="segment-row"
       >
+        <div class="segment-controls">
+          <button class="remove-btn" @click="removeSegment(index)">Verwijder</button>
+        </div>
         <h3>Blok {{ index + 1 }} (positie {{ segment.order_index || '?' }})</h3>
 
         <label>
@@ -58,9 +65,9 @@
           <input
             type="file"
             accept="image/*"
-            :ref="el => { if (el) fileInputs[index] = el }"
-            class="hidden-file-input"
+            :data-file-index="index"
             @change="handleFileChange($event, index)"
+            class="hidden-file-input"
           />
         </div>
 
@@ -74,12 +81,19 @@
       </div>
 
       <div class="actions">
+        <div class="debug-info" style="margin-bottom:8px;color:#666;font-size:0.9rem;">
+          Debug: segments = {{ segments.length }}
+          <span v-if="error" style="color:#c33;"> — Error: {{ error }}</span>
+        </div>
+        <button class="add-btn-inline" @click="addSegment" style="margin-right:8px;">+ Voeg tekstblok toe</button>
         <button
           class="save-btn"
-          :disabled="isLoading || segments.length === 0"
+          :disabled="isLoading || saving"
           @click="handleSave"
         >
-          {{ isLoading ? 'Bezig met opslaan...' : 'Alles opslaan' }}
+          <span v-if="saving">Bezig met opslaan...</span>
+          <span v-else-if="isLoading">Bezig met laden...</span>
+          <span v-else>Alles opslaan</span>
         </button>
       </div>
     </div>
@@ -89,23 +103,27 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useTextSegments } from '../composables/useTextSegments'
+import { useImageUpload } from '../composables/useImageUpload'
 
 const { segments, isLoading, error, loadSegments, saveSegments } = useTextSegments()
+const { uploadImage } = useImageUpload()
+
+// Local saving flag to avoid UI races
+const saving = ref(false)
 
 // Refs voor file inputs per segment
-const fileInputs = ref<(HTMLInputElement | null)[]>([])
+const fileInputs = ref<Record<number, HTMLInputElement | null>>({})
 
-onMounted(() => {
-  loadSegments()
-})
+// Note: loadSegments is called automatically via onMounted in useTextSegments
+// No need to call it again here
 
 const sortedSegments = computed(() =>
   [...segments.value].sort((a, b) => (a.order_index ?? 999) - (b.order_index ?? 999))
 )
 
 const triggerFileInput = (index: number) => {
-  const input = fileInputs.value[index]
-  if (input) input.click()
+  const el = document.querySelector(`input[data-file-index="${index}"]`) as HTMLInputElement
+  if (el) el.click()
 }
 
 const handleFileChange = async (event: Event, index: number) => {
@@ -118,51 +136,51 @@ const handleFileChange = async (event: Event, index: number) => {
     return
   }
 
-  // Tijdelijke client-side preview (data URL)
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    segments.value[index].image = e.target?.result as string  // preview tonen
-  }
-  reader.readAsDataURL(file)
-
-  // Echte upload naar server
-  const formData = new FormData()
-  formData.append('file', file)  // key 'file' zoals in je slider-upload
-
   try {
-    const res = await fetch('/api/upload-image', {    // ← gebruik dezelfde URL als slider!
-      method: 'POST',
-      body: formData,
-      credentials: 'same-origin',
-    })
-
-    if (!res.ok) {
-      const err = await res.json()
-      throw new Error(err.message || 'Upload mislukt')
-    }
-
-    const data = await res.json()
+    // Upload to backend
+    const url = await uploadImage(file)
     
-    // Overschrijf preview met echte URL
-    segments.value[index].image = data.url || data.path || data.filename
+    // Set the server URL (not base64)
+    segments.value[index].image = url
     
-    // Optioneel: meteen opslaan
-    // await saveSegments()
-  } catch (err) {
-    console.error(err)
+  } catch (err: any) {
     alert('Upload mislukt: ' + err.message)
-    segments.value[index].image = ''  // reset bij fout
   } finally {
-    input.value = ''  // reset file input
+    input.value = ''
   }
 }
 
 const handleSave = async () => {
+  if (saving.value) return
+  saving.value = true
+  console.log('[AdminTextSegmentsEditor] Saving segments...', segments.value)
   try {
     await saveSegments()
+    // Reload to ensure UI stays in sync with server
+    await loadSegments()
     alert('Tekstblokken opgeslagen!')
-  } catch (err) {
-    alert('Opslaan mislukt – check console')
+  } catch (err: any) {
+    console.error('[AdminTextSegmentsEditor] Save failed:', err)
+    alert('Opslaan mislukt: ' + (err?.message || 'onbekend probleem'))
+  } finally {
+    saving.value = false
+  }
+}
+
+// Nieuwe functies voor toevoegen/verwijderen van segmenten
+const addSegment = () => {
+  const newSegment = {
+    order_index: segments.value.length + 1,
+    title: '',
+    description: '',
+    image: ''
+  }
+  segments.value.push(newSegment)
+}
+
+const removeSegment = (index: number) => {
+  if (confirm('Weet je zeker dat je dit tekstblok wilt verwijderen?')) {
+    segments.value.splice(index, 1)
   }
 }
 </script>
@@ -221,6 +239,29 @@ const handleSave = async () => {
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 100%;
+}
+
+.empty-segments {
+  padding: 1rem;
+  text-align: center;
+}
+.add-btn {
+  margin-top: 0.5rem;
+  padding: 8px 12px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.remove-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 8px;
 }
 
 /* Rest van je bestaande stijl (segment-row, save-btn, etc.) blijft hetzelfde */
