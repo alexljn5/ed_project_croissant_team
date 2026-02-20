@@ -59,19 +59,31 @@ Route::post('/content/{key}', function (Request $request, $key) {
 // NEW: Photo upload endpoint
 Route::post('/upload-photo', function (Request $request) {
     $request->validate([
-        'photo' => 'required|image|max:2048', // Max 2MB
+        'photo' => 'required|image|max:10240', // Max 10MB
     ]);
 
-    // Store the file in the 'public' disk (usually storage/app/public)
-    $path = $request->file('photo')->store('photos', 'public');
-    
-    // Get the public URL (will be accessible via storage link)
-    $url = Storage::disk('public')->url($path);
-    
-    return response()->json([
-        'success' => true,
-        'path' => $path,
-        'url' => $url,
-        'message' => 'Foto succesvol geüpload!'
-    ]);
+    try {
+        // Store the file in the 'public' disk (usually storage/app/public/photos)
+        $path = $request->file('photo')->store('photos', 'public');
+        
+        if (!$path) {
+            throw new \Exception('File storage failed');
+        }
+        
+        // Construct the public URL manually (using asset helper)
+        $url = asset('storage/' . $path);
+        
+        return response()->json([
+            'success' => true,
+            'path' => $path,
+            'url' => $url,
+            'message' => 'Foto succesvol geüpload!'
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Upload error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Upload failed: ' . $e->getMessage()
+        ], 400);
+    }
 });
