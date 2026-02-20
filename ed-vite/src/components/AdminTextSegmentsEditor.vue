@@ -23,61 +23,67 @@
         :key="segment.id || index"
         class="segment-row"
       >
+        <!-- Left column: image preview + upload -->
+        <div class="segment-image-col">
+          <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Afbeelding</label>
+          <div class="preview">
+            <img
+              v-if="segment.image"
+              :src="segment.image"
+              alt="preview"
+              class="preview-img"
+            />
+            <button
+              class="upload-btn"
+              title="Nieuwe foto kiezen"
+              @click="triggerFileInput(index)"
+            >
+              📷
+            </button>
+            <input
+              type="file"
+              accept="image/*"
+              :data-file-index="index"
+              @change="handleFileChange($event, index)"
+              class="hidden-file-input"
+            />
+          </div>
+        </div>
+
+        <!-- Middle column: text fields -->
+        <div class="segment-content-col">
+          <h3 style="margin: 0 0 1rem 0;">Blok {{ index + 1 }}</h3>
+
+          <label style="display: block; margin-bottom: 0.8rem;">
+            <span style="font-weight: 600; display: block; margin-bottom: 0.3rem;">Positie</span>
+            <input v-model.number="segment.order_index" type="number" min="1" max="10" style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px;" />
+          </label>
+
+          <label style="display: block; margin-bottom: 0.8rem;">
+            <span style="font-weight: 600; display: block; margin-bottom: 0.3rem;">Titel</span>
+            <input v-model="segment.title" type="text" placeholder="Titel blok" style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px;" />
+          </label>
+
+          <label style="display: block; margin-bottom: 0.8rem;">
+            <span style="font-weight: 600; display: block; margin-bottom: 0.3rem;">Beschrijving</span>
+            <textarea v-model="segment.description" rows="4" placeholder="Beschrijving..." style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px;" />
+          </label>
+
+          <label style="display: block;">
+            <span style="font-weight: 600; display: block; margin-bottom: 0.3rem;">Afbeeldings-URL (optioneel)</span>
+            <input
+              v-model="segment.image"
+              type="text"
+              placeholder="Of plak hier een URL"
+              style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px;"
+            />
+          </label>
+        </div>
+
+        <!-- Right column: remove button -->
         <div class="segment-controls">
           <button class="remove-btn" @click="removeSegment(index)">Verwijder</button>
         </div>
-        <h3>Blok {{ index + 1 }} (positie {{ segment.order_index || '?' }})</h3>
-
-        <label>
-          Positie / volgorde
-          <input v-model.number="segment.order_index" type="number" min="1" max="10" />
-        </label>
-
-        <label>
-          Titel
-          <input v-model="segment.title" type="text" placeholder="Titel blok" />
-        </label>
-
-        <label>
-          Beschrijving
-          <textarea v-model="segment.description" rows="4" placeholder="Beschrijving..." />
-        </label>
-
-        <!-- Afbeelding met dezelfde stijl als slider editor -->
-        <label>Afbeelding</label>
-        <div class="preview">
-          <img
-            v-if="segment.image"
-            :src="segment.image"
-            alt="preview"
-            class="preview-img"
-          />
-          <!-- Klein upload-knopje – exact dezelfde look & feel -->
-          <button
-            class="upload-btn"
-            title="Nieuwe foto kiezen"
-            @click="triggerFileInput(index)"
-          >
-            📷
-          </button>
-
-          <!-- Verborgen file input -->
-          <input
-            type="file"
-            accept="image/*"
-            :data-file-index="index"
-            @change="handleFileChange($event, index)"
-            class="hidden-file-input"
-          />
-        </div>
-
-        <!-- Handmatige URL optie (blijft bestaan) -->
-        <input
-          v-model="segment.image"
-          type="text"
-          placeholder="Of plak hier handmatig een URL"
-          class="input-url"
-        />
       </div>
 
       <div class="actions">
@@ -226,7 +232,7 @@ const removeSegment = (index: number) => {
 
 .upload-btn:hover {
   background: rgba(0, 0, 0, 0.85);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .hidden-file-input {
@@ -262,6 +268,80 @@ const removeSegment = (index: number) => {
   border-radius: 4px;
   cursor: pointer;
   margin-bottom: 8px;
+}
+
+/* New layout styles for better admin UI */
+.segment-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.segment-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 140px;
+  gap: 1.5rem;
+  padding: 1.2rem;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  align-items: start;
+}
+
+.segment-image-col {
+  grid-column: 1 / 2;
+}
+
+.segment-content-col {
+  grid-column: 2 / 3;
+}
+
+.segment-controls {
+  grid-column: 3 / 4;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.segment-row h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.save-btn {
+  padding: 10px 14px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.save-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.add-btn-inline {
+  padding: 8px 12px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.debug-info { font-size: 0.85rem; }
+
+/* responsive */
+@media (max-width: 800px) {
+  .segment-row { grid-template-columns: 1fr; }
+  .segment-controls { grid-column: 1 / -1; display:flex; justify-content:flex-end; }
 }
 
 /* Rest van je bestaande stijl (segment-row, save-btn, etc.) blijft hetzelfde */

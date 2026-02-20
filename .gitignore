@@ -125,3 +125,7 @@ backend/croissant
 backend/database/migrations/2026_01_15_082937_testtodeletelater.php
 ed_project_croissant_team
 .setup_done
+
+# Ignore uploaded storage photos (dev)
+/storage/app/public/photos/
+/public/storage/photos/

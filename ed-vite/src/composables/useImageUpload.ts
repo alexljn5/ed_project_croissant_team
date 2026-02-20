@@ -34,7 +34,7 @@ export function useImageUpload() {
       const res = await fetch(`${backendUrl}/api/upload-photo`, {
         method: 'POST',
         body: formData,
-        credentials: 'same-origin',
+        // Don't send credentials for cross-origin requests; CORS will handle auth via headers
       })
 
       if (!res.ok) {

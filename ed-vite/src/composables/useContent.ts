@@ -17,9 +17,7 @@ export function useContent<T>(key: string, defaultValue: T) {
         const API_BASE = `${backendUrl}/api/content`;
         try {
             console.log(`[useContent] Attempting to fetch ${key} from ${backendUrl}/api/content/${key}`);
-            const res = await fetch(`${API_BASE}/${key}`, {
-                credentials: 'same-origin'
-            });
+            const res = await fetch(`${API_BASE}/${key}`);
             if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch`);
             const json = await res.json();
             console.log(`[useContent] Loaded ${key}:`, json);
@@ -47,7 +45,6 @@ export function useContent<T>(key: string, defaultValue: T) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ value: plainData }),
-                credentials: 'same-origin'
             });
             if (!res.ok) {
                 throw new Error(`Save failed with status ${res.status}`);

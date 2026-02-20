@@ -25,7 +25,6 @@ export function useTextSegments() {
         headers: {
           'Accept': 'application/json',
         },
-        credentials: 'same-origin',
       })
 
       if (!response.ok) {
@@ -78,7 +77,6 @@ export function useTextSegments() {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        credentials: 'same-origin',
         body: JSON.stringify({
           value: segments.value,  // Send as { value: [...] } to match /api/content/{key} endpoint
         }),
