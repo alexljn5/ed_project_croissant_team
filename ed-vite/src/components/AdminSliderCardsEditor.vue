@@ -15,7 +15,7 @@
             title="Nieuwe foto kiezen"
             @click="triggerFileInput(card.id)"
           >
-            📷
+            +
           </button>
 
           <!-- Verborgen file input -->

@@ -216,7 +216,7 @@ onBeforeUnmount(() => {
   box-shadow: 0 10px 9px rgba(0, 0, 0, 0.1);
   transition: all 0.4s ease;
   position: relative;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgb(255, 255, 255);
   backdrop-filter: blur(10px) saturate(15px);
   -webkit-backdrop-filter: blur(10px) saturate(15px);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -228,7 +228,7 @@ onBeforeUnmount(() => {
 }
 
 .slider-card:not(.active) {
-  opacity: 0.7;
+  opacity: 1;
 }
 
 .card-image {

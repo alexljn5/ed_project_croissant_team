@@ -15,7 +15,6 @@
 </template>
 
 <script setup lang="ts">
-// DeleteCross component - displays an X icon for delete actions
 </script>
 
 <style scoped>

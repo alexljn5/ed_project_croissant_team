@@ -1,9 +1,6 @@
 <template>
   <div class="home-page">
     <Hero />
-    <div class="scroll-indicator-wrapper">
-      <div class="scroll-indicator">
-      </div>
     </div>
      <div class="content-slider" 
        :style="{ backgroundImage: 'url(/img/achSlider.png)', backgroundSize: 'cover', backgroundPosition: 'top center' }">
@@ -130,7 +127,6 @@ import { useMap } from '../composables/useMap'
 import type { POI } from '../composables/useMap'
 import { useSliderCards } from '../composables/useSliderCards'
 import '@/assets/css/home.css'
-import { useSliderCards } from '../composables/useSliderCards'
 
 const arrowPointingUp = ref(false)
 
