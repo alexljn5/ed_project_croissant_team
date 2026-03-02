@@ -29,6 +29,7 @@ let previewLayer: L.Polyline | null = null    // live admin preview
 export function useMap() {
   const isLoading = ref(false)
   const pois = ref<POI[]>([])
+  const savedCoordinates = ref<{ lat: number; lng: number } | null>(null)
 
   // ---------------- helpers ----------------
   function ensureGroups() {
@@ -118,6 +119,7 @@ export function useMap() {
       })
     }
 
+    setupMapClickHandler()
     addExampleMarkers()
     return mapInstance
   }
@@ -173,6 +175,22 @@ export function useMap() {
   function getAuthHeaders() {
     const token = localStorage.getItem('admin_token')
     return token ? { 'Authorization': `Bearer ${token}` } : {}
+  }
+
+  // Setup map click handler to save coordinates (admin only)
+  function setupMapClickHandler() {
+    if (!mapInstance) {
+      console.warn('⚠️ mapInstance is null, cannot setup click handler')
+      return
+    }
+    console.log('✓ Setting up map click handler')
+    mapInstance.on('click', (e: L.LeafletMouseEvent) => {
+      savedCoordinates.value = {
+        lat: Number(e.latlng.lat.toFixed(6)),
+        lng: Number(e.latlng.lng.toFixed(6))
+      }
+      console.log('✓ Coördinaten opgeslagen:', savedCoordinates.value)
+    })
   }
 
   // ---------------- POI MARKERS ----------------
@@ -339,5 +357,7 @@ export function useMap() {
     loadMarkers,
     saveMarkers,
     refresh,
+    savedCoordinates,
+    setupMapClickHandler,
   }
 }

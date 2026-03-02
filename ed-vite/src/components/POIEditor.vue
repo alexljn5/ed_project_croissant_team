@@ -4,15 +4,25 @@
 
     <!-- Form to add markers -->
     <div class="poi-form">
-      <div class="form-row">
-        <div class="form-group">
-          <label>Latitude:</label>
-          <input v-model.number="form.lat" type="number" step="0.0001" placeholder="52.5205" />
+      <div class="form-row-with-paste">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Latitude:</label>
+            <input v-model.number="form.lat" type="number" step="0.0001" placeholder="52.5205" />
+          </div>
+          <div class="form-group">
+            <label>Longitude:</label>
+            <input v-model.number="form.lng" type="number" step="0.0001" placeholder="5.4790" />
+          </div>
         </div>
-        <div class="form-group">
-          <label>Longitude:</label>
-          <input v-model.number="form.lng" type="number" step="0.0001" placeholder="5.4790" />
-        </div>
+        <button
+          @click="pasteCoordsToForm"
+          class="paste-coords-btn-large"
+          :disabled="!savedCoordinates"
+          :title="savedCoordinates ? `${savedCoordinates.lat}, ${savedCoordinates.lng}` : 'Klik op kaart om coördinaten op te slaan'"
+        >
+          📍 Plak coördinaten
+        </button>
       </div>
 
       <div class="form-group">
@@ -69,6 +79,7 @@ interface Props {
   onRemovePOI: (id: string) => void
   onSave: () => Promise<void>
   isLoading: boolean
+  savedCoordinates?: { lat: number; lng: number } | null
 }
 
 const props = defineProps<Props>()
@@ -104,6 +115,15 @@ function onFileChange(e: Event) {
   }
 
   reader.readAsDataURL(file)
+}
+
+// -------------------------
+// Paste saved coordinates to form
+// -------------------------
+function pasteCoordsToForm() {
+  if (!props.savedCoordinates) return
+  form.value.lat = props.savedCoordinates.lat
+  form.value.lng = props.savedCoordinates.lng
 }
 
 // -------------------------
@@ -232,6 +252,41 @@ async function savePOIs() {
 
 .add-poi-btn:hover:not(:disabled) {
   background: #1976d2;
+}
+
+.form-row-with-paste {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.form-row-with-paste .form-row {
+  flex: 1;
+}
+
+.paste-coords-btn-large {
+  padding: 0.8rem 1.2rem;
+  background: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  white-space: nowrap;
+  font-size: 0.95rem;
+  height: fit-content;
+}
+
+.paste-coords-btn-large:hover:not(:disabled) {
+  background: #f57c00;
+  transform: scale(1.05);
+}
+
+.paste-coords-btn-large:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #bdbdbd;
 }
 
 .poi-list {

@@ -85,6 +85,14 @@
                     placeholder="Longitude"
                   />
                 </div>
+                <button
+                  @click="pasteCoordinatesToWaypoint(idx)"
+                  class="paste-coords-btn"
+                  :disabled="!savedCoordinates"
+                  :title="savedCoordinates ? `${savedCoordinates.lat}, ${savedCoordinates.lng}` : 'Klik op kaart om coördinaten op te slaan'"
+                >
+                  📍 Plak
+                </button>
                 <button @click="deleteWaypoint(idx)" class="delete-btn">
                   Verwijder
                 </button>
@@ -113,6 +121,7 @@
             :onRemovePOI="removePOI"
             :onSave="savePOIsWrapper"
             :isLoading="isLoading"
+            :savedCoordinates="savedCoordinates"
           />
         </div>
       </div>
@@ -169,6 +178,7 @@ const {
   removePOI,
   saveMarkers,
   loadMarkers,
+  savedCoordinates,
 } = useMap()
 
 // THIS IS THE ONLY CORRECT WAY — ONE MAP, ONE SOURCE OF TRUTH
@@ -222,6 +232,12 @@ function addWaypoint() {
     lat: last.lat + 0.001,
     lng: last.lng + 0.001,
   })
+}
+
+function pasteCoordinatesToWaypoint(idx: number) {
+  if (!savedCoordinates.value) return
+  waypoints.value[idx].lat = savedCoordinates.value.lat
+  waypoints.value[idx].lng = savedCoordinates.value.lng
 }
 
 async function deleteWaypoint(idx: number) {
