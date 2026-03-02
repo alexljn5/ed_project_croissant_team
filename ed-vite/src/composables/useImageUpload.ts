@@ -31,10 +31,18 @@ export function useImageUpload() {
 
     try {
       console.log(`[useImageUpload] Uploading to ${backendUrl}/api/upload-photo, file size: ${file.size} bytes`)
+      
+      // Get auth token from localStorage
+      const token = localStorage.getItem('admin_token')
+      const headers: Record<string, string> = {}
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
       const res = await fetch(`${backendUrl}/api/upload-photo`, {
         method: 'POST',
+        headers,
         body: formData,
-        // Don't send credentials for cross-origin requests; CORS will handle auth via headers
       })
 
       if (!res.ok) {

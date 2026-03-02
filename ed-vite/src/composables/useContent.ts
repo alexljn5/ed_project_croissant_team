@@ -41,9 +41,17 @@ export function useContent<T>(key: string, defaultValue: T) {
             // Convert reactive proxy to plain object/array before sending
             const plainData = JSON.parse(JSON.stringify(data.value));
             console.log(`[useContent] Saving ${key}:`, plainData);
+            
+            // Get auth token from localStorage
+            const token = localStorage.getItem('admin_token');
+            const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
             const res = await fetch(`${API_BASE}/${key}`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({ value: plainData }),
             });
             if (!res.ok) {

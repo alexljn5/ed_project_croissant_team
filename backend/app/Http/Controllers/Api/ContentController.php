@@ -49,14 +49,28 @@ class ContentController extends Controller
             'photo' => 'required|image|mimes:jpeg,png,gif,webp|max:10240'
         ]);
 
-        $path = $request->file('photo')->store('photos', 'public');
+        try {
+            $path = $request->file('photo')->store('photos', 'public');
 
-        $url = asset('storage/' . $path);
+            if (!$path) {
+                throw new \Exception('Failed to store file');
+            }
 
-        return response()->json([
-            'success' => true,
-            'url' => $url . '?t=' . time(), // cache bust
-            'path' => $path
-        ]);
+            $url = asset('storage/' . $path);
+
+            \Log::info("✓ Photo uploaded: $path");
+
+            return response()->json([
+                'success' => true,
+                'url' => $url . '?t=' . time(), // cache bust
+                'path' => $path
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("❌ Photo upload error: $e");
+            return response()->json([
+                'error' => 'Failed to upload photo',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

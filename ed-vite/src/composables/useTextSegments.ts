@@ -71,12 +71,19 @@ export function useTextSegments() {
 
     const backendUrl = getBackendUrl()
     try {
+      // Get auth token from localStorage
+      const token = localStorage.getItem('admin_token')
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
       const response = await fetch(`${backendUrl}/api/content/text-segments`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           value: segments.value,  // Send as { value: [...] } to match /api/content/{key} endpoint
         }),
