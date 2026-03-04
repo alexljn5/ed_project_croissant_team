@@ -32,26 +32,26 @@ export function useTextSegments() {
       }
 
       const data = await response.json()
+      console.log('Raw API data:', data)
 
-      console.log('Raw API data:', data); // Debug: zie wat de API echt retourneert
+      let loadedSegments: any[] = []
 
-      // API returns { value: [...] } so extract the array
-      let loadedSegments = data.value || []
-      if (!Array.isArray(loadedSegments)) {
-        loadedSegments = []
+      // Handle both stringified JSON or actual array
+      if (typeof data.value === 'string') {
+        try {
+          loadedSegments = JSON.parse(data.value)
+        } catch (err) {
+          console.error('Failed to parse segments JSON:', err, data.value)
+        }
+      } else if (Array.isArray(data.value)) {
+        loadedSegments = data.value
       }
 
-      console.log('Parsed loadedSegments:', loadedSegments); // Debug: voor sort
-
-      // Sorteer alleen als het een array is
-      if (Array.isArray(loadedSegments)) {
-        loadedSegments.sort((a: any, b: any) => (a.order_index ?? 999) - (b.order_index ?? 999))
-      } else {
-        console.warn('Loaded segments is not an array, setting to empty')
-        loadedSegments = []
-      }
+      // Sort by order_index
+      loadedSegments.sort((a: any, b: any) => (a.order_index ?? 999) - (b.order_index ?? 999))
 
       segments.value = loadedSegments
+      console.log('Parsed loadedSegments:', segments.value)
     } catch (err: any) {
       console.error('Fout bij laden van tekstsegmenten:', err)
       error.value = 'Kon de tekstsegmenten niet laden: ' + (err.message || 'onbekend probleem')
@@ -71,7 +71,6 @@ export function useTextSegments() {
 
     const backendUrl = getBackendUrl()
     try {
-      // Get auth token from localStorage
       const token = localStorage.getItem('admin_token')
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
@@ -85,7 +84,7 @@ export function useTextSegments() {
         method: 'POST',
         headers,
         body: JSON.stringify({
-          value: segments.value,  // Send as { value: [...] } to match /api/content/{key} endpoint
+          value: segments.value, // Always send as an array
         }),
       })
 
@@ -95,7 +94,6 @@ export function useTextSegments() {
       }
 
       console.log('Segmenten succesvol opgeslagen')
-      // Don't reload here - let the component handle UI update
     } catch (err: any) {
       console.error('Fout bij opslaan:', err)
       error.value = 'Opslaan mislukt: ' + (err.message || 'onbekend probleem')
@@ -105,7 +103,7 @@ export function useTextSegments() {
     }
   }
 
-  // Auto-load on component mount
+  // Auto-load segments on mount
   onMounted(() => {
     loadSegments()
   })
