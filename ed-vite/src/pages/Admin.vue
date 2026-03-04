@@ -10,14 +10,8 @@
         <button @click="handleLogout" class="logout-btn">Logout</button>
       </div>
 
-      <div class="test-button">
-        Admin Panel Loaded! Vue is working! {{ testCounter }}
-        <button @click="testCounter++">Click me!</button>
-      </div>
-
       <div class="admin-grid">
-        <EditableSection />
-        <DynamicList />
+        
 
         <!-- EMAILS CARD -->
         <div class="map-card">

@@ -15,6 +15,6 @@ class Kernel extends HttpKernel
     ];
 
     protected $routeMiddleware = [
-        'admin.token' => \App\Http\Middleware\AdminTokenMiddleware::class,
+        'admin.token' => \App\Http\Middleware\AdminToken::class,
     ];
 }

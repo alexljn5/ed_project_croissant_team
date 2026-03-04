@@ -6,22 +6,22 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class AdminTokenMiddleware
+class AdminToken
 {
     public function handle(Request $request, Closure $next)
     {
-        $token = $request->bearerToken();
+        $authHeader = $request->header('Authorization');
 
-        if (!$token || !$this->validateToken($token)) {
+        if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $token = substr($authHeader, 7);
+
+        if (!Cache::has('admin_token:' . $token)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         return $next($request);
-    }
-
-    private function validateToken($token)
-    {
-        // Check if token exists in cache
-        return Cache::has('admin_token:' . $token);
     }
 }
