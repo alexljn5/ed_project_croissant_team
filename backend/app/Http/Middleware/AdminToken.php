@@ -12,7 +12,7 @@ class AdminToken
     {
         $authHeader = $request->header('Authorization');
 
-        if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+        if (!$authHeader || !str_starts_with($authHeader, needle: 'Bearer ')) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 

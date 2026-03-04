@@ -22,6 +22,7 @@ return [
         'http://localhost:5173',
         'http://127.0.0.1:5173',
         'http://127.0.0.1:3000',  // Alternative dev port
+        'http://127.0.0.1:8000',  // Direct backend URL for development
     ],
 
     'allowed_origins_patterns' => [],
