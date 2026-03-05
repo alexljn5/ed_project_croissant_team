@@ -11,6 +11,6 @@ class PageContent extends Model
 
     // Tell Laravel that "value" is JSON and should be automatically converted to array
     protected $casts = [
-        'value' => 'array'
+        'value' => 'json'
     ];
 }

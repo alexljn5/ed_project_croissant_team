@@ -48,7 +48,21 @@ Route::get('/content/{key}', function ($key) {
     $content = PageContent::select(['id', 'key', 'value'])
         ->where('key', $key)
         ->first();
-    return response()->json(['value' => $content?->value ?? null]);
+    
+    if (!$content) {
+        return response()->json(['value' => null]);
+    }
+    
+    // Ensure the value is properly decoded from JSON
+    $value = $content->value;
+    
+    // If it's a string (not yet decoded), decode it
+    if (is_string($value)) {
+        $decoded = json_decode($value, true);
+        $value = (json_last_error() === JSON_ERROR_NONE) ? $decoded : $value;
+    }
+    
+    return response()->json(['value' => $value]);
 });
 
 // POST content (admin only - opslaan)
