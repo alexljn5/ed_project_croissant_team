@@ -6,7 +6,6 @@ import Admin from "./pages/Admin.vue";
 import AdminLogin from "./pages/AdminLogin.vue";
 import Reviews from "./pages/Reviews.vue";
 import LocationDetector from "./pages/LocationDetector.vue";
-import Emails from "./pages/Emails.vue";
 
 const routes = [
     {
@@ -39,11 +38,6 @@ const routes = [
         path: "/locations",
         name: "LocationDetector",
         component: LocationDetector,
-    },
-    {
-        path: "/emails",
-        name: "Emails",
-        component: Emails,
     },
     {
         path: "/:pathMatch(.)",

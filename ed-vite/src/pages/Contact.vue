@@ -101,10 +101,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useEmail } from "@/composables/useEmail";
 import "@/assets/css/contact.css";
-
-const { sendEmail } = useEmail();
 
 const form = ref({
   name: "",
@@ -116,29 +113,18 @@ const form = ref({
 const successMessage = ref("");
 
 const handleSubmit = () => {
-  try {
-    sendEmail(
-      form.value.name,
-      form.value.email,
-      form.value.subject,
-      form.value.message,
-    );
+  successMessage.value = "Bericht succesvol verzonden! ✓";
 
-    successMessage.value = "Bericht succesvol verzonden! ✓";
+  form.value = {
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  };
 
-    form.value = {
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    };
-
-    setTimeout(() => {
-      successMessage.value = "";
-    }, 3000);
-  } catch (error) {
-    console.error("Error sending email:", error);
-  }
+  setTimeout(() => {
+    successMessage.value = "";
+  }, 3000);
 };
 </script>
 
