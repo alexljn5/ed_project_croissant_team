@@ -4,8 +4,8 @@
     <div class="admin-container">
       <div class="admin-header">
         <div>
-          <h1 class="admin-title">Admin Panel</h1>
-          <p class="admin-subtitle">Manage all editable content for your site</p>
+          <h1 class="admin-title">Admin Paneel</h1>
+          <p class="admin-subtitle">Maak aanpassingen aan de site</p>
         </div>
         <button @click="handleLogout" class="logout-btn">Logout</button>
       </div>
@@ -13,12 +13,7 @@
       <div class="admin-grid">
         
 
-        <!-- EMAILS CARD -->
-        <div class="map-card">
-          <router-link to="/emails" class="emails-link">
-            <button class="view-emails-btn">Bekijk alle emails →</button>
-          </router-link>
-        </div>
+  
 
         <!-- NIEUWS & EVENEMENTEN BEHEER – één keer -->
         <div class="map-card">
