@@ -10,14 +10,8 @@
         <button @click="handleLogout" class="logout-btn">Logout</button>
       </div>
 
-      <div class="test-button">
-        Admin Panel Loaded! Vue is working! {{ testCounter }}
-        <button @click="testCounter++">Click me!</button>
-      </div>
-
       <div class="admin-grid">
-        <EditableSection />
-        <DynamicList />
+        
 
         <!-- EMAILS CARD -->
         <div class="map-card">
@@ -26,12 +20,20 @@
           </router-link>
         </div>
 
-        <!-- NIEUWS & EVENEMENTEN BEHEER – toegevoegd -->
+        <!-- NIEUWS & EVENEMENTEN BEHEER – één keer -->
         <div class="map-card">
           <div class="map-header">
             <h2>Nieuws & Evenementen beheren</h2>
           </div>
           <AdminSliderCardsEditor />
+        </div>
+
+        <!-- NIEUWE TEKSTSEGMENTEN EDITOR -->
+        <div class="map-card">
+          <div class="map-header">
+            <h2>Homepage Tekstblokken (editable)</h2>
+          </div>
+          <AdminTextSegmentsEditor />
         </div>
 
         <!-- MAP CARD -->
@@ -77,6 +79,14 @@
                     placeholder="Longitude"
                   />
                 </div>
+                <button
+                  @click="pasteCoordinatesToWaypoint(idx)"
+                  class="paste-coords-btn"
+                  :disabled="!savedCoordinates"
+                  :title="savedCoordinates ? `${savedCoordinates.lat}, ${savedCoordinates.lng}` : 'Klik op kaart om coördinaten op te slaan'"
+                >
+                  📍 Plak
+                </button>
                 <button @click="deleteWaypoint(idx)" class="delete-btn">
                   Verwijder
                 </button>
@@ -105,6 +115,7 @@
             :onRemovePOI="removePOI"
             :onSave="savePOIsWrapper"
             :isLoading="isLoading"
+            :savedCoordinates="savedCoordinates"
           />
         </div>
       </div>
@@ -120,6 +131,7 @@
 
 <script setup lang="ts">
 import AdminSliderCardsEditor from '../components/AdminSliderCardsEditor.vue'
+import AdminTextSegmentsEditor from '../components/AdminTextSegmentsEditor.vue'
 import 'leaflet/dist/leaflet.css'
 import { ref, onMounted, watch, nextTick } from 'vue'
 import EditableSection from '../components/EditableSection.vue'
@@ -160,6 +172,7 @@ const {
   removePOI,
   saveMarkers,
   loadMarkers,
+  savedCoordinates,
 } = useMap()
 
 // THIS IS THE ONLY CORRECT WAY — ONE MAP, ONE SOURCE OF TRUTH
@@ -213,6 +226,12 @@ function addWaypoint() {
     lat: last.lat + 0.001,
     lng: last.lng + 0.001,
   })
+}
+
+function pasteCoordinatesToWaypoint(idx: number) {
+  if (!savedCoordinates.value) return
+  waypoints.value[idx].lat = savedCoordinates.value.lat
+  waypoints.value[idx].lng = savedCoordinates.value.lng
 }
 
 async function deleteWaypoint(idx: number) {

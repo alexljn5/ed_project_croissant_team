@@ -1,14 +1,20 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
+// Global reactive state for auth
+const authToken = ref<string | null>(localStorage.getItem('admin_token'))
+
 export function useAdminAuth() {
   const router = useRouter()
-  const token = ref<string | null>(localStorage.getItem('admin_token'))
-  const isAuthenticated = ref(!!token.value)
   const error = ref('')
   const isLoading = ref(false)
+
+  const isAuthenticated = computed(() => {
+    // Check both the ref and localStorage as fallback
+    return !!authToken.value || !!localStorage.getItem('admin_token')
+  })
 
   async function login(password: string) {
     isLoading.value = true
@@ -28,9 +34,8 @@ export function useAdminAuth() {
         return false
       }
       
-      token.value = data.token
+      authToken.value = data.token
       localStorage.setItem('admin_token', data.token)
-      isAuthenticated.value = true
       return true
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Network error'
@@ -41,15 +46,15 @@ export function useAdminAuth() {
   }
 
   function logout() {
-    token.value = null
+    authToken.value = null
     localStorage.removeItem('admin_token')
-    isAuthenticated.value = false
     router.push('/admin-login')
   }
 
   function getAuthHeader() {
-    return token.value ? { 'Authorization': `Bearer ${token.value}` } : {}
+    const token = authToken.value || localStorage.getItem('admin_token')
+    return token ? { 'Authorization': `Bearer ${token}` } : {}
   }
 
-  return { token, isAuthenticated, error, isLoading, login, logout, getAuthHeader }
+  return { authToken, isAuthenticated, error, isLoading, login, logout, getAuthHeader }
 }

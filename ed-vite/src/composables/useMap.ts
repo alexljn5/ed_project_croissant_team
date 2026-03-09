@@ -29,6 +29,7 @@ let previewLayer: L.Polyline | null = null    // live admin preview
 export function useMap() {
   const isLoading = ref(false)
   const pois = ref<POI[]>([])
+  const savedCoordinates = ref<{ lat: number; lng: number } | null>(null)
 
   // ---------------- helpers ----------------
   function ensureGroups() {
@@ -118,6 +119,7 @@ export function useMap() {
       })
     }
 
+    setupMapClickHandler()
     addExampleMarkers()
     return mapInstance
   }
@@ -133,24 +135,33 @@ export function useMap() {
       if (!coords || !Array.isArray(coords)) return null
       renderSavedRoute(coords, { name: data?.name ?? 'Walking route' })
       return coords
-    } catch {
+    } catch (e) {
+      console.warn('⚠️ loadRoute failed:', e)
       return null
     }
   }
 
   async function saveRoute(coordinates: Array<{ lat: number; lng: number }>) {
     try {
+      const headers = { 
+        'Content-Type': 'application/json',
+        ...getAuthHeaders()
+      }
       const res = await fetch('http://127.0.0.1:8000/api/content/walking-route', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ value: coordinates }),
       })
-      if (!res.ok) throw new Error('Failed to save route')
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || `HTTP ${res.status}`)
+      }
       clearPreview()
       renderSavedRoute(coordinates, { name: 'Saved route' })
+      console.log('✓ Route saved successfully')
       return true
     } catch (e) {
-      console.error('saveRoute failed', e)
+      console.error('❌ saveRoute failed:', e)
       alert('Failed to save route')
       return false
     }
@@ -160,12 +171,40 @@ export function useMap() {
     renderPreviewRoute(coords)
   }
 
+  // Helper to get auth token
+  function getAuthHeaders() {
+    const token = localStorage.getItem('admin_token')
+    return token ? { 'Authorization': `Bearer ${token}` } : {}
+  }
+
+  // Setup map click handler to save coordinates (admin only)
+  function setupMapClickHandler() {
+    if (!mapInstance) {
+      console.warn('⚠️ mapInstance is null, cannot setup click handler')
+      return
+    }
+    console.log('✓ Setting up map click handler')
+    mapInstance.on('click', (e: L.LeafletMouseEvent) => {
+      savedCoordinates.value = {
+        lat: Number(e.latlng.lat.toFixed(6)),
+        lng: Number(e.latlng.lng.toFixed(6))
+      }
+      console.log('✓ Coördinaten opgeslagen:', savedCoordinates.value)
+    })
+  }
+
   // ---------------- POI MARKERS ----------------
   async function loadMarkers() {
     if (!mapInstance) return null
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/content/poi-markers')
-      if (!res.ok) throw new Error('Failed to load markers')
+      const headers = { ...getAuthHeaders() }
+      const res = await fetch('http://127.0.0.1:8000/api/content/poi-markers', {
+        headers
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || `HTTP ${res.status}`)
+      }
       const data = await res.json()
       const arr = data?.value ?? data
       if (!arr || !Array.isArray(arr)) return null
@@ -180,23 +219,32 @@ export function useMap() {
       pois.value.forEach(poi => mapAddMarker(mapInstance!, poi))
       return pois.value
     } catch (e) {
-      console.warn('loadMarkers failed', e)
+      console.warn('⚠️ loadMarkers failed:', e)
       return null
     }
   }
 
   async function saveMarkers() {
     try {
+      const headers = { 
+        'Content-Type': 'application/json',
+        ...getAuthHeaders()
+      }
       const res = await fetch('http://127.0.0.1:8000/api/content/poi-markers', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ value: pois.value }),
       })
-      if (!res.ok) throw new Error('Failed to save markers')
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || `HTTP ${res.status}: ${err.message || 'Unknown error'}`)
+      }
+      const result = await res.json()
+      console.log('✓ POI markers saved successfully:', result)
       return true
     } catch (e) {
-      console.error('saveMarkers failed', e)
-      alert('Failed to save markers')
+      console.error('❌ saveMarkers failed:', e)
+      alert(`Failed to save markers: ${e instanceof Error ? e.message : String(e)}`)
       return false
     }
   }
@@ -309,5 +357,7 @@ export function useMap() {
     loadMarkers,
     saveMarkers,
     refresh,
+    savedCoordinates,
+    setupMapClickHandler,
   }
 }

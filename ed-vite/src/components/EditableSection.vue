@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useContent } from '../composables/useContent'
+import { useImageUpload } from '../composables/useImageUpload'
 import { ref } from 'vue'
 
 // Tekst deel (blijft hetzelfde)
@@ -22,40 +23,47 @@ const saveChanges = async () => {
   }
 }
 
-// Foto deel – nu met base64 (kopie van POIEditor logica)
+// Foto deel – nu met echte backend upload
 const { data: photoUrl, save: savePhoto, loading: photoLoading, reload } = useContent<string>(
   'homepage_photo',
   '' // geen foto standaard
 )
 
+const { uploadImage } = useImageUpload()
 const uploadingPhoto = ref(false)
+const previewUrl = ref<string>('')  // transient preview only
 const fileInput = ref<HTMLInputElement | null>(null)
 
-function handlePhotoChange(e: Event) {
+async function handlePhotoChange(e: Event) {
   const input = e.target as HTMLInputElement
   if (!input.files?.length) return
 
   const file = input.files[0]
   uploadingPhoto.value = true
 
-  const reader = new FileReader()
-  reader.onload = () => {
-    photoUrl.value = reader.result as string  // base64 string: data:image/...
-    uploadingPhoto.value = false
+  try {
+    // Show transient preview only
+    const reader = new FileReader()
+    reader.onload = () => {
+      previewUrl.value = reader.result as string
+    }
+    reader.readAsDataURL(file)
 
-    // Optioneel: automatisch opslaan na upload
-    savePhoto().then(() => {
-      alert('Foto succesvol geüpload en opgeslagen!')
-      reload() // herlaad eventueel andere data
-    }).catch(err => {
-      alert('Opslaan mislukt: ' + err.message)
-    })
-  }
-  reader.onerror = () => {
-    alert('Kon afbeelding niet lezen')
+    // Upload to backend
+    const url = await uploadImage(file)
+    photoUrl.value = url  // Store server URL
+
+    // Save to database
+    await savePhoto()
+    alert('Foto succesvol geüpload en opgeslagen!')
+    
+  } catch (err: any) {
+    alert('Upload mislukt: ' + err.message)
+    previewUrl.value = ''
+  } finally {
     uploadingPhoto.value = false
+    input.value = ''
   }
-  reader.readAsDataURL(file)
 }
 
 const triggerUpload = () => fileInput.value?.click()
@@ -102,13 +110,12 @@ const triggerUpload = () => fileInput.value?.click()
 
       <div v-if="photoLoading" class="text-pink-600">Foto laden...</div>
 
-      <!-- Huidige foto tonen (werkt met base64 én oude URLs) -->
-      <div v-if="photoUrl && !photoLoading" class="mb-6">
+      <!-- Huidige foto tonen (werkt met echte URLs) -->
+      <div v-if="(previewUrl || photoUrl) && !photoLoading" class="mb-6">
         <img 
-          :src="photoUrl" 
+          :src="previewUrl || photoUrl" 
           alt="Huidige homepage foto"
           class="max-w-full h-auto rounded-lg shadow-md mx-auto"
-          @error="() => { photoUrl = '' }"  <!-- fallback als src kapot is -->
         />
         <p class="text-center text-sm text-gray-600 mt-2">
           Huidige foto – vervang door nieuwe upload

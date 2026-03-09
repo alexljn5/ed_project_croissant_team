@@ -43,35 +43,90 @@ Route::get('/hello', fn() => [
     'time' => now()->toIso8601String(),
 ]);
 
-// GET content
+// GET content (public, no auth needed)
 Route::get('/content/{key}', function ($key) {
-    $content = PageContent::firstWhere('key', $key);
-    return response()->json(['value' => $content?->value ?? null]);
+    $content = PageContent::select(['id', 'key', 'value'])
+        ->where('key', $key)
+        ->first();
+    
+    if (!$content) {
+        return response()->json(['value' => null]);
+    }
+    
+    // Ensure the value is properly decoded from JSON
+    $value = $content->value;
+    
+    // If it's a string (not yet decoded), decode it
+    if (is_string($value)) {
+        $decoded = json_decode($value, true);
+        $value = (json_last_error() === JSON_ERROR_NONE) ? $decoded : $value;
+    }
+    
+    return response()->json(['value' => $value]);
 });
 
-// POST content (opslaan)
+// POST content (admin only - opslaan)
 Route::post('/content/{key}', function (Request $request, $key) {
-    $value = $request->input('value');
-    PageContent::updateOrCreate(['key' => $key], ['value' => $value]);
-    return response()->json(['success' => true, 'value' => $value]);
-});
+    try {
+        $value = $request->input('value');
 
-// NEW: Photo upload endpoint
+        if ($value === null) {
+            return response()->json(['error' => 'value field is required'], 400);
+        }
+
+        // Ensure value is properly stored as JSON if it's an array
+        $toStore = is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
+
+        $content = PageContent::updateOrCreate(
+            ['key' => $key],
+            ['value' => $toStore]
+        );
+
+        \Log::info("✓ Content saved: key=$key");
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Content saved successfully',
+            'value' => $value
+        ], 200);
+    } catch (\Exception $e) {
+        \Log::error("Content save error: $e");
+        return response()->json([
+            'error' => 'Failed to save content',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+})->middleware('admin.token');
+
+// NEW: Photo upload endpoint (admin only)
 Route::post('/upload-photo', function (Request $request) {
     $request->validate([
-        'photo' => 'required|image|max:2048', // Max 2MB
+        'photo' => 'required|image|max:10240', // Max 10MB
     ]);
 
-    // Store the file in the 'public' disk (usually storage/app/public)
-    $path = $request->file('photo')->store('photos', 'public');
-    
-    // Get the public URL (will be accessible via storage link)
-    $url = Storage::disk('public')->url($path);
-    
-    return response()->json([
-        'success' => true,
-        'path' => $path,
-        'url' => $url,
-        'message' => 'Foto succesvol geüpload!'
-    ]);
-});
+    try {
+        $path = $request->file('photo')->store('photos', 'public');
+
+        if (!$path) {
+            throw new \Exception('File storage failed');
+        }
+
+        $url = asset('storage/' . $path);
+
+        \Log::info("✓ Photo uploaded: $path");
+
+        return response()->json([
+            'success' => true,
+            'path' => $path,
+            'url' => $url,
+            'message' => 'Foto succesvol geüpload!'
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Upload error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'error' => 'Upload failed',
+            'message' => $e->getMessage()
+        ], 400);
+    }
+})->middleware('admin.token');

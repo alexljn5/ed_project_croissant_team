@@ -1,11 +1,11 @@
-// src/composables/useTextSegments.ts
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
-// Helper: detect backend URL (localhost:5173 -> localhost:8000)
-function getBackendUrl() {
-  return window.location.origin.includes('5173')
-    ? 'http://localhost:8000'
-    : window.location.origin
+function getBackendUrl(): string {
+  const origin = window.location.origin
+  if (origin.includes('5173')) {
+    return 'http://127.0.0.1:8000'
+  }
+  return origin
 }
 
 export function useTextSegments() {
@@ -17,14 +17,14 @@ export function useTextSegments() {
     isLoading.value = true
     error.value = null
 
+    const backendUrl = getBackendUrl()
     try {
-      const backendUrl = getBackendUrl()
+      console.log(`[useTextSegments] Loading from ${backendUrl}/api/content/text-segments`)
       const response = await fetch(`${backendUrl}/api/content/text-segments`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
         },
-        credentials: 'same-origin',
       })
 
       if (!response.ok) {
@@ -32,23 +32,26 @@ export function useTextSegments() {
       }
 
       const data = await response.json()
+      console.log('Raw API data:', data)
 
-      console.log('Raw API data:', data); // Debug: zie wat de API echt retourneert
+      let loadedSegments: any[] = []
 
-      // API returns { value: [...] }, extract it
-      let loadedSegments = data.value || data || []
-
-      // Ensure it's an array
-      if (!Array.isArray(loadedSegments)) {
-        loadedSegments = []
+      // Handle both stringified JSON or actual array
+      if (typeof data.value === 'string') {
+        try {
+          loadedSegments = JSON.parse(data.value)
+        } catch (err) {
+          console.error('Failed to parse segments JSON:', err, data.value)
+        }
+      } else if (Array.isArray(data.value)) {
+        loadedSegments = data.value
       }
-
-      console.log('Parsed loadedSegments:', loadedSegments); // Debug: voor sort
 
       // Sort by order_index
       loadedSegments.sort((a: any, b: any) => (a.order_index ?? 999) - (b.order_index ?? 999))
 
       segments.value = loadedSegments
+      console.log('Parsed loadedSegments:', segments.value)
     } catch (err: any) {
       console.error('Fout bij laden van tekstsegmenten:', err)
       error.value = 'Kon de tekstsegmenten niet laden: ' + (err.message || 'onbekend probleem')
@@ -58,19 +61,31 @@ export function useTextSegments() {
   }
 
   const saveSegments = async () => {
+    if (segments.value.length === 0) {
+      error.value = 'Geen segmenten om op te slaan'
+      return
+    }
+
     isLoading.value = true
     error.value = null
 
+    const backendUrl = getBackendUrl()
     try {
-      const backendUrl = getBackendUrl()
+      const token = localStorage.getItem('admin_token')
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
       const response = await fetch(`${backendUrl}/api/content/text-segments`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        credentials: 'same-origin',
-        body: JSON.stringify(JSON.parse(JSON.stringify(segments.value))), // Strip Vue proxies
+        headers,
+        body: JSON.stringify({
+          value: segments.value, // Always send as an array
+        }),
       })
 
       if (!response.ok) {
@@ -79,8 +94,6 @@ export function useTextSegments() {
       }
 
       console.log('Segmenten succesvol opgeslagen')
-      // Herlaad na opslaan om te syncen
-      await loadSegments()
     } catch (err: any) {
       console.error('Fout bij opslaan:', err)
       error.value = 'Opslaan mislukt: ' + (err.message || 'onbekend probleem')
@@ -89,6 +102,11 @@ export function useTextSegments() {
       isLoading.value = false
     }
   }
+
+  // Auto-load segments on mount
+  onMounted(() => {
+    loadSegments()
+  })
 
   return {
     segments,

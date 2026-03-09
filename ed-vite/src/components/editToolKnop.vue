@@ -1,5 +1,5 @@
 <template>
-  <router-link to="/admin" class="editor-link">
+  <router-link v-if="isAuthenticated" to="/admin" class="editor-link">
     <div class="editor-bg-box">
       <button class="edit-tool-knop">
         <!-- knop icon -->
@@ -14,7 +14,10 @@
 </template>
 
 <script setup lang="ts">
-import "@/assets/css/editKnop.css";
+import "@/assets/css/editKnop.css"
+import { useAdminAuth } from "../composables/useAdminAuth"
+
+const { isAuthenticated } = useAdminAuth()
 </script>
 
 <style scoped>

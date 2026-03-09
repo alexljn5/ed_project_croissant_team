@@ -1,7 +1,17 @@
- import { createApp } from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import '@/assets/css/root.css'
+
+// ───────────── DEV ADMIN TOKEN ─────────────
+if (import.meta.env.DEV) {
+  localStorage.setItem(
+    'admin_token',
+    'adxq8cU54PJFtSpZ6L6PvRrISznwwM7xNQ0RZD3zvXn9Yo7bd0A9pdvN9wnMpQjCT2R33ASPuiksDW4I'
+  )
+}
+// ───────────────────────────────────────────
+
 
 let leafletPromise: Promise<any> | null = null
 

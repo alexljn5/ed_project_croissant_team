@@ -9,16 +9,15 @@
         <div class="preview">
           <img :src="card.image" alt="preview" class="preview-img" />
           
-          <!-- Klein upload-knopje -->
           <button 
             class="upload-btn" 
             title="Nieuwe foto kiezen"
             @click="triggerFileInput(card.id)"
+            :disabled="uploading"
           >
             📷
           </button>
 
-          <!-- Verborgen file input -->
           <input
             type="file"
             accept="image/*"
@@ -47,10 +46,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useSliderCards } from '@/composables/useSliderCards'
+import { useImageUpload } from '@/composables/useImageUpload'
 
 const { cards: sliderCards, updateCard, removeCard, addCard } = useSliderCards()
+const { uploadImage, uploading } = useImageUpload()
 
-// Om de file inputs te kunnen benaderen
 const fileInputs = ref<Record<string, HTMLInputElement>>({})
 
 function addNew() {
@@ -58,13 +58,12 @@ function addNew() {
     title: 'Nieuw evenement',
     description: 'Vul hier de beschrijving in...',
     date: 'dd-mm-jj, hh:mm',
-    image: '/src/assets/img/placeholder.webp',
+    image: '/storage/images/placeholder.webp',   // voorbeeld
   })
 }
 
 function saveCard(card: any) {
   updateCard(card)
-  // alert('Opgeslagen!') ← optioneel, kan weg als je het niet storend vindt
 }
 
 function triggerFileInput(cardId: string) {
@@ -72,24 +71,29 @@ function triggerFileInput(cardId: string) {
   if (input) input.click()
 }
 
-function handleFileChange(event: Event, card: any) {
+async function handleFileChange(event: Event, card: any) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
 
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    const dataUrl = e.target?.result as string
-    if (dataUrl) {
-      card.image = dataUrl
-      updateCard(card)           // meteen opslaan
-      // optioneel: alert('Foto toegevoegd!')
+  try {
+    // Tijdelijke preview
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      card.image = e.target?.result as string
     }
-  }
-  reader.readAsDataURL(file)
+    reader.readAsDataURL(file)
 
-  // Reset de input zodat je dezelfde foto opnieuw kunt kiezen
-  input.value = ''
+    // Echte upload naar Laravel
+    const url = await uploadImage(file)
+    card.image = url                     // ← echte URL opslaan
+    updateCard(card)                     // opslaan in DB
+  } catch (err: any) {
+    alert('Upload mislukt: ' + err.message)
+    card.image = ''                      // reset bij fout
+  } finally {
+    input.value = ''
+  }
 }
 </script>
 
