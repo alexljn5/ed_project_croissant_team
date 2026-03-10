@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use App\Models\PageContent;
+use App\Models\Review;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,21 +49,7 @@ Route::get('/content/{key}', function ($key) {
     $content = PageContent::select(['id', 'key', 'value'])
         ->where('key', $key)
         ->first();
-    
-    if (!$content) {
-        return response()->json(['value' => null]);
-    }
-    
-    // Ensure the value is properly decoded from JSON
-    $value = $content->value;
-    
-    // If it's a string (not yet decoded), decode it
-    if (is_string($value)) {
-        $decoded = json_decode($value, true);
-        $value = (json_last_error() === JSON_ERROR_NONE) ? $decoded : $value;
-    }
-    
-    return response()->json(['value' => $value]);
+    return response()->json(['value' => $content?->value ?? null]);
 });
 
 // POST content (admin only - opslaan)
@@ -90,7 +77,7 @@ Route::post('/content/{key}', function (Request $request, $key) {
             'value' => $value
         ], 200);
     } catch (\Exception $e) {
-        \Log::error("Content save error: $e");
+        \Log::error("❌ Content save error: $e");
         return response()->json([
             'error' => 'Failed to save content',
             'message' => $e->getMessage()
@@ -128,5 +115,111 @@ Route::post('/upload-photo', function (Request $request) {
             'error' => 'Upload failed',
             'message' => $e->getMessage()
         ], 400);
+    }
+})->middleware('admin.token');
+
+// REVIEWS ENDPOINTS
+// GET all reviews (public)
+Route::get('/reviews', function () {
+    $reviews = Review::orderBy('created_at', 'desc')->get();
+    return response()->json($reviews);
+});
+
+// POST a new review (public)
+Route::post('/reviews', function (Request $request) {
+    $request->validate([
+        // text and stars are optional now so admin can seed images only
+        'text' => 'nullable|string',
+        'stars' => 'nullable|integer|between:0,5',
+        'name' => 'nullable|string',
+        'email' => 'nullable|email',
+        'anonymous' => 'boolean',
+        'image_url' => 'nullable|string',
+        'pending' => 'boolean',
+    ]);
+
+    try {
+        $review = Review::create([
+            'text' => $request->input('text', ''),
+            'stars' => $request->input('stars', 0),
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'anonymous' => $request->input('anonymous', true),
+            'image_url' => $request->input('image_url'),
+            'pending' => $request->input('pending', false),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'review' => $review,
+            'message' => 'Review succesvol opgeslagen!'
+        ], 201);
+    } catch (\Exception $e) {
+        \Log::error('Review save error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'error' => 'Failed to save review',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
+
+// PATCH/update an existing review (used when someone "reviews" an admin-uploaded image)
+Route::patch('/reviews/{id}', function (Request $request, $id) {
+    $request->validate([
+        'text' => 'nullable|string',
+        'stars' => 'nullable|integer|between:0,5',
+        'name' => 'nullable|string',
+        'email' => 'nullable|email',
+        'anonymous' => 'boolean',
+        'image_url' => 'nullable|string',
+    ]);
+
+    try {
+        $review = Review::findOrFail($id);
+
+        $review->text = $request->input('text', $review->text);
+        $review->stars = $request->input('stars', $review->stars);
+        $review->name = $request->input('name', $review->name);
+        $review->email = $request->input('email', $review->email);
+        $review->anonymous = $request->input('anonymous', $review->anonymous);
+        $review->image_url = $request->input('image_url', $review->image_url);
+
+        // once edited, clear pending flag so it no longer shows up in the carousel
+        $review->pending = false;
+
+        $review->save();
+
+        return response()->json([
+            'success' => true,
+            'review' => $review,
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Review update error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'error' => 'Failed to update review',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
+
+// DELETE a review (admin only)
+Route::delete('/reviews/{id}', function ($id) {
+    try {
+        $review = Review::findOrFail($id);
+        $review->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Review verwijderd!'
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Review delete error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'error' => 'Failed to delete review',
+            'message' => $e->getMessage()
+        ], 500);
     }
 })->middleware('admin.token');
