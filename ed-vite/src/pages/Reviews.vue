@@ -5,40 +5,44 @@
       <p class="reviews-subtitle">Deel je ervaringen en meningen</p>
     </div>
 
-    <!-- Image Carousel -->
-    <div class="image-carousel-section">
-      <div class="image-carousel">
-        <button
-          @click="previousImage"
-          class="carousel-btn carousel-prev"
-          aria-label="Vorige afbeelding"
-        >
-          ◀
-        </button>
-        <div class="featured-image-wrapper">
-          <img
-            :src="images[currentImageIndex]"
-            :alt="`Afbeelding ${currentImageIndex + 1}`"
-            class="featured-image"
-          />
-          <div class="image-counter">
-            {{ currentImageIndex + 1 }} / {{ images.length }}
+    <div class="reviews-container">
+      <!-- Left side: Review form -->
+      <div class="reviews-form-section">
+        <h2>
+          {{ currentImageUrl ? "Beoordeel afbeelding" : "Schrijf een review" }}
+        </h2>
+
+        <!-- carousel for images -->
+        <div v-if="images.length" class="The-Carousel_Game">
+          <div class="image-carousel">
+            <button
+              class="carousel-btn"
+              @click="prevImage"
+              :disabled="currentImageIndex === 0"
+            >
+              ‹
+            </button>
+            <div class="featured-image-wrapper">
+              <img
+                v-if="currentImageUrl"
+                :src="currentImageUrl"
+                class="featured-image"
+                alt="Te reviewen afbeelding"
+              />
+              <div class="image-counter">
+                {{ currentImageIndex + 1 }} / {{ images.length }}
+              </div>
+            </div>
+            <button
+              class="carousel-btn"
+              @click="nextImage"
+              :disabled="currentImageIndex === images.length - 1"
+            >
+              ›
+            </button>
           </div>
         </div>
-        <button
-          @click="nextImage"
-          class="carousel-btn carousel-next"
-          aria-label="Volgende afbeelding"
-        >
-          ▶
-        </button>
-      </div>
-    </div>
 
-    <div class="reviews-container">
-
-      <div class="reviews-form-section">
-        <h2>Schrijf een review</h2>
         <form @submit.prevent="addReview" class="review-form">
           <!-- Rating section -->
           <div class="form-group">
@@ -119,48 +123,43 @@
             </div>
           </div>
 
-          <button type="submit" class="submit-btn">Verzend Review</button>
+          <button type="submit" class="submit-btn" :disabled="isSubmitting">
+            {{ isSubmitting ? "Verzenden..." : "Verzend Review" }}
+          </button>
+          <span v-if="submitError" class="submit-error">{{ submitError }}</span>
         </form>
       </div>
 
       <!-- Right side: Reviews list -->
       <section class="reviews-list-section">
         <div class="reviews-header-info">
-          <h2>Reviews voor afbeelding {{ currentImageIndex + 1 }}</h2>
-          <div
-            v-if="currentImageRatings.averageRating > 0"
-            class="average-rating"
-          >
+          <h2>Alle reviews</h2>
+          <div v-if="averageRating > 0" class="average-rating">
             <div class="average-score">
-              <span class="score-number">{{
-                currentImageRatings.averageRating.toFixed(1)
-              }}</span>
+              <span class="score-number">{{ averageRating.toFixed(1) }}</span>
               <span class="score-max">/5</span>
             </div>
             <div class="average-stars">
               <span
                 v-for="star in 5"
                 :key="star"
-                :class="[
-                  'avg-star',
-                  { active: currentImageRatings.averageRating >= star },
-                ]"
+                :class="['avg-star', { active: averageRating >= star }]"
                 >★</span
               >
             </div>
             <span class="rating-count"
-              >{{ currentImageRatings.ratingsCount }} beoordeling{{
-                currentImageRatings.ratingsCount !== 1 ? "en" : ""
+              >{{ ratingsCount }} beoordeling{{
+                ratingsCount !== 1 ? "en" : ""
               }}</span
             >
           </div>
         </div>
 
-        <div v-if="currentImageReviews.length" class="reviews-list">
+        <div v-if="currentReviews.length" class="reviews-list">
           <ul class="reviews-ul">
             <li
-              v-for="(review, idx) in currentImageVisibleReviews"
-              :key="idx"
+              v-for="review in currentReviews"
+              :key="review.id"
               class="review-item"
             >
               <!-- Stars -->
@@ -191,30 +190,8 @@
                   >{{ review.email }}</span
                 >
               </div>
-
-              <!-- Delete button -->
-              <button
-                @click="removeReview(currentImageIndex, idx)"
-                class="remove-btn"
-                aria-label="Verwijder review"
-              >
-                Verwijder
-              </button>
             </li>
           </ul>
-
-          <button
-            v-if="
-              currentImageVisibleReviews.length < currentImageReviews.length
-            "
-            @click="showMoreReviews"
-            class="show-more-btn"
-          >
-            Bekijk meer ({{
-              currentImageReviews.length - currentImageVisibleReviews.length
-            }}
-            meer)
-          </button>
         </div>
 
         <div v-else class="no-reviews">
@@ -226,43 +203,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "vue";
-import pigImage from "@/assets/img/pig-1.jpg";
-import fishImage from "@/assets/img/fish.png";
-//import alecImage from "@/assets/img/alec.png";
-
-const STORAGE_KEY = "site-reviews-by-image";
-const REVIEWS_TO_SHOW = 5;
+import { ref, onMounted, computed } from "vue";
 
 interface Review {
+  id: number;
   text: string;
   anonymous: boolean;
   name?: string;
   email?: string;
-  stars?: number;
+  stars: number;
+  image_url?: string;
+  pending?: boolean;
+  created_at: string;
 }
 
-// Images array
-const images = ref<string[]>([
-  pigImage,
-  "https://picsum.photos/500/400?random=2",
-  "https://picsum.photos/500/400?random=3",
-  //fishImage,
-  //alecImage,
-]);
+interface NewReview {
+  text: string;
+  anonymous: boolean;
+  name: string;
+  email: string;
+  stars: number;
+}
 
-const currentImageIndex = ref(0);
-
-// Reviews structure: array of review arrays, one per image
-const reviewsByImage = ref<Review[][]>([]);
-
-const currentImageReviews = computed(() => {
-  return reviewsByImage.value[currentImageIndex.value] || [];
-});
-
-const currentImageVisibleReviews = ref<Review[]>([]);
-
-const newReview = ref<Review>({
+const reviews = ref<Review[]>([]);
+const newReview = ref<NewReview>({
   text: "",
   anonymous: false,
   name: "",
@@ -270,78 +234,102 @@ const newReview = ref<Review>({
   stars: 0,
 });
 
+// state for carousel
+const currentImageIndex = ref(0);
+
 const hoverRating = ref(0);
+const isSubmitting = ref(false);
+const submitError = ref("");
 
-const currentImageRatings = computed(() => {
-  const reviews = currentImageReviews.value;
-  const reviewsWithStars = reviews.filter((r) => r.stars && r.stars > 0);
-  const averageRating =
-    reviewsWithStars.length === 0
-      ? 0
-      : reviewsWithStars.reduce((total, r) => total + (r.stars || 0), 0) /
-        reviewsWithStars.length;
-  return {
-    averageRating,
-    ratingsCount: reviewsWithStars.length,
-  };
+const averageRating = computed(() => {
+  const reviewsWithStars = currentReviews.value.filter(
+    (r) => r.stars && r.stars > 0,
+  );
+  if (reviewsWithStars.length === 0) return 0;
+  return (
+    reviewsWithStars.reduce((total, r) => total + r.stars, 0) /
+    reviewsWithStars.length
+  );
 });
 
-onMounted(() => {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    try {
-      reviewsByImage.value = JSON.parse(saved);
-    } catch (error) {
-      console.error("Error loading reviews:", error);
-    }
-  }
-  // Initialize empty arrays for each image
-  if (reviewsByImage.value.length === 0) {
-    reviewsByImage.value = images.value.map(() => []);
-  }
-  updateVisibleReviews();
+// unique images from all reviews with image_url
+const images = computed(() => {
+  const uniqueUrls = new Set<string>();
+  reviews.value
+    .filter((r) => r.image_url)
+    .forEach((r) => uniqueUrls.add(r.image_url!));
+  return Array.from(uniqueUrls);
 });
 
-watch(
-  [currentImageIndex, currentImageReviews],
-  () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(reviewsByImage.value));
-    updateVisibleReviews();
-  },
-  { deep: true },
+const currentImageUrl = computed(
+  () => images.value[currentImageIndex.value] || null,
 );
 
-function updateVisibleReviews() {
-  currentImageVisibleReviews.value = currentImageReviews.value.slice(
-    0,
-    REVIEWS_TO_SHOW,
+// reviews for current image
+const currentReviews = computed(() => {
+  if (!currentImageUrl.value) return [];
+  return reviews.value.filter(
+    (r) => r.image_url === currentImageUrl.value && !r.pending,
   );
+});
+
+const ratingsCount = computed(() => {
+  return currentReviews.value.filter((r) => r.stars && r.stars > 0).length;
+});
+
+async function loadReviews() {
+  try {
+    const response = await fetch("/api/reviews");
+    if (!response.ok) throw new Error("Failed to load reviews");
+    reviews.value = await response.json();
+    // reset carousel index when list changes
+    if (images.value.length > 0) {
+      currentImageIndex.value = Math.min(
+        currentImageIndex.value,
+        images.value.length - 1,
+      );
+    } else {
+      currentImageIndex.value = 0;
+    }
+  } catch (err) {
+    console.error("Error loading reviews:", err);
+  }
 }
 
-function nextImage() {
-  currentImageIndex.value = (currentImageIndex.value + 1) % images.value.length;
-}
+async function addReview() {
+  if (!newReview.value.text.trim()) {
+    return;
+  }
+  if (!currentImageUrl.value) {
+    submitError.value = "Selecteer een afbeelding om te reviewen.";
+    return;
+  }
 
-function previousImage() {
-  currentImageIndex.value =
-    (currentImageIndex.value - 1 + images.value.length) % images.value.length;
-}
+  isSubmitting.value = true;
+  submitError.value = "";
 
-function addReview() {
-  if (newReview.value.text.trim()) {
-    const review: Review = {
+  try {
+    const payload: any = {
       text: newReview.value.text.trim(),
+      stars: newReview.value.stars || 0,
       anonymous: newReview.value.anonymous,
       name: newReview.value.anonymous ? "" : newReview.value.name?.trim() || "",
       email: newReview.value.email?.trim() || "",
-      stars: newReview.value.stars || 0,
+      image_url: currentImageUrl.value,
     };
 
-    if (!reviewsByImage.value[currentImageIndex.value]) {
-      reviewsByImage.value[currentImageIndex.value] = [];
-    }
+    const response = await fetch("/api/reviews", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-    reviewsByImage.value[currentImageIndex.value].unshift(review);
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || "Failed to save review");
+    }
 
     // Reset form
     newReview.value = {
@@ -352,20 +340,30 @@ function addReview() {
       stars: 0,
     };
     hoverRating.value = 0;
+    submitError.value = "";
+
+    // Reload reviews
+    await loadReviews();
+  } catch (err) {
+    submitError.value = (err as Error).message;
+  } finally {
+    isSubmitting.value = false;
   }
 }
 
-function showMoreReviews() {
-  const current = currentImageVisibleReviews.value.length;
-  currentImageVisibleReviews.value = currentImageReviews.value.slice(
-    0,
-    current + REVIEWS_TO_SHOW,
-  );
-}
+onMounted(() => {
+  loadReviews();
+});
 
-function removeReview(imageIndex: number, reviewIndex: number) {
-  if (reviewsByImage.value[imageIndex]) {
-    reviewsByImage.value[imageIndex].splice(reviewIndex, 1);
+// carousel helpers
+function prevImage() {
+  if (currentImageIndex.value > 0) {
+    currentImageIndex.value--;
+  }
+}
+function nextImage() {
+  if (currentImageIndex.value < images.value.length - 1) {
+    currentImageIndex.value++;
   }
 }
 
